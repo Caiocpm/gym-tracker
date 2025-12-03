@@ -80,8 +80,8 @@ export function PublicProfile() {
   }
 
   // Usar dados do Firebase Auth como fallback
-  const displayName = state.profile?.displayName || currentUser.displayName || "Usuário";
-  const bio = state.profile?.bio;
+  const displayName = state.profile?.name || currentUser.displayName || "Usuário";
+  const bio = undefined; // Bio não está disponível em UserProfile
   const photoURL = currentUser.photoURL;
 
   return (
@@ -166,7 +166,7 @@ export function PublicProfile() {
           <div className={styles.statsSection}>
             <UserStatsDisplay stats={stats} isLoading={statsLoading} />
             <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-              <button className={styles.refreshButton} onClick={refreshStats}>
+              <button className={styles.refreshButton} onClick={() => refreshStats()}>
                 🔄 Atualizar Estatísticas
               </button>
               <button

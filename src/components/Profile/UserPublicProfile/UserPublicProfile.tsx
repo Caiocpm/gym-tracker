@@ -2,11 +2,10 @@
 import { useState, useEffect } from "react";
 import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { db as firebaseDb } from "../../../config/firebase";
-import { useAuth } from "../../../contexts/AuthContext";
 import { useUserBadges } from "../../../hooks/useUserBadges";
 import { BadgeGallery } from "../BadgeGallery/BadgeGallery";
 import { UserStatsDisplay } from "../UserStatsDisplay/UserStatsDisplay";
-import type { UserProfile, UserChallengeBadge, UserStats, WorkoutPost } from "../../../types/social";
+import type { User, UserChallengeBadge, UserStats, WorkoutPost } from "../../../types/social";
 import styles from "./UserPublicProfile.module.css";
 
 interface UserPublicProfileProps {
@@ -17,10 +16,9 @@ interface UserPublicProfileProps {
 type ProfileTab = "stats" | "badges";
 
 export function UserPublicProfile({ userId, onClose }: UserPublicProfileProps) {
-  const { currentUser } = useAuth();
   const { getUserBadges } = useUserBadges();
 
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [userProfile, setUserProfile] = useState<User | null>(null);
   const [stats, setStats] = useState<UserStats | null>(null);
   const [badges, setBadges] = useState<UserChallengeBadge[]>([]);
   const [userPosts, setUserPosts] = useState<WorkoutPost[]>([]);
@@ -37,7 +35,7 @@ export function UserPublicProfile({ userId, onClose }: UserPublicProfileProps) {
         const profileDoc = await getDoc(doc(firebaseDb, "userProfiles", userId));
 
         if (profileDoc.exists()) {
-          const profileData = profileDoc.data() as UserProfile;
+          const profileData = profileDoc.data() as User;
           setUserProfile(profileData);
           console.log("✅ Perfil encontrado:", profileData);
         } else {
@@ -128,7 +126,7 @@ export function UserPublicProfile({ userId, onClose }: UserPublicProfileProps) {
           totalChallengesCompleted,
           totalBadges: userBadges.length,
           memberSince: profileDoc.exists()
-            ? (profileDoc.data() as UserProfile).createdAt
+            ? (profileDoc.data() as User).createdAt
             : new Date().toISOString(),
           lastWorkout: userPosts.length > 0
             ? userPosts[0].workoutDate

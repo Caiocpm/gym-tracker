@@ -7,8 +7,25 @@ import { useAuth } from "../contexts/AuthContext";
 import { useProfile } from "../contexts/ProfileProviderIndexedDB";
 import { useUserBadges } from "./useUserBadges";
 import type { UserStats } from "../types/social";
-import type { CompletedWorkout } from "../types/workout";
 import type { LoggedExercise } from "../types";
+
+// Definir CompletedWorkout localmente já que não existe em workout.ts
+interface CompletedWorkout {
+  id: string;
+  userId: string;
+  workoutName: string;
+  completedAt: string;
+  duration: number;
+  exercises: Array<{
+    exerciseDefinitionId: string;
+    exerciseName: string;
+    sets: Array<{
+      reps: number;
+      weight: number;
+      isPersonalRecord?: boolean;
+    }>;
+  }>;
+}
 
 /**
  * Hook para calcular estatísticas completas do usuário
@@ -312,11 +329,11 @@ export function useUserStats() {
    * ✅ Calcular mudança de peso
    */
   const calculateWeightChange = (): UserStats["weightChange"] | undefined => {
-    if (!state.profile?.measurements || state.profile.measurements.length < 2) {
+    if (!state.measurements || state.measurements.length < 2) {
       return undefined;
     }
 
-    const sorted = [...state.profile.measurements].sort(
+    const sorted = [...state.measurements].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
 
@@ -329,7 +346,7 @@ export function useUserStats() {
       start: first.weight,
       current: last.weight,
       change: last.weight - first.weight,
-      unit: state.profile.units.weight,
+      unit: "kg", // Default unit
     };
   };
 
@@ -337,11 +354,11 @@ export function useUserStats() {
    * ✅ Calcular mudança de gordura corporal
    */
   const calculateBodyFatChange = (): UserStats["bodyFatChange"] | undefined => {
-    if (!state.profile?.measurements || state.profile.measurements.length < 2) {
+    if (!state.measurements || state.measurements.length < 2) {
       return undefined;
     }
 
-    const sorted = [...state.profile.measurements].sort(
+    const sorted = [...state.measurements].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
 
@@ -361,25 +378,8 @@ export function useUserStats() {
    * ✅ Calcular mudança de massa muscular
    */
   const calculateMuscleMassChange = (): UserStats["muscleMassChange"] | undefined => {
-    if (!state.profile?.measurements || state.profile.measurements.length < 2) {
-      return undefined;
-    }
-
-    const sorted = [...state.profile.measurements].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-    );
-
-    const first = sorted.find((m) => m.muscleMass);
-    const last = [...sorted].reverse().find((m) => m.muscleMass);
-
-    if (!first?.muscleMass || !last?.muscleMass) return undefined;
-
-    return {
-      start: first.muscleMass,
-      current: last.muscleMass,
-      change: last.muscleMass - first.muscleMass,
-      unit: state.profile.units.weight,
-    };
+    // muscleMass não existe em BodyMeasurements, retornar undefined
+    return undefined;
   };
 
   // ✅ Auto-calcular estatísticas quando componente monta
