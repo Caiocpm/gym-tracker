@@ -1,0 +1,150 @@
+/* src/components/WorkoutTracker/components/WorkoutDailyLog/WorkoutDailyLog.module.css */
+
+.workoutDailyLog {
+  background: var(--background-color-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-small);
+  border: 1px solid var(--border-color-light);
+}
+
+.dayTitle {
+  color: var(--text-color-primary);
+  margin-bottom: 1.5rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: center;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.emptyMessage {
+  text-align: center;
+  color: var(--text-color-secondary);
+  font-style: italic;
+  padding: 2rem;
+  background: var(--background-color-light);
+  border-radius: 10px;
+  border: 2px dashed var(--border-color-light);
+}
+
+.exerciseList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.logWorkoutButton {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(
+    135deg,
+    var(--color-accent) 0%,
+    var(--color-accent-dark) 100%
+  );
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logWorkoutButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
+}
+
+/* Toggle para a sessão inteira */
+.sessionToggleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  background-color: var(--background-color-light);
+  padding: 0.8rem 1.2rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color-light);
+  box-shadow: var(--shadow-small);
+}
+
+.sessionToggleLabel {
+  font-weight: 600;
+  color: var(--text-color-primary);
+  font-size: 1rem;
+}
+
+.toggleSwitch {
+  position: relative;
+  display: inline-block;
+  width: 44px; /* Ajustado para um tamanho mais visível */
+  height: 26px; /* Ajustado */
+}
+
+.toggleSwitch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 26px; /* Ajustado */
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px; /* Ajustado */
+  width: 18px; /* Ajustado */
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--color-primary);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--color-primary);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(18px); /* Ajustado */
+  -ms-transform: translateX(18px); /* Ajustado */
+  transform: translateX(18px); /* Ajustado */
+}
+
+/* Variáveis de exemplo, ajuste conforme seu tema global */
+:root {
+  --background-color-light: #f0f4f8;
+  --background-color-card: #ffffff;
+  --text-color-primary: #343a40;
+  --text-color-secondary: #6c757d;
+  --color-primary: #667eea;
+  --color-secondary: #764ba2; /* Cor secundária para gradiente */
+  --color-accent: #28a745;
+  --color-accent-dark: #218838;
+  --border-color-light: #e9ecef;
+  --shadow-small: 0 2px 4px rgba(0, 0, 0, 0.05);
+}

@@ -1,0 +1,215 @@
+/* src/components/WorkoutTracker/WorkoutCompletionToast/WorkoutCompletionToast.module.css */
+
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  z-index: 9999;
+  max-width: 420px;
+  backdrop-filter: blur(10px);
+  animation: slideIn 0.3s ease-out;
+  overflow: hidden;
+}
+
+.toast::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #06b6d4 100%);
+  z-index: 1;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(500px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toastContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-top: 4px;
+  position: relative;
+  z-index: 2;
+}
+
+.toastMessage {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #1a1a1a;
+  flex: 1;
+}
+
+.icon {
+  font-size: 28px;
+  animation: bounce 0.6s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.text h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #1a1a1a;
+}
+
+.text p {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #6c757d;
+  line-height: 1.2;
+}
+
+.toastActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.shareBtn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.shareBtn:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.shareBtn:active {
+  transform: translateY(0);
+}
+
+.dismissBtn {
+  background: rgba(226, 232, 240, 0.6);
+  color: #6c757d;
+  border: 1px solid #e2e8f0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 36px;
+}
+
+.dismissBtn:hover {
+  background: rgba(226, 232, 240, 1);
+  color: #495057;
+  transform: rotate(90deg);
+}
+
+.dismissBtn:active {
+  transform: rotate(90deg) scale(0.95);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .toast {
+    top: 12px;
+    right: 12px;
+    left: 12px;
+    max-width: none;
+    padding: 12px 16px;
+  }
+
+  .toastContent {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 6px;
+  }
+
+  .toastActions {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .shareBtn {
+    flex: 1;
+  }
+
+  .icon {
+    font-size: 24px;
+  }
+
+  .text h4 {
+    font-size: 15px;
+  }
+
+  .text p {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .toast {
+    top: 8px;
+    right: 8px;
+    left: 8px;
+    padding: 12px;
+  }
+
+  .toastContent {
+    gap: 8px;
+  }
+
+  .toastMessage {
+    gap: 8px;
+  }
+
+  .icon {
+    font-size: 20px;
+  }
+
+  .text h4 {
+    font-size: 14px;
+  }
+
+  .text p {
+    font-size: 11px;
+  }
+
+  .shareBtn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}

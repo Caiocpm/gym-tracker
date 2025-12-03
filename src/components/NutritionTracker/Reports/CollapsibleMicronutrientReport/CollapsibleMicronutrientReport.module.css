@@ -1,0 +1,432 @@
+/* src/components/NutritionTracker/Reports/CollapsibleMicronutrientReport.module.css */
+
+.collapsibleMicronutrientContainer {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+  overflow: visible;
+  min-height: auto;
+}
+
+.collapsibleHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 18px 25px;
+  background-color: #f9f9f9;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 1.1em;
+  color: #333;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #eee;
+}
+
+.collapsibleHeader:hover {
+  background-color: #f0f0f0;
+}
+
+.collapsibleHeader h3 {
+  margin: 0;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* ✅ STATUS INDICATOR MELHORADO */
+.statusIndicator {
+  font-size: 0.85em;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ✅ ESTADOS DO STATUS */
+.statusIndicator.excellent {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: #10b981;
+  color: #059669;
+}
+
+.statusIndicator.good {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+
+.statusIndicator.warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  border-color: #f59e0b;
+  color: #d97706;
+}
+
+.statusIndicator.danger {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444;
+  color: #dc2626;
+}
+
+.statusIndicator.noGoals {
+  background-color: rgba(107, 114, 128, 0.1);
+  border-color: #6b7280;
+  color: #4b5563;
+}
+
+/* ✅ HOVER STATES */
+.statusIndicator.excellent:hover {
+  background-color: rgba(16, 185, 129, 0.15);
+}
+
+.statusIndicator.good:hover {
+  background-color: rgba(59, 130, 246, 0.15);
+}
+
+.statusIndicator.warning:hover {
+  background-color: rgba(245, 158, 11, 0.15);
+}
+
+.statusIndicator.danger:hover {
+  background-color: rgba(239, 68, 68, 0.15);
+}
+
+.statusIndicator.noGoals:hover {
+  background-color: rgba(107, 114, 128, 0.15);
+}
+
+.collapsibleHeader .arrow {
+  font-size: 0.9em;
+  transition: transform 0.2s ease;
+  color: #666;
+}
+
+/* ✅ CORRIGIR PROBLEMA DE EXPANSÃO E SCROLL */
+.collapsibleContent {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+  padding: 0 25px;
+}
+
+.collapsibleContent.expanded {
+  max-height: none;
+  height: auto;
+  padding: 20px 25px;
+  overflow: visible;
+  transition: padding 0.4s ease-out;
+}
+
+/* ✅ ADICIONAR SCROLL INTERNO SE NECESSÁRIO */
+.detailedReport {
+  max-height: 80vh;
+  overflow-y: auto;
+  overflow-x: visible;
+  padding-right: 10px;
+}
+
+/* ✅ ESTILIZAR SCROLLBAR */
+.detailedReport::-webkit-scrollbar {
+  width: 8px;
+}
+
+.detailedReport::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.detailedReport::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.detailedReport::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* ✅ GARANTIR QUE TABELAS SEJAM TOTALMENTE VISÍVEIS */
+.collapsibleContent.expanded > div {
+  margin-top: 0;
+  margin-bottom: 0;
+  overflow: visible;
+  max-height: none;
+}
+
+.micronutrientSummary {
+  padding: 10px 0;
+  font-size: 0.95em;
+  color: #555;
+}
+
+.summaryItem {
+  margin-bottom: 8px;
+}
+
+.summaryHighlights ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 5px;
+}
+
+.summaryHighlights li {
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.highlightLow {
+  color: #e74c3c;
+}
+
+.highlightHigh {
+  color: #f39c12;
+}
+
+.highlightGood {
+  color: #27ae60;
+}
+
+.summaryAllGood {
+  color: #27ae60;
+  font-style: italic;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.micronutrientNoGoals {
+  padding: 15px 0;
+  color: #777;
+  font-style: italic;
+  text-align: center;
+}
+
+.expandHint {
+  font-size: 0.85em;
+  color: #888;
+  margin-top: 15px;
+  text-align: center;
+  display: block;
+}
+
+.collapseHint {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.collapseButton {
+  background-color: #f0f0f0;
+  color: #555;
+  border: 1px solid #ddd;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.collapseButton:hover {
+  background-color: #e0e0e0;
+  border-color: #ccc;
+  color: #333;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  .collapsibleHeader {
+    padding: 15px 20px;
+    font-size: 1em;
+  }
+
+  .collapsibleHeader h3 {
+    font-size: 1.1em;
+  }
+
+  .headerContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .statusIndicator {
+    font-size: 0.8em;
+    padding: 4px 8px;
+  }
+
+  .collapsibleContent {
+    padding: 0 20px;
+  }
+
+  .collapsibleContent.expanded {
+    padding: 15px 20px;
+  }
+
+  .detailedReport {
+    max-height: 70vh;
+    padding-right: 5px;
+  }
+
+  .micronutrientSummary {
+    font-size: 0.9em;
+  }
+
+  .collapseButton {
+    padding: 8px 12px;
+    font-size: 0.85em;
+  }
+}
+
+@media (max-width: 480px) {
+  .collapsibleHeader {
+    padding: 12px 15px;
+    font-size: 0.95em;
+  }
+
+  .collapsibleHeader h3 {
+    font-size: 1em;
+  }
+
+  .statusIndicator {
+    font-size: 0.75em;
+    padding: 3px 6px;
+  }
+
+  .collapsibleContent {
+    padding: 0 15px;
+  }
+
+  .collapsibleContent.expanded {
+    padding: 12px 15px;
+  }
+
+  .detailedReport {
+    max-height: 60vh;
+    padding-right: 3px;
+  }
+
+  .micronutrientSummary {
+    font-size: 0.85em;
+    padding: 8px 0;
+  }
+
+  .summaryHighlights li {
+    gap: 3px;
+  }
+
+  .expandHint {
+    font-size: 0.8em;
+    margin-top: 12px;
+  }
+
+  .collapseHint {
+    margin-top: 15px;
+  }
+
+  .collapseButton {
+    padding: 6px 10px;
+    font-size: 0.8em;
+  }
+}
+
+/* ===== ESTADOS DE FOCO ===== */
+.collapsibleHeader:focus,
+.collapseButton:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* ===== ANIMAÇÕES ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.micronutrientSummary,
+.detailedReport {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.micronutrientNoData {
+  padding: 20px 0;
+  text-align: center;
+  color: #6b7280;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px dashed #d1d5db;
+  margin: 10px 0;
+}
+
+.micronutrientNoData p {
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.micronutrientNoData p:first-child {
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.configNote {
+  font-size: 0.85em;
+  font-style: italic;
+  color: #9ca3af !important;
+  margin-top: 12px !important;
+}
+
+/* ✅ NOVO ESTADO PARA QUANDO NÃO HÁ DADOS */
+.statusIndicator.noData {
+  background-color: rgba(107, 114, 128, 0.1);
+  border-color: #9ca3af;
+  color: #6b7280;
+}
+
+.statusIndicator.noData:hover {
+  background-color: rgba(107, 114, 128, 0.15);
+}
+.statusContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ✅ PONTO COLORIDO DISCRETO */
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  transition: all 0.2s ease;
+}
+
+/* ✅ TEXTO OPCIONAL DISCRETO */
+.statusText {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+  min-width: fit-content;
+}
+
+/* ✅ HOVER EFFECT SUTIL */
+.collapsibleHeader:hover .statusDot {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+}

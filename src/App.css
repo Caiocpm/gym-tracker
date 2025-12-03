@@ -1,0 +1,415 @@
+/* src/App.css - Versão moderna e minimalista */
+
+.app {
+  min-height: 100vh;
+  background: #fafafa; /* ✅ Fundo mais neutro e limpo */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ===== HEADER MINIMALISTA ===== */
+.app-header {
+  background: #ffffff; /* ✅ Branco puro */
+  border-bottom: 1px solid #e5e5e5; /* ✅ Borda sutil */
+  padding: 1.5rem 2rem;
+  text-align: center;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.header-branding {
+  text-align: left;
+}
+
+.app-header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a1a1a; /* ✅ Preto suave */
+  margin: 0 0 0.25rem 0;
+  letter-spacing: -0.02em;
+}
+
+.app-header p {
+  color: #666666; /* ✅ Cinza médio */
+  font-size: 0.9rem;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* ===== NAVEGAÇÃO DESKTOP (MINIMALISTA) ===== */
+.view-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.toggle-button {
+  padding: 0.75rem 1.25rem;
+  border: none; /* ✅ Sem bordas */
+  background: transparent; /* ✅ Fundo transparente */
+  color: #666666;
+  border-radius: 12px; /* ✅ Cantos menos arredondados */
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease; /* ✅ Transição mais rápida */
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.toggle-button:hover {
+  background: #f5f5f5; /* ✅ Hover sutil */
+  color: #333333;
+  transform: none; /* ✅ Sem movimento */
+}
+
+.toggle-button.active {
+  background: #000000; /* ✅ Preto sólido para ativo */
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* ===== MAIN CONTENT ===== */
+.app-main {
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ===== BOTTOM NAVIGATION (ULTRA MINIMALISTA) ===== */
+.bottom-navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff; /* ✅ Branco puro */
+  border-top: 1px solid #e5e5e5; /* ✅ Borda sutil */
+  z-index: 1000;
+  display: none;
+  padding: env(safe-area-inset-bottom, 0); /* ✅ Safe area para iPhone */
+}
+
+@media (max-width: 768px) {
+  .view-toggle {
+    display: none;
+  }
+
+  .bottom-navigation {
+    display: block;
+  }
+
+  .app-main {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0));
+  }
+
+  .app-header {
+    padding: 1rem 1.5rem;
+  }
+
+  .header-top {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .header-branding {
+    text-align: center;
+  }
+}
+
+.bottom-nav-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 16px; /* ✅ Mais arredondado */
+  transition: all 0.2s ease;
+  cursor: pointer;
+  min-width: 60px;
+  text-decoration: none;
+  color: #999999; /* ✅ Cinza mais claro para inativo */
+  background: transparent;
+  border: none;
+  position: relative;
+}
+
+/* ✅ Estado ativo com indicador moderno */
+.bottom-nav-item.active {
+  color: #000000; /* ✅ Preto para ativo */
+  background: #f8f8f8; /* ✅ Fundo muito sutil */
+}
+
+/* ✅ Indicador de ativo (ponto) */
+.bottom-nav-item.active::before {
+  content: "";
+  position: absolute;
+  top: 0.25rem;
+  width: 4px;
+  height: 4px;
+  background: #000000;
+  border-radius: 50%;
+}
+
+.bottom-nav-icon {
+  font-size: 1.3rem;
+  margin-bottom: 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.bottom-nav-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+/* ===== RESPONSIVIDADE MELHORADA ===== */
+@media (max-width: 480px) {
+  .app-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .app-header p {
+    font-size: 0.85rem;
+  }
+
+  .bottom-nav-container {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .bottom-nav-item {
+    min-width: 50px;
+    padding: 0.4rem 0.5rem;
+  }
+
+  .bottom-nav-icon {
+    font-size: 1.2rem;
+  }
+
+  .bottom-nav-label {
+    font-size: 0.65rem;
+  }
+
+  .app-main {
+    padding: 1rem;
+    padding-bottom: calc(75px + env(safe-area-inset-bottom, 0));
+  }
+
+  /* Otimiza header para mobile */
+  .app-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .header-top {
+    margin-bottom: 0.5rem;
+  }
+
+  /* Ajusta inputs para mobile */
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  select,
+  textarea {
+    padding: 0.875rem; /* Maior área de toque */
+  }
+
+  /* Botões maiores para touch */
+  .primary-button,
+  .backup-btn,
+  .secondary-button {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* iPhone 12/13 específico (390px) */
+@media (max-width: 390px) {
+  .app-header h1 {
+    font-size: 1.35rem;
+  }
+
+  .bottom-nav-label {
+    font-size: 0.6rem;
+  }
+
+  .app-main {
+    padding: 0.75rem;
+  }
+}
+
+/* ===== MELHORIAS GERAIS ===== */
+
+/* Remover outline padrão e adicionar focus moderno */
+.toggle-button:focus,
+.bottom-nav-item:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Melhorar seleção de texto */
+::selection {
+  background: rgba(0, 0, 0, 0.1);
+  color: inherit;
+}
+
+/* Otimizar para telas de alta densidade */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .bottom-navigation {
+    border-top-width: 0.5px;
+  }
+}
+
+/* ===== COMPONENTES MINIMALISTAS ===== */
+
+/* Cards mais limpos - NOTA: .profile-container e .settings-container têm seus próprios estilos nos componentes */
+.backup-controls {
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: none;
+  margin-bottom: 1.5rem;
+}
+
+/* Botões mais minimalistas */
+.primary-button,
+.backup-btn {
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primary-button:hover,
+.backup-btn:hover {
+  background: #333333;
+  transform: none; /* ✅ Sem movimento */
+}
+
+.secondary-button {
+  background: #f5f5f5;
+  color: #333333;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondary-button:hover {
+  background: #eeeeee;
+  border-color: #d5d5d5;
+}
+
+/* Inputs mais limpos */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+select,
+textarea {
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  background: #ffffff;
+  transition: border-color 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Títulos mais limpos */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #1a1a1a;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+/* Texto secundário */
+.text-secondary {
+  color: #666666;
+  font-size: 0.9rem;
+}
+
+.text-muted {
+  color: #999999;
+  font-size: 0.85rem;
+}
+/* ===== NUTRITION TRACKER INTEGRATION ===== */
+.app-main .nutrition-tracker {
+  background: transparent;
+  padding: 0;
+  min-height: auto;
+}
+
+.app-main .nutrition-tracker > * {
+  margin-bottom: 20px;
+}
+
+.app-main .nutrition-tracker > *:last-child {
+  margin-bottom: 0;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  .app-main .nutrition-tracker {
+    padding: 0 10px;
+  }
+
+  .app-main .nutrition-tracker > * {
+    margin-bottom: 15px;
+  }
+}
+
+/* ===== ENSURE PROPER SPACING ===== */
+.app-main {
+  padding-bottom: 100px; /* Espaço para bottom navigation */
+}
+
+@media (min-width: 769px) {
+  .app-main {
+    padding-bottom: 20px;
+  }
+}

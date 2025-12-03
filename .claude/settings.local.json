@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm:*)",
+      "Bash(npm run build:*)",
+      "Bash(xargs sed -i '/console\\.log/d; /console\\.warn/d; /console\\.debug/d')",
+      "Bash(git checkout:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(npm install:*)",
+      "Bash(cat:*)",
+      "Bash(for file in Profile.tsx ProfileForm.tsx ProfileDashboard.tsx MeasurementsForm.tsx MeasurementsHistory.tsx)",
+      "Bash(do sed -i 's|from \"\"../../contexts/ProfileContext\"\"|from \"\"../../contexts/ProfileProviderIndexedDB\"\"|g' \"$file\")",
+      "Bash(echo:*)",
+      "Bash(done)",
+      "Bash(for file in WeightEvolutionChart.tsx CircumferenceEvolutionChart.tsx BodyCompositionChart.tsx)",
+      "Bash(timeout 10 npx tsc:*)",
+      "Bash(\"c:/Users/User/Desktop/Dev/gym-tracker/src/contexts/WorkoutProviderIndexedDB.tsx\")",
+      "Bash(\"c:/Users/User/Desktop/Dev/gym-tracker/src/contexts/ProfileProviderIndexedDB.tsx\")",
+      "Bash(\"c:/Users/User/Desktop/Dev/gym-tracker/src/contexts/NutritionProviderIndexedDB.tsx\")",
+      "Bash(\"c:/Users/User/Desktop/Dev/gym-tracker/src/contexts/ProfileProviderIndexedDB.tsx.tmp\")",
+      "Bash(\"c:/Users/User/Desktop/Dev/gym-tracker/src/contexts/NutritionContext.ts\")",
+      "Bash(node -p:*)",
+      "Bash(firebase deploy:*)",
+      "Bash(npx firebase deploy:*)",
+      "Bash(timeout 5 npx tsc:*)",
+      "Bash(node:*)",
+      "Bash(npx tsc:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

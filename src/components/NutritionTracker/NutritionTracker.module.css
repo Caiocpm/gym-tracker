@@ -1,0 +1,651 @@
+/* src/components/NutritionTracker/NutritionTracker.module.css */
+
+/* ===== NUTRITION TRACKER MAIN ===== */
+.nutritionTracker {
+  padding: 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: transparent;
+  min-height: auto;
+}
+
+.nutritionContent {
+  padding: 20px;
+}
+
+/* ===== ADD FOOD MODAL - MOBILE OPTIMIZED ===== */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.addFoodModal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 40px);
+  position: relative;
+}
+
+.modalHeader {
+  padding: 20px 25px;
+  border-bottom: 1px solid #e0e0e0;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.modalHeader h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 5px 0;
+}
+
+.modalHeader p {
+  color: #666;
+  margin: 0;
+}
+
+.closeButton {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.closeButton:hover {
+  background: #f0f0f0;
+}
+
+.modalContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 25px;
+  min-height: 0;
+  max-height: calc(100vh - 200px);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.foodsList {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.foodItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.foodItem:hover {
+  background: #f8f9fa;
+}
+
+.foodItem.selected {
+  background: linear-gradient(135deg, #e8f2ff 0%, #f0f8ff 100%);
+  border-color: #667eea;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+}
+
+.foodItem:last-child {
+  border-bottom: none;
+}
+
+.foodIcon {
+  font-size: 24px;
+  width: 40px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.foodInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.foodInfo h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 5px 0;
+}
+
+.foodInfo p {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 8px 0;
+}
+
+.foodMacros {
+  display: flex;
+  gap: 15px;
+  font-size: 12px;
+  color: #888;
+  flex-wrap: wrap;
+}
+
+.selectedIndicator {
+  color: #667eea;
+  font-size: 20px;
+  font-weight: bold;
+  flex-shrink: 0;
+  background: white;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+}
+
+.quantitySection {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 20px;
+}
+
+.quantityInput {
+  margin-bottom: 20px;
+}
+
+.quantityInput label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.quantityInput input {
+  width: 120px;
+  padding: 8px 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.nutritionPreview {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+}
+
+.nutritionPreview h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 15px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nutritionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.nutritionItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #e0e0e0;
+  transition: all 0.2s ease;
+}
+
+.nutritionItem:hover {
+  border-color: #667eea;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.nutritionItem .label {
+  color: #666;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nutritionItem .value {
+  color: #333;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.modalFooter {
+  padding: 20px 25px;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.cancelButton {
+  padding: 12px 24px;
+  background: #f8f9fa;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cancelButton:hover {
+  background: #e9ecef;
+}
+
+.addButton {
+  padding: 12px 24px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.addButton:hover {
+  background: #5a6fd8;
+}
+
+.addButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ===== FOOD TYPE TOGGLE ===== */
+.foodTypeToggle {
+  display: flex;
+  gap: 0;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+}
+
+.toggleBtn {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  color: #666;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.toggleBtn:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: #333;
+}
+
+.toggleBtn.active {
+  background: #667eea;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+}
+
+/* ===== CUSTOM FOOD FORM ===== */
+.customFoodForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.customFormSection {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+}
+
+.customFormSection h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 15px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.customFormGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.customFormGroup label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.customInput {
+  padding: 12px 16px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  transition: border-color 0.2s ease;
+}
+
+.customInput:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.customNutritionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+/* ===== SEARCH FILTERS ===== */
+.searchFilters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.searchFilters .searchInput {
+  flex: 2;
+}
+
+.categoryFilter {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  cursor: pointer;
+}
+
+.categoryFilter:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* ===== NO FOODS FOUND ===== */
+.noFoodsFound {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.noFoodsFound p {
+  font-size: 16px;
+  margin: 0 0 5px 0;
+  font-weight: 500;
+}
+
+.noFoodsFound small {
+  font-size: 14px;
+  color: #999;
+}
+
+/* ===== TACO FOOTER ===== */
+.tacoFooter {
+  margin-top: 20px;
+  padding: 15px;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 8px;
+  border-left: 4px solid #4caf50;
+}
+
+.tacoFooter p {
+  margin: 0;
+  font-size: 0.85em;
+  color: #666;
+  text-align: center;
+}
+
+.tacoFooter strong {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .nutritionContent {
+    padding: 15px;
+  }
+
+  /* Modal mobile optimizations */
+  .modalOverlay {
+    padding: 10px;
+    align-items: flex-start;
+  }
+
+  .addFoodModal {
+    margin: 10px auto;
+    max-height: calc(100vh - 20px);
+  }
+
+  .modalContent {
+    padding: 15px 20px;
+  }
+
+  .nutritionGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .nutritionItem {
+    padding: 8px 12px;
+  }
+
+  .nutritionItem .value {
+    font-size: 14px;
+  }
+
+  .modalFooter {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cancelButton,
+  .addButton {
+    width: 100%;
+    padding: 14px;
+  }
+
+  .foodMacros {
+    gap: 10px;
+  }
+
+  .searchFilters {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .searchFilters .searchInput,
+  .categoryFilter {
+    flex: none;
+  }
+
+  .foodTypeToggle {
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .toggleBtn {
+    padding: 14px 16px;
+    font-size: 15px;
+  }
+
+  .customFormSection {
+    padding: 15px;
+  }
+
+  .customNutritionGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .customInput {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nutritionContent {
+    padding: 10px;
+  }
+
+  /* Modal extra small screens */
+  .modalHeader {
+    padding: 15px 20px;
+  }
+
+  .modalHeader h3 {
+    font-size: 20px;
+  }
+
+  .modalContent {
+    padding: 15px;
+  }
+
+  .foodItem {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .foodIcon {
+    font-size: 20px;
+    width: 30px;
+  }
+
+  .foodInfo h4 {
+    font-size: 14px;
+  }
+
+  .foodInfo p {
+    font-size: 13px;
+  }
+
+  .foodMacros {
+    font-size: 11px;
+    gap: 8px;
+  }
+
+  .nutritionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .quantityInput input {
+    width: 100px;
+  }
+
+  .foodTypeToggle {
+    margin-bottom: 15px;
+  }
+
+  .toggleBtn {
+    padding: 12px 14px;
+    font-size: 14px;
+    gap: 6px;
+  }
+
+  .customFormSection {
+    padding: 12px;
+  }
+
+  .customFormSection h4 {
+    font-size: 15px;
+  }
+
+  .customFormGroup label {
+    font-size: 13px;
+  }
+
+  .customInput {
+    padding: 10px 14px;
+    font-size: 16px;
+  }
+
+  .customNutritionGrid {
+    gap: 10px;
+  }
+
+  .nutritionPreview {
+    padding: 12px;
+  }
+
+  .nutritionPreview h4 {
+    font-size: 15px;
+  }
+}

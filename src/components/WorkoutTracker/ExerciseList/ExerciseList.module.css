@@ -1,0 +1,396 @@
+/* src/components/WorkoutTracker/ExerciseList/ExerciseList.module.css */
+
+/* ===== EXERCISE LIST CARD ===== */
+.exerciseListCard {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.exerciseListHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 15px;
+}
+
+.exerciseListHeader h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  flex: 1;
+}
+
+.headerInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.totalExercises {
+  background: #f8f9fa;
+  color: #6c757d;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid #e5e5e5;
+}
+
+.trainingType {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.trainingType.strength {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.trainingType.resistance {
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+.exerciseGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+/* ===== EMPTY STATE ===== */
+.emptyState {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #6b7280;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  border: 2px dashed #d1d5db;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  opacity: 0.5;
+  animation: pulse 2s infinite;
+}
+
+.emptyState h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+.emptyState p {
+  font-size: 1rem;
+  margin: 0;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.7;
+  }
+}
+
+/* ===== RESPONSIVIDADE MOBILE ===== */
+@media (max-width: 768px) {
+  .exerciseListCard {
+    padding: 20px 15px;
+  }
+
+  .exerciseListHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .exerciseListHeader h3 {
+    font-size: 1.1rem;
+    text-align: center;
+    width: 100%;
+  }
+
+  .headerInfo {
+    justify-content: center;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .totalExercises {
+    font-size: 0.75rem;
+    padding: 5px 10px;
+  }
+
+  .trainingType {
+    font-size: 0.75rem;
+    padding: 5px 10px;
+  }
+
+  /* ✅ 2 COLUNAS NO MOBILE */
+  .exerciseGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .emptyState {
+    padding: 2rem 1rem;
+    gap: 0.8rem;
+  }
+
+  .emptyIcon {
+    font-size: 2.5rem;
+  }
+
+  .emptyState h4 {
+    font-size: 1.1rem;
+  }
+
+  .emptyState p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .exerciseListCard {
+    padding: 15px 12px;
+  }
+
+  .exerciseListHeader {
+    gap: 10px;
+  }
+
+  .exerciseListHeader h3 {
+    font-size: 1rem;
+  }
+
+  .headerInfo {
+    gap: 6px;
+  }
+
+  .totalExercises {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+
+  .trainingType {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+
+  /* ✅ 2 COLUNAS NO SMALL MOBILE TAMBÉM */
+  .exerciseGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .emptyState {
+    padding: 1.5rem 0.8rem;
+    gap: 0.6rem;
+  }
+
+  .emptyIcon {
+    font-size: 2rem;
+  }
+
+  .emptyState h4 {
+    font-size: 1rem;
+  }
+
+  .emptyState p {
+    font-size: 0.85rem;
+  }
+}
+
+/* ===== DESKTOP (LAYOUT OTIMIZADO) ===== */
+@media (min-width: 1024px) {
+  .exerciseListCard {
+    padding: 30px;
+  }
+
+  .exerciseGrid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+  }
+
+  .exerciseListHeader {
+    margin-bottom: 25px;
+  }
+
+  .exerciseListHeader h3 {
+    font-size: 1.3rem;
+  }
+
+  .totalExercises {
+    font-size: 0.85rem;
+    padding: 7px 14px;
+  }
+
+  .trainingType {
+    font-size: 0.85rem;
+    padding: 7px 14px;
+  }
+
+  .emptyState {
+    padding: 4rem 3rem;
+    gap: 1.2rem;
+  }
+
+  .emptyIcon {
+    font-size: 3.5rem;
+  }
+
+  .emptyState h4 {
+    font-size: 1.3rem;
+  }
+
+  .emptyState p {
+    font-size: 1.1rem;
+  }
+}
+
+/* ===== EXTRA LARGE SCREENS ===== */
+@media (min-width: 1440px) {
+  .exerciseGrid {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 25px;
+  }
+}
+
+/* ===== HOVER EFFECTS ===== */
+@media (hover: hover) {
+  .trainingType:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .trainingType.strength:hover {
+    background: rgba(102, 126, 234, 0.15);
+    border-color: rgba(102, 126, 234, 0.3);
+  }
+
+  .trainingType.resistance:hover {
+    background: rgba(40, 167, 69, 0.15);
+    border-color: rgba(40, 167, 69, 0.3);
+  }
+}
+
+/* ===== DARK MODE SUPPORT (FUTURO) ===== */
+@media (prefers-color-scheme: dark) {
+  .exerciseListCard {
+    background: #1a1a1a;
+    color: #ffffff;
+  }
+
+  .exerciseListHeader h3 {
+    color: #ffffff;
+  }
+
+  .totalExercises {
+    background: #2d2d2d;
+    color: #b0b0b0;
+    border-color: #404040;
+  }
+
+  .emptyState {
+    background-color: #2d2d2d;
+    color: #b0b0b0;
+    border-color: #404040;
+  }
+
+  .emptyState h4 {
+    color: #ffffff;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .exerciseListCard {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  .trainingType,
+  .totalExercises {
+    background: transparent !important;
+    border: 1px solid #ccc !important;
+    color: #000 !important;
+  }
+
+  .emptyState {
+    display: none;
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+  .exerciseListCard,
+  .emptyState,
+  .trainingType {
+    animation: none;
+    transition: none;
+  }
+
+  .emptyIcon {
+    animation: none;
+  }
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+  .exerciseListCard {
+    border: 2px solid #000;
+  }
+
+  .trainingType.strength {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+  }
+
+  .trainingType.resistance {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+  }
+
+  .totalExercises {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+  }
+}

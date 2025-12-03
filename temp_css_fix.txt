@@ -1,0 +1,8 @@
+.food-icon {
+  font-size: 1.2rem;           /* Reduzir um pouco o tamanho */
+  line-height: 1;              /* Remover espaçamento extra */
+  display: inline-block;       /* Controle melhor do posicionamento */
+  vertical-align: top;         /* Alinhar com o topo do texto */
+  margin-right: 8px;           /* Espaçamento consistente */
+  margin-top: 2px;             /* Ajuste fino para alinhar com primeira linha */
+}

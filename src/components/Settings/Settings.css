@@ -1,0 +1,461 @@
+/* src/components/Settings/Settings.css */
+
+.settings-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* ===== HEADER ===== */
+.settings-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.settings-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.settings-header p {
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+/* ===== SETTINGS DESKTOP NAVIGATION (igual ao padrão do Perfil/Analytics) ===== */
+.settings-desktop-nav {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 0.5rem;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.settings-desktop-nav .settings-tab-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: transparent;
+  color: #666666;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  justify-content: center;
+  min-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settings-desktop-nav .settings-tab-button:hover {
+  background: #f8f8f8;
+  color: #333333;
+}
+
+.settings-desktop-nav .settings-tab-button.active {
+  background: #000000;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.tab-icon {
+  font-size: 1.1rem;
+}
+
+.tab-label {
+  font-weight: inherit;
+}
+
+/* ===== SETTINGS MOBILE NAVIGATION (igual ao padrão do Perfil/Analytics) ===== */
+.settings-mobile-nav {
+  display: none;
+}
+
+/* ===== CONTEÚDO DAS SEÇÕES ===== */
+.settings-content {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(5px);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.settings-section {
+  min-height: 400px;
+}
+
+.section-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.section-header h2 {
+  color: #495057;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.section-header p {
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+/* ===== SEÇÃO DE APARÊNCIA ===== */
+.appearance-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.option-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.option-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.option-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.option-header h3 {
+  color: #495057;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.option-description {
+  color: #6c757d;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ===== TOGGLE SWITCH ===== */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(26px);
+}
+
+.toggle-slider.disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+/* ===== BADGE "EM BREVE" ===== */
+.coming-soon-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== SEÇÃO SOBRE ===== */
+.about-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.about-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.about-icon {
+  font-size: 3rem;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.1) 0%,
+    rgba(118, 75, 162, 0.1) 100%
+  );
+  border-radius: 16px;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.about-info h3 {
+  color: #495057;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.version {
+  color: #667eea;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+}
+
+.description {
+  color: #6c757d;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ===== GRID DE FUNCIONALIDADES ===== */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.feature-icon {
+  font-size: 1.2rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.1) 0%,
+    rgba(118, 75, 162, 0.1) 100%
+  );
+  border-radius: 6px;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.feature-text {
+  color: #495057;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* ===== FOOTER DA SEÇÃO SOBRE ===== */
+.about-footer {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.about-footer p {
+  color: #6c757d;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0.5rem 0;
+}
+
+.privacy-note {
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid rgba(40, 167, 69, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem !important;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 1rem;
+    margin: 0 1rem;
+  }
+
+  /* Esconde a navegação desktop em mobile */
+  .settings-desktop-nav {
+    display: none;
+  }
+
+  /* Mostra e estiliza a navegação mobile (igual ao Perfil/Analytics) */
+  .settings-mobile-nav {
+    display: grid;
+    grid-template-columns: repeat(
+      3,
+      1fr
+    ); /* 3 botões: Backup, Aparência, Sobre */
+    gap: 0.5rem;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .settings-mobile-nav .settings-mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 0.5rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    color: #666666;
+    text-align: center;
+  }
+
+  .settings-mobile-nav .settings-mobile-nav-item:hover {
+    background: #f8f8f8;
+    color: #333333;
+  }
+
+  .settings-mobile-nav .settings-mobile-nav-item.active {
+    background: #000000;
+    color: #ffffff;
+  }
+
+  .settings-mobile-nav .settings-mobile-nav-icon {
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+    display: block;
+  }
+
+  .settings-mobile-nav .settings-mobile-nav-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .settings-mobile-nav
+    .settings-mobile-nav-item.active
+    .settings-mobile-nav-label {
+    font-weight: 600;
+  }
+
+  .settings-content {
+    padding: 1rem;
+  }
+
+  .about-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .option-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .section-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .about-icon {
+    font-size: 2.5rem;
+    width: 60px;
+    height: 60px;
+  }
+}

@@ -1,0 +1,497 @@
+// src/components/StudentDashboard/StudentDashboard.tsx
+import { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useFirebaseNotifications } from "../../hooks/useFirebaseNotifications";
+import { useStudentNotes } from "../../hooks/useStudentNotes";
+import { useStudentGoals } from "../../hooks/useStudentGoals";
+import { useEvaluationSchedule } from "../../hooks/useEvaluationSchedule";
+import type {
+  StudentNote,
+  StudentGoal,
+  EvaluationSchedule,
+  Notification,
+} from "../../types/professional";
+import styles from "./StudentDashboard.module.css";
+
+export function StudentDashboard() {
+  const { currentUser } = useAuth();
+  const [activeTab, setActiveTab] = useState<
+    "overview" | "notes" | "goals" | "evaluations" | "groups"
+  >("overview");
+
+  // ✅ Hooks para dados
+  const { notifications } = useFirebaseNotifications(currentUser?.uid || null);
+  const { notes, loadStudentNotes } = useStudentNotes();
+  const { goals, loadStudentGoals } = useStudentGoals();
+  const { evaluations, loadEvaluations } = useEvaluationSchedule();
+
+  // ✅ Carregar dados ao montar
+  useEffect(() => {
+    if (!currentUser?.uid) return;
+
+    console.log("📥 [StudentDashboard] Carregando dados...");
+    loadStudentNotes(currentUser.uid);
+    loadStudentGoals(currentUser.uid);
+    loadEvaluations(currentUser.uid);
+
+    // ✅ Auto-reload a cada 15 segundos
+    const interval = setInterval(() => {
+      console.log("🔄 [StudentDashboard] Recarregando dados...");
+      loadStudentNotes(currentUser.uid);
+      loadStudentGoals(currentUser.uid);
+      loadEvaluations(currentUser.uid);
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, [currentUser?.uid, loadStudentNotes, loadStudentGoals, loadEvaluations]);
+
+  // ✅ Calcular estatísticas
+  const stats = {
+    totalNotes: notes.length,
+    totalGoals: goals.length,
+    completedGoals: goals.filter((g) => {
+      const progress =
+        ((g.currentValue - g.startValue) / (g.targetValue - g.startValue)) *
+        100;
+      return progress >= 100;
+    }).length,
+    upcomingEvaluations: evaluations.filter((e) => {
+      return new Date(e.scheduledDate) > new Date();
+    }).length,
+  };
+
+  // ✅ Renderizar badge (ponto vermelho)
+  const renderTabBadge = (hasItems: boolean) => {
+    if (!hasItems) return null;
+    return <span className={styles.tabBadge} />;
+  };
+
+  return (
+    <div className={styles.dashboard}>
+      {/* ✅ Header */}
+      <div className={styles.header}>
+        <div className={styles.headerContent}>
+          <h1>Dashboard Profissional</h1>
+          <p>Acompanhe suas notificações profissionais</p>
+        </div>
+      </div>
+
+      {/* ✅ Abas de navegação */}
+      <div className={styles.tabsContainer}>
+        <div className={styles.tabsHeader}></div>
+
+        <div className={styles.tabs}>
+          <button
+            className={`${styles.tab} ${
+              activeTab === "overview" ? styles.active : ""
+            }`}
+            onClick={() => setActiveTab("overview")}
+          >
+            <span>📊</span>
+            <span>Visão Geral</span>
+          </button>
+
+          <button
+            className={`${styles.tab} ${
+              activeTab === "notes" ? styles.active : ""
+            }`}
+            onClick={() => setActiveTab("notes")}
+          >
+            <span>📝</span>
+            <span>Anotações</span>
+            {renderTabBadge(stats.totalNotes > 0)}
+          </button>
+
+          <button
+            className={`${styles.tab} ${
+              activeTab === "goals" ? styles.active : ""
+            }`}
+            onClick={() => setActiveTab("goals")}
+          >
+            <span>🎯</span>
+            <span>Metas</span>
+            {renderTabBadge(stats.totalGoals > 0)}
+          </button>
+
+          <button
+            className={`${styles.tab} ${
+              activeTab === "evaluations" ? styles.active : ""
+            }`}
+            onClick={() => setActiveTab("evaluations")}
+          >
+            <span>📋</span>
+            <span>Avaliações</span>
+            {renderTabBadge(stats.upcomingEvaluations > 0)}
+          </button>
+
+          <button
+            className={`${styles.tab} ${
+              activeTab === "groups" ? styles.active : ""
+            }`}
+            onClick={() => setActiveTab("groups")}
+          >
+            <span>👥</span>
+            <span>Grupos</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ✅ Conteúdo das abas */}
+      <div className={styles.content}>
+        {/* Visão Geral */}
+        {activeTab === "overview" && (
+          <OverviewTab stats={stats} notifications={notifications} />
+        )}
+
+        {/* Anotações */}
+        {activeTab === "notes" && <NotesTab notes={notes} />}
+
+        {/* Metas */}
+        {activeTab === "goals" && <GoalsTab goals={goals} />}
+
+        {/* Avaliações */}
+        {activeTab === "evaluations" && (
+          <EvaluationsTab evaluations={evaluations} />
+        )}
+
+        {/* Grupos */}
+        {activeTab === "groups" && <GroupsTab />}
+      </div>
+    </div>
+  );
+}
+
+// ✅ Aba: Visão Geral
+interface OverviewTabProps {
+  stats: {
+    totalNotes: number;
+    totalGoals: number;
+    completedGoals: number;
+    upcomingEvaluations: number;
+  };
+  notifications: Notification[];
+}
+
+function OverviewTab({ stats, notifications }: OverviewTabProps) {
+  return (
+    <div className={styles.section}>
+      <h2>Visão Geral do Progresso</h2>
+
+      {/* Cards de estatísticas */}
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}>📝</div>
+          <div className={styles.statContent}>
+            <div className={styles.statValue}>{stats.totalNotes}</div>
+            <div className={styles.statLabel}>Anotações</div>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}>🎯</div>
+          <div className={styles.statContent}>
+            <div className={styles.statValue}>
+              {stats.completedGoals}/{stats.totalGoals}
+            </div>
+            <div className={styles.statLabel}>Metas Completadas</div>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}>📋</div>
+          <div className={styles.statContent}>
+            <div className={styles.statValue}>{stats.upcomingEvaluations}</div>
+            <div className={styles.statLabel}>Avaliações Próximas</div>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}>🔔</div>
+          <div className={styles.statContent}>
+            <div className={styles.statValue}>
+              {notifications.filter((n) => !n.read).length}
+            </div>
+            <div className={styles.statLabel}>Não Lidas</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Notificações recentes */}
+      <div className={styles.recentNotifications}>
+        <h3>Notificações Recentes</h3>
+        {notifications.length === 0 ? (
+          <div className={styles.emptyState}>
+            <p>Nenhuma notificação no momento</p>
+          </div>
+        ) : (
+          <div className={styles.notificationsList}>
+            {notifications.slice(0, 5).map((notif) => (
+              <div key={notif.id} className={styles.notificationItem}>
+                <div className={styles.notificationDot} />
+                <div>
+                  <div className={styles.notificationTitle}>{notif.title}</div>
+                  <div className={styles.notificationPreview}>
+                    {notif.message}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ✅ Aba: Anotações
+interface NotesTabProps {
+  notes: StudentNote[];
+}
+
+function NotesTab({ notes }: NotesTabProps) {
+  return (
+    <div className={styles.section}>
+      <h2>Minhas Anotações</h2>
+
+      {notes.length === 0 ? (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyIcon}>📝</div>
+          <p>Nenhuma anotação ainda</p>
+          <p className={styles.emptySubtext}>
+            Seu profissional criará anotações sobre seu progresso
+          </p>
+        </div>
+      ) : (
+        <div className={styles.notesList}>
+          {notes.map((note) => (
+            <div key={note.id} className={styles.noteCard}>
+              <div className={styles.noteHeader}>
+                {note.title && (
+                  <h3 className={styles.noteTitle}>{note.title}</h3>
+                )}
+                <span className={styles.noteCategory}>{note.category}</span>
+              </div>
+              <p className={styles.noteContent}>{note.content}</p>
+              <div className={styles.noteMeta}>
+                <span className={styles.noteDate}>
+                  {new Date(note.createdAt).toLocaleDateString("pt-BR")}
+                </span>
+                {note.tags && note.tags.length > 0 && (
+                  <div className={styles.noteTags}>
+                    {note.tags.map((tag, idx) => (
+                      <span key={idx} className={styles.tag}>
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ✅ Aba: Metas
+interface GoalsTabProps {
+  goals: StudentGoal[];
+}
+
+function GoalsTab({ goals }: GoalsTabProps) {
+  return (
+    <div className={styles.section}>
+      <h2>Minhas Metas</h2>
+
+      {goals.length === 0 ? (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyIcon}>🎯</div>
+          <p>Nenhuma meta ainda</p>
+          <p className={styles.emptySubtext}>
+            Seu profissional criará metas para você acompanhar
+          </p>
+        </div>
+      ) : (
+        <div className={styles.goalsList}>
+          {goals.map((goal) => {
+            const progress = Math.min(
+              100,
+              Math.max(
+                0,
+                ((goal.currentValue - goal.startValue) /
+                  (goal.targetValue - goal.startValue)) *
+                  100
+              )
+            );
+            const isCompleted = progress >= 100;
+
+            return (
+              <div
+                key={goal.id}
+                className={`${styles.goalCard} ${
+                  isCompleted ? styles.completed : ""
+                }`}
+              >
+                <div className={styles.goalHeader}>
+                  <h3 className={styles.goalTitle}>{goal.title}</h3>
+                  {isCompleted && (
+                    <span className={styles.completedBadge}>✓ Concluída</span>
+                  )}
+                </div>
+
+                {goal.description && (
+                  <p className={styles.goalDescription}>{goal.description}</p>
+                )}
+
+                {/* Barra de progresso */}
+                <div className={styles.progressContainer}>
+                  <div className={styles.progressBar}>
+                    <div
+                      className={styles.progressFill}
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  <div className={styles.progressText}>
+                    {progress.toFixed(0)}%
+                  </div>
+                </div>
+
+                {/* Valores */}
+                <div className={styles.goalValues}>
+                  <div>
+                    <span className={styles.label}>Atual:</span>
+                    <span className={styles.value}>
+                      {goal.currentValue} {goal.unit}
+                    </span>
+                  </div>
+                  <div>
+                    <span className={styles.label}>Alvo:</span>
+                    <span className={styles.value}>
+                      {goal.targetValue} {goal.unit}
+                    </span>
+                  </div>
+                  <div>
+                    <span className={styles.label}>Até:</span>
+                    <span className={styles.value}>
+                      {new Date(goal.targetDate).toLocaleDateString("pt-BR")}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ✅ Aba: Avaliações
+interface EvaluationsTabProps {
+  evaluations: EvaluationSchedule[];
+}
+
+function EvaluationsTab({ evaluations }: EvaluationsTabProps) {
+  const upcoming = evaluations.filter(
+    (e) => new Date(e.scheduledDate) > new Date()
+  );
+  const past = evaluations.filter(
+    (e) => new Date(e.scheduledDate) <= new Date()
+  );
+
+  return (
+    <div className={styles.section}>
+      <h2>Minhas Avaliações</h2>
+
+      {evaluations.length === 0 ? (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyIcon}>📋</div>
+          <p>Nenhuma avaliação agendada</p>
+          <p className={styles.emptySubtext}>
+            Seu profissional agendará avaliações para acompanhar seu progresso
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Avaliações futuras */}
+          {upcoming.length > 0 && (
+            <div className={styles.evaluationsSection}>
+              <h3 className={styles.sectionTitle}>📅 Próximas Avaliações</h3>
+              <div className={styles.evaluationsList}>
+                {upcoming.map((evaluation) => (
+                  <div key={evaluation.id} className={styles.evaluationCard}>
+                    <div className={styles.evalHeader}>
+                      <h4 className={styles.evalTitle}>{evaluation.title}</h4>
+                      <span className={styles.evalType}>{evaluation.type}</span>
+                    </div>
+                    <div className={styles.evalMeta}>
+                      <span className={styles.evalDateTime}>
+                        📅{" "}
+                        {new Date(evaluation.scheduledDate).toLocaleDateString(
+                          "pt-BR"
+                        )}{" "}
+                        às {evaluation.scheduledTime}
+                      </span>
+                      {evaluation.location && (
+                        <span className={styles.evalLocation}>
+                          📍 {evaluation.location}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Avaliações passadas */}
+          {past.length > 0 && (
+            <div className={styles.evaluationsSection}>
+              <h3 className={styles.sectionTitle}>✓ Avaliações Realizadas</h3>
+              <div className={styles.evaluationsList}>
+                {past.map((evaluation) => (
+                  <div
+                    key={evaluation.id}
+                    className={`${styles.evaluationCard} ${styles.past}`}
+                  >
+                    <div className={styles.evalHeader}>
+                      <h4 className={styles.evalTitle}>{evaluation.title}</h4>
+                      <span className={styles.evalType}>{evaluation.type}</span>
+                    </div>
+                    <div className={styles.evalMeta}>
+                      <span className={styles.evalDateTime}>
+                        📅{" "}
+                        {new Date(evaluation.scheduledDate).toLocaleDateString(
+                          "pt-BR"
+                        )}{" "}
+                        às {evaluation.scheduledTime}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+// ✅ Aba: Grupos (placeholder para futura implementação)
+function GroupsTab() {
+  return (
+    <div className={styles.section}>
+      <h2>Meus Grupos</h2>
+      <div className={styles.emptyState}>
+        <div className={styles.emptyIcon}>👥</div>
+        <p>Seção de Grupos</p>
+        <p className={styles.emptySubtext}>
+          Esta seção será implementada em breve para você compartilhar
+          experiências com outros alunos
+        </p>
+      </div>
+    </div>
+  );
+}

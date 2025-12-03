@@ -1,0 +1,817 @@
+/* src/components/NutritionTracker/AddFoodModal.module.css */
+
+/* ===== MODAL OVERLAY ===== */
+.modalOverlay {
+  /* Renomeado de modal-overlay */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  overflow-y: auto; /* Permite scroll se necessário */
+  -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
+}
+
+/* ===== MODAL PRINCIPAL ===== */
+.addFoodModal {
+  /* Renomeado de add-food-modal */
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
+  position: relative; /* Para z-index funcionar */
+}
+
+/* ===== HEADER ===== */
+.modalHeader {
+  /* Renomeado de modal-header */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  background: #f8f9fa;
+  border-radius: 12px 12px 0 0;
+}
+
+.modalHeader h2 {
+  /* Renomeado de modal-header h2 */
+  margin: 0;
+  color: #333;
+  font-size: 1.4rem;
+}
+
+.closeBtn {
+  /* Renomeado de close-btn */
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  padding: 5px;
+  border-radius: 50%;
+  min-width: 44px; /* Touch target mínimo */
+  min-height: 44px; /* Touch target mínimo */
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.closeBtn:hover {
+  /* Renomeado de close-btn:hover */
+  background: #f0f0f0;
+  color: #333;
+}
+
+/* ===== TOGGLE DE MODO ===== */
+.modeToggle {
+  /* Renomeado de mode-toggle */
+  display: flex;
+  padding: 20px;
+  gap: 10px;
+}
+
+.modeBtn {
+  /* Renomeado de mode-btn */
+  flex: 1;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.modeBtn:hover {
+  /* Renomeado de mode-btn:hover */
+  border-color: #007bff;
+  background: #f8f9ff;
+}
+
+.modeBtn.active {
+  /* Renomeado de mode-btn.active */
+  border-color: #007bff;
+  background: #007bff;
+  color: white;
+}
+
+/* ===== SEÇÃO DE BUSCA ===== */
+.searchSection {
+  /* Renomeado de search-section */
+  padding: 0 20px 20px;
+}
+
+.searchContainer {
+  /* Renomeado de search-container */
+  margin-bottom: 15px;
+}
+
+.searchInput {
+  /* Renomeado de search-input */
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.searchInput:focus {
+  /* Renomeado de search-input:focus */
+  outline: none;
+  border-color: #007bff;
+}
+
+.filterContainer {
+  /* Renomeado de filter-container */
+  display: flex;
+  gap: 10px;
+}
+
+.categorySelect {
+  /* Renomeado de category-select */
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  font-size: 0.9rem;
+}
+
+.categorySelect:focus {
+  /* Renomeado de category-select:focus */
+  outline: none;
+  border-color: #007bff;
+}
+
+/* ===== RESULTADOS DA BUSCA ===== */
+.searchResults {
+  /* Renomeado de search-results */
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0 20px;
+}
+
+.foodResult {
+  /* Renomeado de food-result */
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  transition: all 0.2s;
+}
+
+.foodResult:hover {
+  /* Renomeado de food-result:hover */
+  background: #f8f9fa;
+  border-color: #007bff;
+}
+
+.foodInfo {
+  /* Renomeado de food-info */
+  flex: 1;
+}
+
+.foodHeader {
+  /* Renomeado de food-header */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.foodIcon {
+  /* Renomeado de food-icon */
+  font-size: 1.2rem;
+  line-height: 1;
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 8px;
+  margin-top: 2px;
+}
+
+.foodHeader h4 {
+  /* Renomeado de food-header h4 */
+  margin: 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.foodCategory {
+  /* Renomeado de food-category */
+  font-size: 0.8rem;
+  color: #666;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+/* ESTILO PARA DESKTOP: food-nutrition */
+.foodNutrition {
+  /* Renomeado de food-nutrition */
+  display: flex; /* Mantém o layout flexível para desktop */
+  gap: 15px;
+  font-size: 0.85rem;
+  color: #555;
+  margin: 10px 0;
+  flex-wrap: nowrap; /* Evita quebras de linha no desktop */
+}
+
+.addFoodBtn {
+  /* Renomeado de add-food-btn */
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+  min-height: 44px; /* Touch target mínimo */
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.addFoodBtn:hover {
+  /* Renomeado de add-food-btn:hover */
+  background: #218838;
+}
+
+.noResults {
+  /* Renomeado de no-results */
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.noResults p {
+  /* Renomeado de no-results p */
+  margin: 10px 0;
+}
+
+/* ===== FORMULÁRIO CUSTOMIZADO ===== */
+.customFoodForm {
+  /* Renomeado de custom-food-form */
+  padding: 20px;
+}
+
+.formGroup {
+  /* Renomeado de form-group */
+  margin-bottom: 20px;
+}
+
+.formGroup label {
+  /* Renomeado de form-group label */
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #333;
+}
+
+.formGroupInput, /* Nova classe para inputs dentro de form-group */
+.formGroupSelect {
+  /* Nova classe para selects dentro de form-group */
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.formGroupInput:focus, /* Renomeado de form-group input:focus */
+.formGroupSelect:focus {
+  /* Renomeado de form-group select:focus */
+  outline: none;
+  border-color: #007bff;
+}
+
+.formRow {
+  /* Renomeado de form-row */
+  display: flex;
+  gap: 15px;
+}
+
+.formRow .formGroup {
+  /* Renomeado de form-row .form-group */
+  flex: 1;
+}
+
+.nutritionSection {
+  /* Renomeado de nutrition-section */
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.nutritionSection h3 {
+  /* Renomeado de nutrition-section h3 */
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.formActions {
+  /* Renomeado de form-actions */
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.cancelBtn {
+  /* Renomeado de cancel-btn */
+  padding: 10px 20px;
+  border: 2px solid #6c757d;
+  background: white;
+  color: #6c757d;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.cancelBtn:hover {
+  /* Renomeado de cancel-btn:hover */
+  background: #6c757d;
+  color: white;
+}
+
+.submitBtn {
+  /* Renomeado de submit-btn */
+  padding: 10px 20px;
+  border: none;
+  background: #007bff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.submitBtn:hover {
+  /* Renomeado de submit-btn:hover */
+  background: #0056b3;
+}
+
+/* ===== MODAL DE QUANTIDADE ===== */
+.quantityModal {
+  /* Renomeado de quantity-modal */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 20px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.quantityContent {
+  /* Renomeado de quantity-content */
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.quantityContent h3 {
+  /* Renomeado de quantity-content h3 */
+  margin: 0 0 20px 0;
+  text-align: center;
+  color: #333;
+}
+
+.selectedFoodInfo {
+  /* Renomeado de selected-food-info */
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.selectedFoodInfo h4 {
+  /* Renomeado de selected-food-info h4 */
+  margin: 0 0 5px 0;
+  color: #333;
+}
+
+.selectedFoodInfo p {
+  /* Renomeado de selected-food-info p */
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.quantityInputGroup {
+  /* Renomeado de quantity-input-group */
+  margin-bottom: 20px;
+}
+
+.quantityInputGroup label {
+  /* Renomeado de quantity-input-group label */
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.quantityInputGroup input {
+  /* Renomeado de quantity-input-group input */
+  width: 100%;
+  padding: 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 16px; /* Previne zoom no iOS */
+  text-align: center;
+  min-height: 48px;
+}
+
+/* ESTILO PARA DESKTOP: calculated-nutrition */
+.calculatedNutrition {
+  /* Renomeado de calculated-nutrition */
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  /* No desktop, os itens já se empilham por padrão (display: block) */
+  /* Se quiser um gap entre eles no desktop, adicione: */
+  /* display: flex; flex-direction: column; gap: 8px; */
+}
+
+.nutritionItem {
+  /* Renomeado de nutrition-item */
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px; /* Mantém o espaçamento entre itens no desktop */
+  font-size: 0.9rem;
+}
+
+.nutritionItem:last-child {
+  /* Renomeado de nutrition-item:last-child */
+  margin-bottom: 0;
+}
+
+.quantityActions {
+  /* Renomeado de quantity-actions */
+  display: flex;
+  gap: 10px;
+}
+
+.confirmBtn {
+  /* Renomeado de confirm-btn */
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: #28a745;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.confirmBtn:hover {
+  /* Renomeado de confirm-btn:hover */
+  background: #218838;
+}
+
+.quantityActions .cancelBtn {
+  /* Renomeado de quantity-actions .cancel-btn */
+  flex: 1;
+}
+
+/* ===== CHECKBOX PERSISTENT FOOD ===== */
+.persistentFoodCheckbox {
+  background: #f0f7ff;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.persistentFoodCheckbox label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.persistentFoodCheckbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #007bff;
+}
+
+.persistentFoodCheckbox label span {
+  font-weight: 500;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.checkboxHint {
+  margin: 0;
+  margin-left: 30px;
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+}
+
+/* ===== FOOTER ===== */
+.tacoFooter {
+  /* Renomeado de taco-footer */
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-top: 1px solid #eee;
+  text-align: center;
+  border-radius: 0 0 12px 12px;
+}
+
+.tacoFooter p {
+  /* Renomeado de taco-footer p */
+  margin: 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* ===== RESPONSIVO ===== */
+@media (max-width: 768px) {
+  .modalOverlay {
+    /* Renomeado de modal-overlay */
+    padding: 5px;
+    align-items: flex-start; /* Alinha ao topo para melhor visualização */
+    padding-top: env(safe-area-inset-top, 10px); /* Safe area notch */
+  }
+
+  .addFoodModal {
+    /* Renomeado de add-food-modal */
+    max-height: calc(100vh - env(safe-area-inset-top, 10px) - env(safe-area-inset-bottom, 10px));
+    margin: 0;
+    border-radius: 16px;
+  }
+
+  .modalHeader {
+    /* Renomeado de modal-header */
+    padding: 15px;
+    position: sticky; /* Mantém header visível ao scroll */
+    top: 0;
+    z-index: 10;
+    background: #f8f9fa;
+  }
+
+  .modalHeader h2 {
+    /* Renomeado de modal-header h2 */
+    font-size: 1.2rem;
+    line-height: 1.4;
+  }
+
+  .closeBtn {
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .modeToggle {
+    /* Renomeado de mode-toggle */
+    padding: 15px;
+    flex-direction: column;
+  }
+
+  .modeBtn {
+    min-height: 44px; /* Touch target */
+    padding: 14px;
+    font-size: 0.95rem;
+  }
+
+  .formRow {
+    /* Renomeado de form-row */
+    flex-direction: column;
+  }
+
+  .searchInput {
+    font-size: 16px; /* Previne zoom no iOS */
+    padding: 14px 16px;
+    min-height: 48px;
+  }
+
+  .categorySelect {
+    font-size: 16px; /* Previne zoom no iOS */
+    padding: 12px;
+    min-height: 44px;
+  }
+
+  .formGroupInput,
+  .formGroupSelect {
+    font-size: 16px; /* Previne zoom no iOS */
+    padding: 14px;
+    min-height: 48px;
+  }
+
+  .addFoodBtn {
+    min-height: 44px;
+    padding: 12px 18px;
+    font-size: 0.95rem;
+  }
+
+  .submitBtn,
+  .cancelBtn {
+    min-height: 44px;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+
+  .confirmBtn {
+    min-height: 44px;
+    padding: 14px;
+    font-size: 0.95rem;
+  }
+
+  /* NOVO ESTILO PARA .food-nutrition NO MOBILE (GRID 2x2) */
+  .foodNutrition {
+    /* Renomeado de food-nutrition */
+    display: grid; /* Transforma em grid */
+    grid-template-columns: 1fr 1fr; /* Duas colunas de largura igual */
+    gap: 10px 15px; /* Espaçamento entre linhas e colunas */
+    margin: 10px 0; /* Mantém margens */
+    padding: 0 5px; /* Pequeno padding para não colar nas bordas */
+  }
+
+  /* Estilo para os spans dentro de .food-nutrition para melhor visualização no grid */
+  .foodNutrition span {
+    /* Renomeado de food-nutrition span */
+    white-space: nowrap; /* Evita quebra de linha do texto */
+    overflow: hidden; /* Esconde o texto que excede */
+    text-overflow: ellipsis; /* Adiciona "..." se o texto for muito longo */
+    display: flex; /* Para alinhar ícone e texto */
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* NOVO ESTILO PARA .calculated-nutrition NO MOBILE (GRID 2x2) */
+  .calculatedNutrition {
+    /* Renomeado de calculated-nutrition */
+    display: grid; /* Transforma em grid */
+    grid-template-columns: 1fr 1fr; /* Duas colunas de largura igual */
+    gap: 10px 15px; /* Espaçamento entre linhas e colunas */
+    padding: 10px; /* Ajusta o padding para o layout de grid */
+  }
+
+  /* Estilo para os itens dentro de .calculated-nutrition para melhor visualização no grid */
+  .nutritionItem {
+    /* Renomeado de nutrition-item */
+    display: flex; /* Mantém o flex para alinhar label e valor */
+    justify-content: flex-start; /* Alinha o conteúdo à esquerda */
+    gap: 5px; /* Espaçamento entre label e valor */
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0; /* Remove a margem inferior, pois o gap do grid já faz o espaçamento */
+  }
+
+  /* Ajustes para o texto dentro de .nutrition-item */
+  .nutritionItem span:first-child {
+    /* Renomeado de nutrition-item span:first-child */
+    /* Onde está o ícone e o nome (ex: 🔥 Calorias:) */
+    font-weight: 500;
+  }
+  .nutritionItem span:last-child {
+    /* Renomeado de nutrition-item span:last-child */
+    /* Onde está o valor (ex: 120 kcal) */
+    font-weight: normal;
+  }
+}
+
+/* Corrigir alinhamento do ícone do alimento */
+.foodResult .foodInfo .foodHeader {
+  /* Renomeado de food-result .food-info .food-header */
+  display: flex;
+  align-items: flex-start; /* Alinhar com o topo da primeira linha */
+  gap: 8px;
+}
+
+.foodResult .foodInfo .foodHeader .foodIcon {
+  /* Renomeado de food-result .food-info .food-header .food-icon */
+  flex-shrink: 0; /* Impedir que o ícone encolha */
+  line-height: 1; /* Remover espaçamento extra */
+  font-size: 16px; /* Tamanho consistente */
+  margin-top: 2px; /* Ajuste fino para alinhar com texto */
+}
+
+.foodResult .foodInfo .foodHeader h4 {
+  /* Renomeado de food-result .food-info .food-header h4 */
+  margin: 0; /* Remover margem padrão */
+  line-height: 1.4; /* Altura de linha consistente */
+  flex: 1; /* Ocupar espaço restante */
+}
+
+/* ===== MOBILE PEQUENO (iPhone 12/13: 390px) ===== */
+@media (max-width: 480px) {
+  .modalOverlay {
+    padding: 0;
+  }
+
+  .addFoodModal {
+    border-radius: 20px 20px 0 0; /* Apenas bordas superiores */
+    max-height: calc(100vh - env(safe-area-inset-top, 0px));
+  }
+
+  .modalHeader {
+    padding: 12px 15px;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .modalHeader h2 {
+    font-size: 1.1rem;
+  }
+
+  .closeBtn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .searchSection {
+    padding: 0 15px 15px;
+  }
+
+  .modeToggle {
+    padding: 12px 15px;
+    gap: 8px;
+  }
+
+  .modeBtn {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+
+  .foodResult {
+    padding: 12px;
+    margin-bottom: 8px;
+  }
+
+  .foodHeader h4 {
+    font-size: 0.95rem;
+  }
+
+  .foodCategory {
+    font-size: 0.75rem;
+    padding: 2px 6px;
+  }
+
+  .addFoodBtn {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+
+  .customFoodForm {
+    padding: 15px;
+  }
+
+  .formGroup {
+    margin-bottom: 15px;
+  }
+
+  .quantityContent {
+    padding: 20px;
+    max-width: 350px;
+  }
+
+  .quantityContent h3 {
+    font-size: 1.1rem;
+  }
+
+  .quantityInputGroup input {
+    padding: 12px;
+    font-size: 16px;
+  }
+}

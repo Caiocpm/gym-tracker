@@ -1,0 +1,1274 @@
+/* ===== CSS OTIMIZADO PROFESSIONALDASHBOARD ===== */
+
+/* Remove old :root and dark mode */
+/* O novo design utiliza cores rgba explícitas e backdrop-filter */
+
+.dashboard {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95); /* Fundo gradiente claro */
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  color: #1a1a1a; /* Texto escuro para fundo claro */
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.headerContent h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.01em;
+}
+
+.headerContent p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.inviteButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+}
+
+.inviteButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* --- Mensagens de Feedback --- */
+.errorMessage,
+.successMessage {
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.errorMessage {
+  color: #dc3545;
+  border-color: rgba(220, 53, 69, 0.3);
+}
+
+.successMessage {
+  color: #28a745;
+  border-color: rgba(40, 167, 69, 0.3);
+}
+
+.errorMessage button,
+.successMessage button {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+}
+
+/* --- Formulários (Geral) --- */
+.inviteForm,
+.form {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(5px);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.inviteForm h2,
+.form h2 {
+  margin-top: 0;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.formGroup {
+  margin-bottom: 1rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.formGroup input[type="text"],
+.formGroup input[type="email"],
+.formGroup input[type="number"],
+.formGroup input[type="date"],
+.formGroup input[type="time"],
+.formGroup select,
+.formGroup textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid rgba(212, 212, 212, 0.4);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+  color: #333;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  min-height: 48px;
+}
+
+.formGroup input[type="color"] {
+  width: 100%;
+  height: 40px;
+  padding: 0;
+  border: 2px solid rgba(212, 212, 212, 0.4);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.formGroup select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23667eea%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+.formGroup textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.formGroup input:disabled,
+.formGroup select:disabled,
+.formGroup textarea:disabled {
+  background-color: rgba(212, 212, 212, 0.2);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.formRow {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.formRow .formGroup {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.submitButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  width: auto;
+  display: block;
+  margin-top: 1rem;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
+.submitButton:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.8;
+  box-shadow: none;
+}
+
+/* --- Navegação por Abas --- */
+.tabsContainer {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(222, 226, 230, 0.5);
+}
+
+.tabs {
+  display: flex;
+  justify-content: center; /* Centrado para desktop */
+  gap: 0.5rem;
+  flex-wrap: wrap; /* Permite quebrar linha no desktop */
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 0.5rem;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.tab {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: transparent;
+  color: #666666;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1; /* Permite que as abas cresçam no desktop */
+  justify-content: center;
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  background: #f8f8f8;
+  color: #333333;
+}
+
+.tab.active {
+  background: #000000; /* Preto sólido para aba ativa */
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* --- Cabeçalhos de Seção --- */
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.addButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+}
+
+.addButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* --- Seção de Estatísticas --- */
+.statsSection {
+  margin-bottom: 2rem;
+}
+
+.statsSection h2 {
+  margin-bottom: 1.5rem;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ✅ Para tablets, manter 2 colunas mínimo */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .statsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.statCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.statIcon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.1) 0%,
+    rgba(118, 75, 162, 0.1) 100%
+  );
+  border-radius: 12px;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  color: #667eea; /* Cor para o ícone */
+}
+
+.statContent {
+  flex-grow: 1;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+/* --- Seção de Tags --- */
+.tagsSection {
+  margin-bottom: 2rem;
+}
+
+.tagsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.tagItem {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  padding: 1.25rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border-left: 5px solid #667eea;
+  transition: all 0.3s ease;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.tagItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.tagHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.tagColor {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  margin-top: 0.125rem;
+}
+
+.tagInfo {
+  flex-grow: 1;
+}
+
+.tagNameRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.tagName {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #1a1a1a;
+}
+
+.tagCount {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tagContent {
+  padding-left: 2rem;
+}
+
+.tagStudents {
+  margin-bottom: 0.75rem;
+}
+
+.tagStudentsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.tagStudentBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  padding: 0.375rem 0.625rem;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.tagStudentBadge:hover {
+  background: rgba(102, 126, 234, 0.15);
+}
+
+.studentBadgeIcon {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.studentBadgeName {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.removeTagButton {
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.125rem;
+  margin-left: 0.25rem;
+  transition: transform 0.2s;
+}
+
+.removeTagButton:hover {
+  transform: scale(1.2);
+}
+
+.addStudentToTag {
+  margin-top: 0.75rem;
+}
+
+.selectStudent {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  background: white;
+  font-size: 0.875rem;
+  color: #2d3748;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.selectStudent:hover {
+  border-color: #667eea;
+}
+
+.selectStudent:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.selectStudent option:first-child {
+  color: #718096;
+}
+
+.tagDescription {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+.noStudentsMessage {
+  padding: 0.75rem;
+  text-align: center;
+  color: #718096;
+  font-size: 0.875rem;
+  font-style: italic;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+}
+
+.allStudentsTagged {
+  padding: 0.5rem;
+  text-align: center;
+  color: #28a745;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: rgba(40, 167, 69, 0.1);
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+/* --- Seção de Anotações --- */
+.notesSection {
+  margin-bottom: 2rem;
+}
+
+.notesList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+/* Nota: O estilo individual do NoteCard deve estar em NoteCard.module.css */
+
+/* --- Seção de Metas --- */
+.goalsSection {
+  margin-bottom: 2rem;
+}
+
+.goalsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+/* Nota: O estilo individual do GoalCard deve estar em GoalCard.module.css */
+
+/* --- Seção de Avaliações --- */
+.evaluationsSection {
+  margin-bottom: 2rem;
+}
+
+.evaluationsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+/* Nota: O estilo individual do EvaluationCard deve estar em EvaluationCard.module.css */
+
+/* --- Seção de Alertas (Compacto) --- */
+/* Esta seção define estilos para um card de alerta compacto.
+   Para que esses estilos tenham efeito total, o componente 'AlertsSection'
+   (src/components/AlertsSection/AlertsSection.tsx) e seu CSS correspondente
+   (AlertsSection.module.css) precisariam ser atualizados para usar
+   essas classes compactas ou adotar uma estrutura semelhante.
+   Aqui, fornecemos um modelo de como um card de alerta compacto deve ser. */
+.alertsSection {
+  /* Assumindo que o div raiz do componente AlertsSection tem esta classe */
+  margin-bottom: 2rem;
+}
+
+.alertCardCompact {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  border-radius: 12px;
+  padding: 0.75rem 1rem; /* Padding reduzido */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* Espaçamento reduzido */
+  margin-bottom: 0.75rem; /* Espaço entre alertas compactos */
+  transition: all 0.3s ease;
+  min-height: 50px; /* Garante uma altura mínima */
+}
+
+.alertCardCompact:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.alertCardCompactIcon {
+  font-size: 1.5rem; /* Ícone menor */
+  flex-shrink: 0;
+  width: 32px; /* Largura fixa */
+  height: 32px; /* Altura fixa */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 107, 0.1) 0%,
+    rgba(238, 90, 36, 0.1) 100%
+  ); /* Gradiente tipo alerta */
+  border-radius: 8px;
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  color: #ff6b6b; /* Cor vermelha para o ícone de alerta */
+}
+
+.alertCardCompactContent {
+  flex-grow: 1;
+  min-width: 0; /* Permite que o conteúdo encolha */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.alertCardCompactTitle {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.alertCardCompactStudent {
+  font-size: 0.8rem;
+  color: #6c757d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.alertCardCompactDescription {
+  display: none; /* Oculta a descrição por padrão para compacidade */
+}
+
+.alertCardCompactActions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.alertCardCompactActionButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem; /* Botão compacto */
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.alertCardCompactActionButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.alertCardCompactCloseButton {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.2rem;
+  transition: color 0.2s ease;
+}
+
+.alertCardCompactCloseButton:hover {
+  color: #dc3545;
+}
+
+/* --- Seção de Alunos --- */
+.studentsSection {
+  margin-bottom: 2rem;
+}
+
+.studentsSectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.studentsSectionHeader h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.searchBox {
+  position: relative;
+  flex-grow: 1;
+  max-width: 400px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  padding-right: 2.5rem; /* Espaço para o botão de limpar */
+  border: 2px solid rgba(212, 212, 212, 0.4);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+  color: #333;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.clearSearch {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #6c757d;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.clearSearch:hover {
+  color: #dc3545;
+}
+
+.studentsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+/* Assumindo que StudentCardExpanded tem uma classe raiz como esta */
+.studentCardExpanded {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.studentCardExpanded:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* --- Seção de Convites --- */
+.invitationsSection {
+  margin-bottom: 2rem;
+}
+
+.invitationsSection h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.invitationsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.invitationCard {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border-left: 5px solid #ffc107;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.invitationInfo {
+  font-size: 0.95rem;
+}
+
+.invitationEmail {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.invitationDate {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.invitationCode {
+  background: rgba(248, 249, 250, 0.7);
+  backdrop-filter: blur(3px);
+  padding: 0.5rem;
+  border-radius: 8px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.9rem;
+  color: #333;
+  border: 1px dashed rgba(222, 226, 230, 0.5);
+}
+
+/* --- Estados Vazios e de Carregamento --- */
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  margin-top: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+.emptyState h3 {
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.emptyState p {
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+}
+
+.emptyStateButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  margin: 0.5rem;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+}
+
+.emptyStateButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
+.testDataButton {
+  background: linear-gradient(
+    135deg,
+    #1d1e1f 0%,
+    #343a40 100%
+  ); /* Gradiente mais escuro para informação */
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  margin: 0.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.testDataButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.testDataButton:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.8;
+  box-shadow: none;
+}
+
+.loadingState {
+  text-align: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  margin-top: 1.5rem;
+  color: #6c757d;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* --- Design Responsivo --- */
+@media (max-width: 1024px) {
+  .headerContent h1 {
+    font-size: 2rem;
+  }
+
+  .headerContent p {
+    font-size: 1rem;
+  }
+
+  .inviteButton {
+    width: 100%;
+    text-align: center;
+  }
+
+  .statsGrid,
+  .tagsList,
+  .notesList,
+  .goalsList,
+  .evaluationsList,
+  .studentsList,
+  .invitationsList {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  .formRow {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .formRow .formGroup {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1.5rem;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .headerContent h1 {
+    font-size: 1.8rem;
+  }
+
+  .headerContent p {
+    font-size: 0.9rem;
+  }
+
+  /* Abas: Força 3 colunas */
+  .tabs {
+    display: grid; /* Alterado para grid */
+    grid-template-columns: repeat(3, 1fr); /* Exatamente 3 colunas */
+    gap: 0.5rem; /* Mantém o espaçamento */
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .tab {
+    font-size: 0.85rem; /* Tamanho de fonte menor */
+    padding: 0.6rem 0.5rem; /* Padding menor */
+    min-width: unset; /* Remove restrição de largura mínima */
+    flex: unset; /* Remove flex grow */
+    white-space: normal; /* Permite que o texto quebre linha */
+    word-break: break-word; /* Quebra palavras longas */
+    line-height: 1.2;
+  }
+
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sectionHeader h2 {
+    font-size: 1.5rem;
+  }
+
+  .addButton {
+    width: 100%;
+    text-align: center;
+  }
+
+  .searchBox {
+    max-width: 100%;
+  }
+
+  /* ✅ OTIMIZAÇÃO MOBILE: Stats em grid 2x2, outros em coluna única */
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr); /* Grid 2x2 para estatísticas */
+    gap: 1rem; /* Espaçamento reduzido */
+  }
+
+  .tagsList,
+  .notesList,
+  .goalsList,
+  .evaluationsList,
+  .studentsList,
+  .invitationsList {
+    grid-template-columns: 1fr; /* Layout de coluna única */
+  }
+
+  /* ✅ Reduz tamanho dos cards de estatísticas */
+  .statCard {
+    padding: 1rem; /* Padding reduzido de 1.5rem para 1rem */
+    gap: 0.75rem;
+  }
+
+  .statIcon {
+    font-size: 2rem; /* Reduzido de 2.5rem */
+    width: 48px; /* Reduzido de 60px */
+    height: 48px;
+  }
+
+  .statValue {
+    font-size: 1.5rem; /* Reduzido de 2rem */
+  }
+
+  .statLabel {
+    font-size: 0.8rem; /* Reduzido de 0.9rem */
+  }
+
+  /* Card de Alerta Compacto para Mobile */
+  .alertCardCompact {
+    flex-wrap: wrap; /* Permite quebrar linha se o conteúdo for muito longo */
+    padding: 0.6rem 0.8rem;
+    gap: 0.6rem;
+  }
+
+  .alertCardCompactIcon {
+    font-size: 1.3rem;
+    width: 28px;
+    height: 28px;
+  }
+
+  .alertCardCompactContent {
+    flex-basis: calc(
+      100% - 28px - 0.6rem - 0.5rem - 0.5rem
+    ); /* Ajusta largura para ícone e botões */
+    flex-grow: 1;
+  }
+
+  .alertCardCompactTitle {
+    font-size: 0.9rem;
+  }
+
+  .alertCardCompactStudent {
+    font-size: 0.75rem;
+  }
+
+  .alertCardCompactActions {
+    width: 100%; /* Ocupa largura total se quebrar linha */
+    justify-content: flex-end; /* Alinha botões à direita */
+    margin-top: 0.5rem; /* Espaço do conteúdo */
+  }
+
+  .alertCardCompactActionButton {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
+
+  .alertCardCompactCloseButton {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard {
+    padding: 1rem;
+  }
+
+  .headerContent h1 {
+    font-size: 1.5rem;
+  }
+
+  .headerContent p {
+    font-size: 0.85rem;
+  }
+
+  .tab {
+    font-size: 0.75rem; /* Tamanho de fonte ainda menor */
+    padding: 0.5rem 0.3rem; /* Padding ainda menor */
+  }
+
+  .inviteButton,
+  .submitButton,
+  .emptyStateButton,
+  .testDataButton,
+  .addButton {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+  }
+
+  /* ✅ OTIMIZAÇÃO MOBILE 480px: Stats ainda menores em grid 2x2 */
+  .statsGrid {
+    gap: 0.75rem; /* Espaçamento ainda mais reduzido */
+  }
+
+  .statCard {
+    padding: 0.75rem; /* Padding ainda mais reduzido */
+    gap: 0.5rem;
+  }
+
+  .statIcon {
+    font-size: 1.5rem; /* Reduzido de 2rem */
+    width: 40px; /* Reduzido de 48px */
+    height: 40px;
+  }
+
+  .statValue {
+    font-size: 1.25rem; /* Reduzido de 1.5rem */
+  }
+
+  .statLabel {
+    font-size: 0.75rem; /* Reduzido de 0.8rem */
+  }
+
+  /* Card de Alerta Compacto para mobile menor */
+  .alertCardCompact {
+    padding: 0.5rem 0.7rem;
+    gap: 0.5rem;
+  }
+
+  .alertCardCompactIcon {
+    font-size: 1.2rem;
+    width: 24px;
+    height: 24px;
+  }
+
+  .alertCardCompactTitle {
+    font-size: 0.85rem;
+  }
+
+  .alertCardCompactStudent {
+    font-size: 0.7rem;
+  }
+
+  .alertCardCompactActionButton {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.7rem;
+  }
+
+  .alertCardCompactCloseButton {
+    font-size: 0.9rem;
+  }
+}
+
+/* ✅ OTIMIZAÇÃO MOBILE 360px: Telas muito pequenas */
+@media (max-width: 360px) {
+  .dashboard {
+    padding: 0.75rem;
+  }
+
+  .headerContent h1 {
+    font-size: 1.25rem;
+  }
+
+  .headerContent p {
+    font-size: 0.8rem;
+  }
+
+  /* ✅ Stats em grid 2x2 ainda mais compactos */
+  .statsGrid {
+    gap: 0.5rem;
+  }
+
+  .statCard {
+    padding: 0.6rem;
+    gap: 0.4rem;
+    border-radius: 12px;
+  }
+
+  .statIcon {
+    font-size: 1.25rem;
+    width: 32px;
+    height: 32px;
+  }
+
+  .statValue {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .statLabel {
+    font-size: 0.7rem;
+    line-height: 1.2;
+  }
+
+  .tab {
+    font-size: 0.7rem;
+    padding: 0.45rem 0.25rem;
+  }
+}
+
+.cardsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .cardsList {
+    grid-template-columns: 1fr;
+  }
+}

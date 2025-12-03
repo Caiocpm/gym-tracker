@@ -1,0 +1,238 @@
+/* src/components/NutritionTracker/NutritionSummaryCards.module.css */
+
+.nutritionSummaryCardsContainer {
+  /* Renomeado de nutrition-summary-cards-container */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.summaryCard {
+  /* Renomeado de summary-card */
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.summaryCard:hover {
+  /* Renomeado de summary-card:hover */
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.cardIcon {
+  /* Renomeado de card-icon */
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.cardInfo h5 {
+  /* Renomeado de card-info h5 */
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: #333333;
+}
+
+.cardInfo p {
+  /* Renomeado de card-info p */
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.cardInfo p span {
+  /* Renomeado de card-info p span */
+  color: #667eea; /* Cor de destaque para o valor consumido */
+}
+
+.cardInfo small {
+  /* Renomeado de card-info small */
+  font-size: 0.85rem;
+  color: #666666;
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.progressBar {
+  /* Renomeado de progress-bar */
+  width: 100%;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  /* Renomeado de progress-fill */
+  height: 100%;
+  background-color: #667eea; /* Cor primária */
+  border-radius: 4px;
+  transition: width 0.3s ease-out;
+}
+
+/* Cores específicas para macros */
+.proteinCard .progressFill {
+  /* Renomeado de protein-card .progress-fill */
+  background-color: #f5576c;
+}
+
+.carbsCard .progressFill {
+  /* Renomeado de carbs-card .progress-fill */
+  background-color: #4facfe;
+}
+
+.fatCard .progressFill {
+  /* Renomeado de fat-card .progress-fill */
+  background-color: #00f2fe;
+}
+
+.waterCard .progressFill {
+  /* Renomeado de water-card .progress-fill */
+  background-color: #764ba2;
+}
+
+/* Micronutrientes Summary Card */
+.micronutrientsSummaryCard {
+  /* Renomeado de micronutrients-summary-card */
+  grid-column: span 2; /* Ocupa duas colunas em layouts maiores */
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.micronutrientsSummaryCard .cardInfo {
+  /* Renomeado de micronutrients-summary-card .card-info */
+  width: 100%;
+}
+
+.micronutrientListSummary {
+  /* Renomeado de micronutrient-list-summary */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.micronutrientItemSummary {
+  /* Renomeado de micronutrient-item-summary */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #444444;
+}
+
+.micronutrientItemSummary span:first-child {
+  /* Renomeado de micronutrient-item-summary span:first-child */
+  font-weight: 500;
+  min-width: 100px; /* Para alinhar os valores */
+}
+
+.micronutrientItemSummary span:nth-child(2) {
+  /* Renomeado de micronutrient-item-summary span:nth-child(2) */
+  font-weight: 600;
+  color: #1a1a1a;
+  flex-grow: 1;
+  text-align: right;
+}
+
+.micronutrientItemSummary .progressBar.small {
+  /* Renomeado de micronutrient-item-summary .progress-bar.small */
+  height: 6px;
+  min-width: 80px; /* Garante que a barra tenha um tamanho mínimo */
+}
+
+.micronutrientItemSummary .progressFill {
+  /* Renomeado de micronutrient-item-summary .progress-fill */
+  background-color: #27ae60; /* Cor para micronutrientes */
+}
+
+.small {
+  /* Classe para progress-bar pequena */
+  height: 6px;
+  min-width: 80px;
+}
+
+/* Empty State */
+.nutritionSummaryEmpty {
+  /* Renomeado de nutrition-summary-empty */
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  color: #666666;
+  margin-top: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.nutritionSummaryEmpty p {
+  /* Renomeado de nutrition-summary-empty p */
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .nutritionSummaryCardsContainer {
+    /* Renomeado de nutrition-summary-cards-container */
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .micronutrientsSummaryCard {
+    /* Renomeado de micronutrients-summary-card */
+    grid-column: span 1; /* Em telas menores, ocupa apenas uma coluna */
+  }
+}
+
+@media (max-width: 768px) {
+  .nutritionSummaryCardsContainer {
+    /* Renomeado de nutrition-summary-cards-container */
+    grid-template-columns: 1fr; /* Uma coluna em mobile */
+    gap: 1rem;
+  }
+
+  .summaryCard {
+    /* Renomeado de summary-card */
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .cardIcon {
+    /* Renomeado de card-icon */
+    font-size: 2rem;
+  }
+
+  .cardInfo h5 {
+    /* Renomeado de card-info h5 */
+    font-size: 1rem;
+  }
+
+  .cardInfo p {
+    /* Renomeado de card-info p */
+    font-size: 1.1rem;
+  }
+
+  .cardInfo small {
+    /* Renomeado de card-info small */
+    font-size: 0.8rem;
+  }
+
+  .micronutrientItemSummary {
+    /* Renomeado de micronutrient-item-summary */
+    font-size: 0.85rem;
+  }
+
+  .micronutrientItemSummary span:first-child {
+    /* Renomeado de micronutrient-item-summary span:first-child */
+    min-width: 80px;
+  }
+}

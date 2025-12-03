@@ -1,0 +1,191 @@
+/* src/components/NutritionTracker/WaterTracker/WaterTracker.module.css */
+
+.waterTracker {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.waterTrackerTitle {
+  /* Nova classe para o h4 */
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 20px 0;
+}
+
+.waterProgress {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+/* .waterVisual { /* Esta regra foi removida pois estava vazia */
+/* } */
+
+.waterBottle {
+  width: 80px;
+  height: 200px;
+  background: #f0f8ff;
+  border: 3px solid #3498db;
+  border-radius: 10px 10px 15px 15px;
+  position: relative;
+  overflow: hidden;
+}
+
+.waterFill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, #3498db, #87ceeb);
+  transition: height 0.5s ease;
+  border-radius: 0 0 12px 12px;
+}
+
+.waterText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  z-index: 10;
+}
+
+/* .current { /* Esta regra foi removida pois estava vazia */
+/* } */
+
+/* .goal { /* Esta regra foi removida pois estava vazia */
+/* } */
+
+.waterInfo {
+  flex: 1;
+}
+
+.waterStats {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.stat .label {
+  font-size: 14px;
+  color: #666;
+}
+
+.stat .value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* .waterControls { /* Esta regra foi removida pois estava vazia */
+/* } */
+
+.quickButtons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.quickWaterButton {
+  padding: 8px 16px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.quickWaterButton:hover {
+  background: #2980b9;
+}
+
+.customWater {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.customWaterInput {
+  /* Nova classe para o input customizado */
+  width: 80px;
+  padding: 8px 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.addCustomWater {
+  padding: 8px 16px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.addCustomWater:hover {
+  background: #219a52;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .waterProgress {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .waterStats {
+    justify-content: center;
+  }
+
+  .quickButtons {
+    justify-content: center;
+  }
+
+  .customWater {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .waterBottle {
+    width: 60px;
+    height: 150px;
+  }
+
+  .waterText {
+    font-size: 10px;
+  }
+
+  .quickWaterButton,
+  .addCustomWater {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .customWaterInput {
+    /* Usando a nova classe */
+    width: 70px;
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+}

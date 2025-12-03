@@ -1,0 +1,283 @@
+.alertsSection {
+  margin-bottom: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.header h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+}
+
+.expandIcon {
+  font-size: 1rem;
+  color: #667eea;
+  transition: transform 0.2s;
+}
+
+.count {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #718096;
+  background: #f7fafc;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+}
+
+.alertsContent {
+  animation: slideDown 0.3s ease-out;
+}
+
+.alertGroup {
+  margin-bottom: 1.5rem;
+}
+
+.alertGroup:last-child {
+  margin-bottom: 0;
+}
+
+.groupTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #718096;
+  margin: 0 0 0.75rem 0;
+}
+
+.alertsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.alertCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid;
+  transition: all 0.2s;
+}
+
+.alertCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Cores por severidade */
+.alertCard.urgent {
+  border-left-color: #e53e3e;
+  background: #fff5f5;
+}
+
+.alertCard.warning {
+  border-left-color: #ed8936;
+  background: #fffaf0;
+}
+
+.alertCard.info {
+  border-left-color: #4299e1;
+  background: #ebf8ff;
+}
+
+.alertIcon {
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  background: white;
+  flex-shrink: 0;
+}
+
+.alertContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.alertHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.alertTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+}
+
+.studentName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #667eea;
+  background: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  white-space: nowrap;
+}
+
+.alertDescription {
+  font-size: 0.875rem;
+  color: #4a5568;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.alertDetails {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 200px;
+  }
+}
+
+.detailItem {
+  font-size: 0.8125rem;
+  color: #2d3748;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.detailItem strong {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.moreAlerts {
+  text-align: center;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: #718096;
+  background: #f7fafc;
+  border-radius: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.alertActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.expandButton {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #667eea;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.expandButton:hover {
+  background: #f7fafc;
+  color: #764ba2;
+  border-color: #cbd5e0;
+}
+
+.actionButton {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.actionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.dismissButton {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 1.25rem;
+  color: #718096;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dismissButton:hover {
+  background: #f7fafc;
+  color: #2d3748;
+  border-color: #cbd5e0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .alertCard {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .alertIcon {
+    align-self: flex-start;
+  }
+
+  .alertActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .actionButton {
+    flex: 1;
+  }
+
+  .alertHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .studentName {
+    align-self: flex-start;
+  }
+}

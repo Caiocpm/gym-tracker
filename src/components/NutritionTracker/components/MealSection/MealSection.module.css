@@ -1,0 +1,1261 @@
+/* src/components/NutritionTracker/MealSection.module.css */
+
+/* ===== MEAL SECTION ===== */
+.mealSection {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+/* ===== HEADER DESKTOP (MANTÉM O ATUAL) ===== */
+.mealHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.mealTitle h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.mealStats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.mealCalories {
+  font-size: 14px;
+  color: #667eea;
+  font-weight: 500;
+}
+
+.mealCaloriesTotal {
+  font-size: 14px;
+  color: #667eea;
+  font-weight: 500;
+  margin: 8px 0;
+}
+
+.mealCompletion {
+  font-size: 12px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+/* ===== HEADER MOBILE NOVO ===== */
+.mealHeaderMobile {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.mealTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.mealTitleRow h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.totalCalories {
+  font-size: 0.875rem;
+  color: #667eea;
+  font-weight: 600;
+  background: #f0f4ff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* ===== PROGRESSO COM DOTS (MOBILE) ===== */
+.quickProgress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.progressDots {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.progressDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  transition: background 0.2s ease;
+}
+
+.progressDot.completed {
+  background: #22c55e;
+}
+
+.progressDot.pending {
+  background: #f59e0b;
+}
+
+.moreIndicator {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-left: 0.25rem;
+}
+
+.progressText {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* ===== BOTÕES ===== */
+.addFoodButton {
+  padding: 8px 16px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.addFoodButton:hover {
+  background: #5a6fd8;
+}
+
+.addButtonMobile {
+  width: 100%;
+  padding: 0.75rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addButtonMobile:hover {
+  background: #5a6fd8;
+  transform: translateY(-1px);
+}
+
+/* ===== CARDS COMPACTOS MOBILE ===== */
+.compactFoodCard {
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.compactFoodCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  cursor: pointer;
+  min-height: 60px;
+}
+
+.foodBasics {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.foodIconMobile {
+  font-size: 1.5rem;
+  min-width: 24px;
+}
+
+.foodInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.foodName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.foodCalories {
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.statusButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #e5e7eb;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.statusButton.consumed {
+  border-color: #22c55e;
+  background: #f0fdf4;
+}
+
+.statusButton.planned {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.statusButton:hover {
+  transform: scale(1.05);
+}
+
+.expandIcon {
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+/* ===== DETALHES EXPANSÍVEIS ===== */
+.cardDetails {
+  border-top: 1px solid #f3f4f6;
+  padding: 1rem;
+  background: #f9fafb;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 200px;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.detailLabel {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.detailValue {
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 600;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.timeInfo {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.consumedTimeInfo {
+  color: #22c55e;
+  font-weight: 500;
+}
+
+.removeButtonMobile {
+  background: #fee2e2;
+  color: #dc2626;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.removeButtonMobile:hover {
+  background: #fecaca;
+  transform: scale(1.05);
+}
+
+/* ===== RESUMO MOBILE ===== */
+.mobileSummary {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-top: 1px solid #e5e7eb;
+}
+
+.mobileSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 0.5rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.summaryIcon {
+  font-size: 1.25rem;
+}
+
+.summaryValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.summaryLabel {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* ===== ESTADO VAZIO ===== */
+.emptyMeal {
+  padding: 20px;
+  text-align: center;
+  color: #999;
+}
+
+.emptyMeal p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* ===== PROGRESSO DA REFEIÇÃO (DESKTOP) ===== */
+.mealProgressContainer {
+  margin: 12px 0;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #dee2e6;
+}
+
+.mealProgressBar {
+  width: 100%;
+  height: 6px;
+  background: #e9ecef;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.mealProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #49e06f, #49e06f);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.mealProgressStats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.consumedStat {
+  color: #198754;
+}
+
+.plannedStat {
+  color: #fd7e14;
+}
+
+/* ===== MEAL ENTRIES ===== */
+.mealEntries {
+  padding: 15px 20px;
+}
+
+/* ===== SEÇÕES DE ALIMENTOS ===== */
+.entriesSection {
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.consumedSection .sectionTitle {
+  background: #f8f9fa;
+  color: #198754;
+  border-left: 4px solid #d1e7dd;
+}
+
+.plannedSection .sectionTitle {
+  background: #f8f9fa;
+  color: #fd7e14;
+  border-left: 4px solid #ffeaa7;
+}
+
+/* ===== ENTRADAS DE ALIMENTOS (DESKTOP) ===== */
+.mealEntry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+}
+
+.consumedEntry {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+.plannedEntry {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+.mealEntry:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: #f1f3f4;
+}
+
+/* ===== CHECKBOX/TOGGLE (DESKTOP) ===== */
+.entryCheckbox {
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statusToggle {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statusToggle.consumed {
+  background: #198754;
+  color: white;
+}
+
+.statusToggle.planned {
+  background: #fd7e14;
+  color: white;
+}
+
+.statusToggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== FOOD ICON (DESKTOP) ===== */
+.foodIcon {
+  font-size: 20px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+/* ===== INFORMAÇÕES DA ENTRADA (DESKTOP) ===== */
+.entryInfo {
+  flex: 1;
+}
+
+.entryInfo h6 {
+  margin: 0 0 4px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.entryInfo p {
+  margin: 0 0 6px 0;
+  font-size: 0.8rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.entryMacros {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.entryMacros span {
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  color: #495057;
+  font-weight: 500;
+}
+
+/* ===== AÇÕES DA ENTRADA (DESKTOP) ===== */
+.entryActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  min-width: 80px;
+}
+
+.entryTime,
+.consumedTime {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.consumedTime {
+  color: #198754;
+  font-weight: 600;
+}
+
+.removeButton {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.removeButton:hover {
+  background: #c82333;
+  transform: scale(1.05);
+}
+
+/* ===== RESUMOS DAS SEÇÕES (DESKTOP) ===== */
+.sectionSummary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.consumedSummary {
+  background: #f8f9fa;
+  color: #198754;
+  border: 1px solid #e9ecef;
+}
+
+.plannedSummary {
+  background: #f8f9fa;
+  color: #fd7e14;
+  border: 1px solid #e9ecef;
+}
+
+/* ===== RESUMO TOTAL (DESKTOP) ===== */
+.mealTotalSummary {
+  margin-top: 16px;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.summaryTotals {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.totalLabel {
+  width: 100%;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 12px;
+  text-align: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.summaryTotals span:not(.totalLabel) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #495057;
+  text-align: center;
+  transition: all 0.2s ease;
+  flex: 1;
+  justify-content: center;
+  min-width: 120px;
+}
+
+.summaryTotals span:not(.totalLabel):hover {
+  background: #f1f3f4;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== ESTADO VAZIO ESPECÍFICO ===== */
+.mealSection h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 15px 20px 0 20px;
+}
+
+.mealSection .mealCaloriesTotal {
+  margin: 8px 20px;
+}
+
+.mealSection .addFoodButton {
+  margin: 0 20px 15px 20px;
+  display: block;
+  width: calc(100% - 40px);
+}
+
+.mealSection:has(.emptyMeal) {
+  padding: 15px 0;
+}
+
+.mealSection:has(.emptyMeal) h4 {
+  margin-bottom: 8px;
+}
+
+.mealSection:has(.emptyMeal) .addFoodButton {
+  margin-bottom: 15px;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  /* Esconde elementos desktop */
+  .mealHeader,
+  .mealProgressContainer,
+  .mealEntry,
+  .sectionSummary,
+  .mealTotalSummary {
+    display: none;
+  }
+
+  /* Mostra elementos mobile */
+  .mealHeaderMobile,
+  .compactFoodCard,
+  .mobileSummary {
+    display: block;
+  }
+
+  .mealEntries {
+    padding: 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+@media (min-width: 769px) {
+  /* Esconde elementos mobile */
+  .mealHeaderMobile,
+  .compactFoodCard,
+  .mobileSummary {
+    display: none;
+  }
+
+  /* Mostra elementos desktop */
+  .mealHeader,
+  .mealProgressContainer,
+  .mealEntry,
+  .sectionSummary,
+  .mealTotalSummary {
+    display: flex;
+  }
+
+  .mealTotalSummary {
+    display: block;
+  }
+}
+
+/* ===== ESTADOS DE FOCO ===== */
+.addFoodButton:focus,
+.addButtonMobile:focus,
+.statusToggle:focus,
+.statusButton:focus,
+.removeButton:focus,
+.removeButtonMobile:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* ===== ANIMAÇÕES ===== */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mealEntry,
+.compactFoodCard {
+  animation: slideIn 0.2s ease-out;
+}
+.statusButton.planned {
+  border-color: #6b7280;
+  background: #f9fafb;
+  color: #6b7280;
+}
+
+.statusToggle.planned {
+  background: #6b7280;
+  color: white;
+}
+/* ===== SEÇÕES COLAPSÁVEIS ===== */
+.sectionHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+.sectionHeader.consumed {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.sectionHeader.planned {
+  background: #fffbeb;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+}
+
+.sectionHeader:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sectionHeader.consumed:hover {
+  background: #ecfdf5;
+  border-color: #86efac;
+}
+
+.sectionHeader.planned:hover {
+  background: #fef3c7;
+  border-color: #fbbf24;
+}
+
+.sectionHeaderContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.sectionTitleInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sectionHeader .sectionTitle {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+}
+
+.sectionCalories {
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+/* ===== MINI PROGRESSO (QUANDO FECHADO) ===== */
+.miniProgress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.miniProgressDots {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.miniProgressDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.miniProgressDot.consumed {
+  background: #22c55e;
+}
+
+.miniProgressDot.planned {
+  background: #f59e0b;
+}
+
+.miniMoreIndicator {
+  font-size: 0.625rem;
+  font-weight: 500;
+  margin-left: 0.25rem;
+  opacity: 0.7;
+}
+
+/* ===== SETA DE EXPANSÃO ===== */
+.sectionArrow {
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+  opacity: 0.7;
+}
+
+.sectionArrow.expanded {
+  transform: rotate(0deg);
+}
+
+.sectionArrow.collapsed {
+  transform: rotate(0deg);
+}
+
+/* ===== CONTEÚDO EXPANSÍVEL ===== */
+.sectionContent {
+  margin-top: 0.5rem;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+    overflow: visible;
+  }
+}
+
+/* ===== RESPONSIVIDADE PARA SEÇÕES ===== */
+@media (max-width: 768px) {
+  .sectionHeader {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .sectionHeaderContent {
+    margin-right: 0.75rem;
+  }
+
+  .miniProgressDots {
+    gap: 0.2rem;
+  }
+
+  .miniProgressDot {
+    width: 5px;
+    height: 5px;
+  }
+}
+
+/* ===== AJUSTES PARA MANTER COMPATIBILIDADE ===== */
+.entriesSection .sectionTitle {
+  /* Remove estilos antigos quando usar o novo header */
+  display: none;
+}
+
+.sectionHeader + .sectionContent .sectionTitle {
+  display: none;
+}
+
+/* ===== LAYOUT EM COLUNAS APENAS MOBILE ===== */
+@media (max-width: 768px) {
+  /* Container pai das refeições - adicionar no componente pai */
+  .mealsContainerMobile {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    padding: 0.5rem;
+  }
+
+  /* Cards de refeição mais compactos para mobile */
+  .mealSection {
+    height: fit-content;
+    margin-bottom: 0;
+    border-radius: 8px;
+  }
+
+  /* Header mobile mais compacto */
+  .mealHeaderMobile {
+    padding: 0.75rem;
+  }
+
+  .mealTitleRow h4 {
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  .totalCalories {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  /* Progresso com dots mais compacto */
+  .quickProgress {
+    margin-bottom: 0.5rem;
+  }
+
+  .progressDots {
+    gap: 0.2rem;
+  }
+
+  .progressDot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .progressText {
+    font-size: 0.7rem;
+  }
+
+  /* Botão adicionar mais compacto */
+  .addButtonMobile {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  /* Seções colapsáveis mais compactas */
+  .sectionHeader {
+    padding: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .sectionHeader .sectionTitle {
+    font-size: 0.75rem;
+  }
+
+  .sectionCalories {
+    font-size: 0.7rem;
+  }
+
+  /* Mini progresso mais compacto */
+  .miniProgressDot {
+    width: 4px;
+    height: 4px;
+  }
+
+  .miniMoreIndicator {
+    font-size: 0.6rem;
+  }
+
+  /* Cards de comida compactos */
+  .compactFoodCard {
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+  }
+
+  .cardHeader {
+    padding: 0.75rem;
+    min-height: 50px;
+  }
+
+  .foodIconMobile {
+    font-size: 1.2rem;
+  }
+
+  .foodName {
+    font-size: 0.8rem;
+    line-height: 1.1;
+  }
+
+  .foodCalories {
+    font-size: 0.75rem;
+  }
+
+  .statusButton {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .expandIcon {
+    font-size: 0.75rem;
+  }
+
+  /* Detalhes expansíveis mais compactos */
+  .cardDetails {
+    padding: 0.75rem;
+  }
+
+  .detailsGrid {
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .detailLabel {
+    font-size: 0.65rem;
+  }
+
+  .detailValue {
+    font-size: 0.75rem;
+  }
+
+  .cardFooter {
+    padding-top: 0.5rem;
+  }
+
+  .timeInfo {
+    font-size: 0.65rem;
+  }
+
+  .removeButtonMobile {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.65rem;
+  }
+
+  /* Resumo mobile mais compacto */
+  .mobileSummary {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .mobileSummaryGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .summaryItem {
+    padding: 0.5rem 0.25rem;
+    gap: 0.2rem;
+  }
+
+  .summaryIcon {
+    font-size: 1rem;
+  }
+
+  .summaryValue {
+    font-size: 0.75rem;
+  }
+
+  .summaryLabel {
+    font-size: 0.65rem;
+  }
+
+  /* Estado vazio compacto */
+  .emptyMeal {
+    padding: 1rem 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  /* Ajustes para o estado vazio */
+  .mealSection h4 {
+    font-size: 0.875rem;
+    margin: 0.75rem 0.75rem 0 0.75rem;
+  }
+
+  .mealSection .mealCaloriesTotal {
+    margin: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  .mealSection .addFoodButton {
+    margin: 0 0.75rem 0.75rem 0.75rem;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* ===== AJUSTE PARA MOBILE MUITO PEQUENO ===== */
+@media (max-width: 480px) {
+  .mealsContainerMobile {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    padding: 0.25rem;
+  }
+
+  .mealSection {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* ===== AJUSTE PARA MOBILE LANDSCAPE ===== */
+@media (max-width: 768px) and (orientation: landscape) {
+  .mealsContainerMobile {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ===== TEMPLATE INDICATORS ===== */
+.foodNameRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.foodNameRow h6 {
+  margin: 0;
+}
+
+.templateBadge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: help;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.templateBadge:hover {
+  opacity: 1;
+}
+
+/* ===== REMOVE TEMPLATE BUTTON ===== */
+.removeTemplateButton {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.removeTemplateButton:hover {
+  background: #ff5252;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+}
+
+.removeTemplateButton:active {
+  transform: translateY(0);
+}
+
+/* ===== CARD FOOTER ACTIONS ===== */
+.cardFooterActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Ajustes para botões dentro de entryActions */
+.entryActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.entryActions .removeTemplateButton {
+  margin-top: 0.25rem;
+}

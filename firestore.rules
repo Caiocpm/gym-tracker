@@ -1,0 +1,214 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ✅ Regras para Usuários
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // ✅ Regras para Grupos
+    match /groups/{groupId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null;
+      allow delete: if request.auth != null
+        && request.auth.uid == resource.data.createdBy;
+    }
+
+    // ✅ Regras para Membros de Grupos
+    match /groupMembers/{memberId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null;
+      allow delete: if request.auth != null;
+    }
+
+    // ✅ Regras para Posts de Treino
+    match /workoutPosts/{postId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null;
+      allow delete: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+    }
+
+    // ✅ Regras para Posts (coleção alternativa)
+    match /posts/{postId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null;
+      allow delete: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+    }
+
+    // ✅ Regras para Curtidas
+    match /postLikes/{likeId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow delete: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+    }
+
+    // ✅ Regras para Comentários
+    match /postComments/{commentId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+      allow delete: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+    }
+
+    // ✅ Regras para Desafios de Grupo
+    match /groupChallenges/{challengeId} {
+      // Permitir leitura para usuários autenticados
+      allow read: if request.auth != null;
+
+      // Permitir criar desafios para usuários autenticados
+      allow create: if request.auth != null
+        && request.resource.data.createdBy == request.auth.uid;
+
+      // Permitir atualizar para criador ou participantes
+      allow update: if request.auth != null;
+
+      // Permitir deletar apenas para o criador
+      allow delete: if request.auth != null
+        && request.auth.uid == resource.data.createdBy;
+    }
+
+    // ✅ Regras para Badges de Usuários
+    match /userBadges/{badgeId} {
+      // Permitir leitura para usuários autenticados
+      allow read: if request.auth != null;
+
+      // Permitir criar apenas pelo sistema (quando completa desafio)
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid;
+
+      // Não permitir atualização (badges são imutáveis)
+      allow update: if false;
+
+      // Permitir deletar apenas o próprio badge (para testes/cleanup)
+      allow delete: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+    }
+
+    // ✅ Regras para Configurações de Privacidade
+    match /privacySettings/{userId} {
+      // Apenas o usuário pode ler suas configurações
+      allow read: if request.auth != null
+        && request.auth.uid == userId;
+
+      // Apenas o usuário pode criar/atualizar suas configurações
+      allow write: if request.auth != null
+        && request.auth.uid == userId;
+    }
+
+    // ✅ Regras para Perfis Públicos
+    match /publicProfiles/{userId} {
+      // Leitura controlada por privacidade (por enquanto público para todos autenticados)
+      allow read: if request.auth != null;
+
+      // Apenas o usuário pode criar/atualizar seu perfil público
+      allow write: if request.auth != null
+        && request.auth.uid == userId;
+    }
+
+    // ✅ Regras para Perfis de Usuários
+    match /userProfiles/{userId} {
+      // Permitir leitura para usuários autenticados
+      allow read: if request.auth != null;
+
+      // Apenas o usuário pode criar/atualizar seu próprio perfil
+      allow create: if request.auth != null
+        && request.auth.uid == userId;
+      allow update: if request.auth != null
+        && request.auth.uid == userId;
+      allow delete: if request.auth != null
+        && request.auth.uid == userId;
+    }
+
+    // ✅ Regras para Treinos Completos (necessário para estatísticas)
+    match /completedWorkouts/{workoutId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid;
+      allow update: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+      allow delete: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+    }
+
+    // ✅ Regras para Profissionais e suas subcoleções
+    match /professionals/{professionalId} {
+      // Permitir leitura e escrita para o próprio profissional
+      allow read, write: if request.auth != null
+        && request.auth.uid == professionalId;
+
+      // ✅ Subcoleção: Tags
+      match /tags/{tagId} {
+        allow read, write: if request.auth != null
+          && request.auth.uid == professionalId;
+      }
+
+      // ✅ Subcoleção: Links de Estudantes
+      match /studentLinks/{linkId} {
+        allow read, write: if request.auth != null
+          && request.auth.uid == professionalId;
+      }
+
+      // ✅ Subcoleção: Metas dos Estudantes
+      match /studentGoals/{goalId} {
+        allow read, write: if request.auth != null
+          && request.auth.uid == professionalId;
+      }
+
+      // ✅ Subcoleção: Avaliações
+      match /evaluations/{evaluationId} {
+        allow read, write: if request.auth != null
+          && request.auth.uid == professionalId;
+      }
+
+      // ✅ Subcoleção: Alertas
+      match /alerts/{alertId} {
+        allow read, write: if request.auth != null
+          && request.auth.uid == professionalId;
+      }
+
+      // ✅ Subcoleção: Anotações
+      match /notes/{noteId} {
+        allow read, write: if request.auth != null
+          && request.auth.uid == professionalId;
+      }
+    }
+
+    // ✅ Regras para Anotações de Estudantes (coleção global)
+    match /student_notes/{noteId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.professionalId == request.auth.uid;
+      allow update, delete: if request.auth != null
+        && request.auth.uid == resource.data.professionalId;
+    }
+
+    // ✅ Regras para Metas (coleção global)
+    match /goals/{goalId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.professionalId == request.auth.uid;
+      allow update, delete: if request.auth != null
+        && request.auth.uid == resource.data.professionalId;
+    }
+
+    // ✅ Regras para Avaliações (coleção global)
+    match /evaluations/{evaluationId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.professionalId == request.auth.uid;
+      allow update, delete: if request.auth != null
+        && request.auth.uid == resource.data.professionalId;
+    }
+  }
+}

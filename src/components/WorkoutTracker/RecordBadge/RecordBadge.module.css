@@ -1,0 +1,213 @@
+/* src/components/WorkoutTracker/RecordBadge/RecordBadge.module.css */
+.recordBadge {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  padding: 1.5rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(255, 215, 0, 0.4);
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.recordBadge.animate {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  animation: recordPulse 0.6s ease-in-out;
+}
+
+@keyframes recordPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+.badgeContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.badgeIcon {
+  font-size: 3rem;
+  line-height: 1;
+  animation: rotate 2s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-15deg);
+  }
+  75% {
+    transform: rotate(15deg);
+  }
+}
+
+.badgeText {
+  color: #1a1a1a;
+  text-align: left;
+}
+
+.badgeTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.badgeDetails {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.previousValue {
+  color: #666;
+  text-decoration: line-through;
+}
+
+.arrow {
+  color: #333;
+  font-weight: bold;
+}
+
+.currentValue {
+  color: #d4af37;
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.improvement {
+  color: #27ae60;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+}
+
+/* Confetti Animation */
+.confetti {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.confettiPiece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #ff6b6b;
+  top: 50%;
+  left: 50%;
+  opacity: 0;
+  animation: confettiFall 1.5s ease-out forwards;
+}
+
+.confettiPiece:nth-child(2n) { background: #4ecdc4; }
+.confettiPiece:nth-child(3n) { background: #45b7d1; }
+.confettiPiece:nth-child(4n) { background: #f7dc6f; }
+.confettiPiece:nth-child(5n) { background: #bb8fce; }
+
+.confettiPiece:nth-child(1) { animation-delay: 0s; }
+.confettiPiece:nth-child(2) { animation-delay: 0.05s; }
+.confettiPiece:nth-child(3) { animation-delay: 0.1s; }
+.confettiPiece:nth-child(4) { animation-delay: 0.15s; }
+.confettiPiece:nth-child(5) { animation-delay: 0.2s; }
+.confettiPiece:nth-child(6) { animation-delay: 0.25s; }
+.confettiPiece:nth-child(7) { animation-delay: 0.3s; }
+.confettiPiece:nth-child(8) { animation-delay: 0.35s; }
+.confettiPiece:nth-child(9) { animation-delay: 0.4s; }
+.confettiPiece:nth-child(10) { animation-delay: 0.45s; }
+.confettiPiece:nth-child(11) { animation-delay: 0.5s; }
+.confettiPiece:nth-child(12) { animation-delay: 0.55s; }
+.confettiPiece:nth-child(13) { animation-delay: 0.6s; }
+.confettiPiece:nth-child(14) { animation-delay: 0.65s; }
+.confettiPiece:nth-child(15) { animation-delay: 0.7s; }
+.confettiPiece:nth-child(16) { animation-delay: 0.75s; }
+.confettiPiece:nth-child(17) { animation-delay: 0.8s; }
+.confettiPiece:nth-child(18) { animation-delay: 0.85s; }
+.confettiPiece:nth-child(19) { animation-delay: 0.9s; }
+.confettiPiece:nth-child(20) { animation-delay: 0.95s; }
+
+@keyframes confettiFall {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(
+      calc((var(--random-x, 0.5) - 0.5) * 400px),
+      calc((var(--random-y, 0.5) - 0.5) * 400px)
+    ) rotate(720deg);
+  }
+}
+
+.confettiPiece:nth-child(1) { --random-x: 0.1; --random-y: 0.2; }
+.confettiPiece:nth-child(2) { --random-x: 0.9; --random-y: 0.3; }
+.confettiPiece:nth-child(3) { --random-x: 0.3; --random-y: 0.8; }
+.confettiPiece:nth-child(4) { --random-x: 0.7; --random-y: 0.1; }
+.confettiPiece:nth-child(5) { --random-x: 0.5; --random-y: 0.9; }
+.confettiPiece:nth-child(6) { --random-x: 0.2; --random-y: 0.4; }
+.confettiPiece:nth-child(7) { --random-x: 0.8; --random-y: 0.6; }
+.confettiPiece:nth-child(8) { --random-x: 0.4; --random-y: 0.2; }
+.confettiPiece:nth-child(9) { --random-x: 0.6; --random-y: 0.7; }
+.confettiPiece:nth-child(10) { --random-x: 0.1; --random-y: 0.5; }
+.confettiPiece:nth-child(11) { --random-x: 0.9; --random-y: 0.8; }
+.confettiPiece:nth-child(12) { --random-x: 0.3; --random-y: 0.1; }
+.confettiPiece:nth-child(13) { --random-x: 0.7; --random-y: 0.9; }
+.confettiPiece:nth-child(14) { --random-x: 0.2; --random-y: 0.3; }
+.confettiPiece:nth-child(15) { --random-x: 0.8; --random-y: 0.4; }
+.confettiPiece:nth-child(16) { --random-x: 0.4; --random-y: 0.6; }
+.confettiPiece:nth-child(17) { --random-x: 0.6; --random-y: 0.2; }
+.confettiPiece:nth-child(18) { --random-x: 0.1; --random-y: 0.7; }
+.confettiPiece:nth-child(19) { --random-x: 0.9; --random-y: 0.5; }
+.confettiPiece:nth-child(20) { --random-x: 0.5; --random-y: 0.1; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .recordBadge {
+    padding: 1rem 1.5rem;
+    max-width: 90%;
+  }
+
+  .badgeIcon {
+    font-size: 2.5rem;
+  }
+
+  .badgeTitle {
+    font-size: 1rem;
+  }
+
+  .badgeDetails {
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+  }
+
+  .currentValue {
+    font-size: 1.1rem;
+  }
+}

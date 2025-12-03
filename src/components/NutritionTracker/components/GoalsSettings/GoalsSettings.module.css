@@ -1,0 +1,479 @@
+/* src/components/NutritionTracker/GoalsSettings.module.css */
+
+/* ===== MODAL OVERLAY ===== */
+.goalsSettingsOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* ===== MODAL CONTAINER ===== */
+.goalsSettingsModal {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: hidden; /* IMPORTANTE: Evita scroll horizontal */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  position: relative; /* IMPORTANTE: Para posicionar o X corretamente */
+}
+
+/* ===== HEADER DO MODAL ===== */
+.goalsSettingsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 28px;
+  border-bottom: 1px solid #f1f5f9;
+  position: relative; /* IMPORTANTE: Para o X */
+}
+
+.goalsSettingsHeader h2 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.5rem;
+  font-weight: 600;
+  flex: 1; /* Ocupa espaço disponível */
+  padding-right: 40px; /* Espaço para o X */
+}
+
+/* ===== BOTÃO FECHAR (X) ===== */
+.closeButton {
+  position: absolute; /* POSICIONAMENTO ABSOLUTO */
+  top: 50%; /* CENTRALIZAR VERTICALMENTE */
+  right: 28px; /* DISTÂNCIA DA BORDA */
+  transform: translateY(-50%); /* CENTRALIZAR PERFEITAMENTE */
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  width: 32px; /* TAMANHO FIXO */
+  height: 32px; /* TAMANHO FIXO */
+  display: flex; /* FLEX PARA CENTRALIZAR */
+  align-items: center;
+  justify-content: center;
+  z-index: 10; /* ACIMA DE OUTROS ELEMENTOS */
+}
+
+.closeButton:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* ===== CONTEÚDO DO MODAL ===== */
+.goalsForm {
+  padding: 0 28px 28px;
+  max-height: calc(90vh - 120px); /* ALTURA MÁXIMA */
+  overflow-y: auto; /* SCROLL VERTICAL SE NECESSÁRIO */
+  overflow-x: hidden; /* NUNCA SCROLL HORIZONTAL */
+}
+
+/* ===== SEÇÕES ===== */
+.goalsSection {
+  margin-bottom: 32px;
+}
+
+.goalsSection h3 {
+  margin: 0 0 20px 0;
+  color: #374151;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* ===== INPUTS ===== */
+.inputGroup {
+  margin-bottom: 16px;
+}
+
+.inputGroup label {
+  display: block;
+  margin-bottom: 6px;
+  color: #374151;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.inputGroup input,
+.inputGroup textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  box-sizing: border-box; /* IMPORTANTE */
+}
+
+.inputGroup input:focus,
+.inputGroup textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ===== MICRONUTRIENTES ===== */
+.micronutrientsList {
+  margin-bottom: 24px;
+}
+
+.micronutrientItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  padding: 16px 0; /* MINIMALISTA: Só padding vertical */
+  background: transparent; /* MINIMALISTA: Sem fundo */
+  border: none; /* MINIMALISTA: Sem borda */
+  border-bottom: 1px solid #f1f5f9; /* MINIMALISTA: Só linha inferior sutil */
+  border-radius: 0; /* MINIMALISTA: Sem bordas arredondadas */
+  box-shadow: none; /* MINIMALISTA: Sem sombra */
+  overflow: visible;
+  transition: border-color 0.2s ease;
+}
+
+.micronutrientItem:hover {
+  border-bottom-color: #e2e8f0; /* Hover sutil */
+}
+
+.micronutrientItem:last-child {
+  border-bottom: none; /* Último item sem linha */
+  margin-bottom: 0;
+}
+
+.micronutrientName {
+  flex: 1;
+  font-weight: 500; /* MINIMALISTA: Menos bold */
+  color: #374151;
+  font-size: 0.95rem;
+  min-width: 0;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+/* ===== INPUT GROUP MINIMALISTA ===== */
+.micronutrientInputGroup {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e5e7eb; /* MINIMALISTA: Borda fina */
+  border-radius: 6px; /* MINIMALISTA: Bordas sutis */
+  overflow: hidden;
+  transition: all 0.2s ease;
+  width: 120px;
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.micronutrientInputGroup:focus-within {
+  border-color: #9ca3af; /* MINIMALISTA: Cinza no focus */
+  box-shadow: none; /* MINIMALISTA: Sem sombra colorida */
+}
+
+.micronutrientInput {
+  border: none !important;
+  outline: none !important;
+  padding: 10px 12px !important;
+  margin: 0 !important;
+  background: transparent !important;
+  flex: 1;
+  min-width: 0;
+  font-size: 0.9rem;
+  font-weight: 500; /* MINIMALISTA: Menos bold */
+  color: #374151;
+  box-shadow: none !important;
+  text-align: center;
+}
+
+.micronutrientInput:focus {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.micronutrientUnit {
+  background: #f8fafc; /* MINIMALISTA: Fundo muito sutil */
+  color: #6b7280; /* MINIMALISTA: Cinza neutro */
+  padding: 10px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-left: 1px solid #e5e7eb; /* MINIMALISTA: Divisor sutil */
+  white-space: nowrap;
+  user-select: none;
+  min-width: 32px;
+  text-align: center;
+  /* CORREÇÃO: Centralização perfeita */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.micronutrientInputGroup:focus-within .micronutrientUnit {
+  background: #f1f5f9; /* MINIMALISTA: Mudança sutil no focus */
+  color: #6b7280;
+}
+
+.removeMicronutrient {
+  background: transparent; /* MINIMALISTA: Sem fundo */
+  border: none; /* MINIMALISTA: Sem borda */
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px; /* MINIMALISTA: Bordas sutis */
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: #9ca3af; /* MINIMALISTA: Cinza neutro */
+}
+
+.removeMicronutrient:hover {
+  background: #f3f4f6; /* MINIMALISTA: Fundo sutil no hover */
+  color: #6b7280; /* MINIMALISTA: Sem vermelho */
+  transform: none; /* MINIMALISTA: Sem animação exagerada */
+}
+
+/* ===== ESTADO VAZIO ===== */
+.emptyMicronutrientsMessage {
+  text-align: center;
+  color: #9ca3af;
+  font-style: italic;
+  font-size: 0.9rem;
+  padding: 24px 0;
+  margin-bottom: 20px;
+}
+
+/* ===== INFORMAÇÕES PROFISSIONAIS ===== */
+.professionalToggle {
+  margin-bottom: 20px;
+}
+
+.professionalToggle label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #374151;
+  font-weight: 500;
+}
+
+.professionalToggle input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.professionalInfo {
+  background: #f0f9ff;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #3b82f6;
+}
+
+/* ===== AÇÕES DO MODAL ===== */
+.goalsActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.cancelButton,
+.saveButton {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  white-space: nowrap; /* EVITA QUEBRA DE TEXTO */
+}
+
+.cancelButton {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.cancelButton:hover {
+  background: #e5e7eb;
+}
+
+.saveButton {
+  background: #3b82f6;
+  color: white;
+}
+
+.saveButton:hover {
+  background: #2563eb;
+}
+
+/* ===== RESPONSIVO MOBILE ===== */
+@media (max-width: 768px) {
+  .goalsSettingsOverlay {
+    padding: 10px;
+    align-items: flex-start; /* ALINHA NO TOPO */
+  }
+
+  .goalsSettingsModal {
+    margin-top: 20px; /* ESPAÇO DO TOPO */
+    max-height: calc(100vh - 40px); /* ALTURA MÁXIMA MOBILE */
+  }
+
+  .goalsSettingsHeader {
+    padding: 20px 24px;
+  }
+
+  .goalsSettingsHeader h2 {
+    font-size: 1.3rem;
+    padding-right: 35px; /* MENOS ESPAÇO PARA O X */
+  }
+
+  .closeButton {
+    right: 24px; /* AJUSTAR POSIÇÃO */
+    font-size: 1.3rem;
+    width: 28px;
+    height: 28px;
+  }
+
+  .goalsForm {
+    padding: 0 24px 24px;
+  }
+
+  .micronutrientItem {
+    gap: 12px;
+    padding: 14px 0;
+    margin-bottom: 10px;
+  }
+
+  .micronutrientName {
+    font-size: 0.9rem;
+  }
+
+  .micronutrientInputGroup {
+    width: 110px;
+    min-width: 110px;
+  }
+
+  .micronutrientInput {
+    padding: 9px 10px !important;
+    font-size: 0.85rem;
+  }
+
+  .micronutrientUnit {
+    padding: 9px 10px;
+    font-size: 0.75rem;
+    min-width: 28px;
+  }
+
+  .removeMicronutrient {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+  }
+
+  .goalsActions {
+    flex-direction: column; /* EMPILHAR BOTÕES */
+    gap: 8px;
+  }
+
+  .cancelButton,
+  .saveButton {
+    width: 100%; /* LARGURA TOTAL */
+    padding: 14px;
+  }
+}
+
+/* ===== MOBILE MUITO PEQUENO ===== */
+@media (max-width: 480px) {
+  .goalsSettingsOverlay {
+    padding: 5px;
+  }
+
+  .goalsSettingsModal {
+    margin-top: 10px;
+    border-radius: 12px;
+  }
+
+  .goalsSettingsHeader {
+    padding: 16px 20px;
+  }
+
+  .goalsSettingsHeader h2 {
+    font-size: 1.2rem;
+  }
+
+  .closeButton {
+    right: 20px;
+    font-size: 1.2rem;
+    width: 26px;
+    height: 26px;
+  }
+
+  .goalsForm {
+    padding: 0 20px 20px;
+  }
+
+  .micronutrientItem {
+    gap: 10px;
+    padding: 12px 0;
+    margin-bottom: 8px;
+  }
+
+  .micronutrientName {
+    font-size: 0.85rem;
+  }
+
+  .micronutrientInputGroup {
+    width: 100px;
+    min-width: 100px;
+  }
+
+  .micronutrientInput {
+    padding: 8px 9px !important;
+    font-size: 0.8rem;
+  }
+
+  .micronutrientUnit {
+    padding: 8px 9px;
+    font-size: 0.7rem;
+    min-width: 26px;
+  }
+
+  .removeMicronutrient {
+    width: 26px;
+    height: 26px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ===== ESTADOS DE FOCO ===== */
+.closeButton:focus,
+.cancelButton:focus,
+.saveButton:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* ===== ANIMAÇÕES ===== */
+.micronutrientItem {
+  animation: none; /* MINIMALISTA: Sem animações */
+}

@@ -1,0 +1,148 @@
+/* src/components/WorkoutTracker/TimerToast/TimerToast.module.css */
+
+/* ===== TOAST COMPACTO (SEMPRE PEQUENO) ===== */
+.compactToast {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 8px 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: slideInFromTop 0.3s ease-out;
+
+  /* ✅ Tamanho fixo pequeno */
+  width: 240px !important;
+  max-width: 240px !important;
+  min-height: auto;
+  max-height: 80px;
+}
+
+.compactToast:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+}
+
+.compactContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.compactTimer {
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Courier New", monospace;
+  flex-shrink: 0;
+  min-width: 60px;
+}
+
+.compactInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.compactExercise {
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.1;
+}
+
+.compactSet {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  line-height: 1;
+}
+
+.compactSkip {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 6px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.7rem;
+  color: white;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.compactSkip:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* ===== ANIMAÇÃO ===== */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  .compactToast {
+    top: 10px !important;
+    right: 10px !important;
+    width: 200px !important;
+    max-width: 200px !important;
+    padding: 6px 10px;
+  }
+
+  .compactTimer {
+    font-size: 0.9rem;
+    min-width: 50px;
+  }
+
+  .compactExercise {
+    font-size: 0.75rem;
+  }
+
+  .compactSet {
+    font-size: 0.65rem;
+  }
+
+  .compactSkip {
+    width: 20px;
+    height: 20px;
+    font-size: 0.6rem;
+  }
+}
+
+/* ===== ESTADO DE AVISO (TEMPO QUASE ACABANDO) ===== */
+.compactToast[data-warning="true"] {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(255, 107, 107, 0.6);
+  }
+  100% {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+}

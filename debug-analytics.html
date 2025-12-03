@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Analytics</title>
+</head>
+<body>
+    <h1>Debug Analytics Data</h1>
+    <button onclick="debugData()">Check IndexedDB Data</button>
+    <pre id="output"></pre>
+    
+    <script>
+        async function debugData() {
+            const output = document.getElementById('output');
+            
+            // Open IndexedDB
+            const request = indexedDB.open('GymTrackerDB', 1);
+            
+            request.onsuccess = async (event) => {
+                const db = event.target.result;
+                const tx = db.transaction(['loggedExercises', 'exerciseDefinitions'], 'readonly');
+                
+                const loggedStore = tx.objectStore('loggedExercises');
+                const defStore = tx.objectStore('exerciseDefinitions');
+                
+                const loggedExercises = await new Promise((resolve) => {
+                    const req = loggedStore.getAll();
+                    req.onsuccess = () => resolve(req.result);
+                });
+                
+                const exerciseDefinitions = await new Promise((resolve) => {
+                    const req = defStore.getAll();
+                    req.onsuccess = () => resolve(req.result);
+                });
+                
+                output.textContent = 'LOGGED EXERCISES:\n' + 
+                    JSON.stringify(loggedExercises, null, 2) + 
+                    '\n\nEXERCISE DEFINITIONS:\n' +
+                    JSON.stringify(exerciseDefinitions, null, 2);
+            };
+        }
+    </script>
+</body>
+</html>

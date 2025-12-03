@@ -1,0 +1,401 @@
+/* src/components/WorkoutTracker/ExerciseCompletedModal/ExerciseCompletedModal.module.css */
+
+/* ✅ OVERLAY - Cobertura total da tela */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+
+  /* ✅ FLEXBOX para centralização perfeita */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* ✅ PADDING para evitar que toque as bordas */
+  padding: 20px;
+  box-sizing: border-box;
+
+  /* ✅ ANIMAÇÃO de entrada */
+  animation: overlayFadeIn 0.3s ease-out;
+}
+
+/* ✅ CONTEÚDO DO MODAL */
+.modalContent {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+
+  /* ✅ TAMANHO responsivo */
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+
+  /* ✅ SCROLL interno se necessário */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  /* ✅ ANIMAÇÃO de entrada */
+  animation: modalSlideIn 0.3s ease-out;
+
+  /* ✅ BORDA superior colorida */
+  border-top: 4px solid #10b981;
+
+  /* ✅ RESET de posicionamento */
+  position: relative;
+  margin: 0;
+  transform: none;
+}
+
+/* ✅ HEADER fixo */
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.headerInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.exerciseName {
+  margin: 0 0 8px 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.3;
+  word-wrap: break-word;
+}
+
+.completedBadge {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 16px;
+  line-height: 1;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.closeButton:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* ✅ BODY com scroll */
+.modalBody {
+  padding: 0 24px 24px 24px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summaryItem {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.summaryItem:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.summaryLabel {
+  display: block;
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summaryValue {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.completionInfo {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.infoItem:last-child {
+  margin-bottom: 0;
+}
+
+.infoLabel {
+  font-size: 0.9rem;
+  color: #166534;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.infoValue {
+  font-size: 0.9rem;
+  color: #166534;
+  font-weight: 600;
+  text-align: right;
+  word-wrap: break-word;
+}
+
+.notesSection {
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.notesTitle {
+  margin: 0 0 8px 0;
+  font-size: 0.9rem;
+  color: #92400e;
+  font-weight: 600;
+}
+
+.notesText {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #92400e;
+  line-height: 1.5;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* ✅ ACTIONS fixas */
+.modalActions {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px 24px 24px;
+  justify-content: flex-end;
+  border-top: 1px solid #f3f4f6;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.closeActionButton {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.closeActionButton:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.closeActionButton:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.restartButton {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.restartButton:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.restartButton:focus {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+/* ✅ ANIMAÇÕES */
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ✅ RESPONSIVIDADE MOBILE */
+@media (max-width: 640px) {
+  .modalOverlay {
+    padding: 16px;
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+
+  .modalContent {
+    max-height: calc(100vh - 80px);
+    border-radius: 12px;
+  }
+
+  .modalHeader {
+    padding: 20px 16px 16px 16px;
+  }
+
+  .modalBody {
+    padding: 0 16px 20px 16px;
+  }
+
+  .modalActions {
+    padding: 16px;
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .summaryGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .closeActionButton,
+  .restartButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .infoItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .infoValue {
+    text-align: left;
+  }
+
+  .exerciseName {
+    font-size: 1.1rem;
+  }
+
+  .closeButton {
+    width: 36px;
+    height: 36px;
+    font-size: 1.25rem;
+  }
+}
+
+/* ✅ TELAS MUITO PEQUENAS */
+@media (max-width: 480px) {
+  .modalOverlay {
+    padding: 12px;
+    padding-top: 20px;
+  }
+
+  .modalContent {
+    max-height: calc(100vh - 40px);
+  }
+
+  .summaryGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .summaryItem {
+    padding: 8px 6px;
+  }
+
+  .summaryLabel {
+    font-size: 0.7rem;
+  }
+
+  .summaryValue {
+    font-size: 1rem;
+  }
+
+  .modalHeader {
+    padding: 16px 12px 12px 12px;
+  }
+
+  .modalBody {
+    padding: 0 12px 16px 12px;
+  }
+
+  .modalActions {
+    padding: 12px;
+  }
+}

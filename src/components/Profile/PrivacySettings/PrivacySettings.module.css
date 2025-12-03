@@ -1,0 +1,265 @@
+/* src/components/Profile/PrivacySettings/PrivacySettings.module.css */
+
+.container {
+  width: 100%;
+}
+
+/* Header */
+.header {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.header h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1a202c;
+  margin: 0 0 0.5rem 0;
+}
+
+.subtitle {
+  font-size: 0.9375rem;
+  color: #718096;
+  margin: 0;
+}
+
+/* Settings List */
+.settingsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.settingItem {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 2px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+.settingItem:hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+/* Setting Info */
+.settingInfo {
+  margin-bottom: 1.25rem;
+}
+
+.settingLabel {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 0.25rem 0;
+}
+
+.settingDescription {
+  font-size: 0.875rem;
+  color: #718096;
+  margin: 0;
+}
+
+/* Privacy Buttons */
+.privacyButtons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.privacyButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: #f7fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  gap: 0.5rem;
+}
+
+.privacyButton:hover {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+  transform: translateY(-2px);
+}
+
+.privacyButton.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.privacyIcon {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.privacyButton.active .privacyLabel,
+.privacyButton.active .privacyDescription {
+  color: white;
+}
+
+.privacyLabel {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.privacyButton .privacyDescription {
+  font-size: 0.75rem;
+  color: #718096;
+  text-align: center;
+}
+
+/* Info Box */
+.infoBox {
+  background: linear-gradient(135deg, #ebf4ff 0%, #f0f4ff 100%);
+  border: 2px solid #bee3f8;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.infoIcon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.infoContent h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a365d;
+  margin: 0 0 0.75rem 0;
+}
+
+.infoContent ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  list-style: none;
+}
+
+.infoContent li {
+  font-size: 0.875rem;
+  color: #2c5282;
+  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 0.5rem;
+}
+
+.infoContent li:last-child {
+  margin-bottom: 0;
+}
+
+.infoContent strong {
+  font-weight: 700;
+}
+
+/* Save Section */
+.saveSection {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.saveButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.saveButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.saveButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.saveButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.saveMessage {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.saveMessage.success {
+  background: #c6f6d5;
+  color: #22543d;
+  border: 2px solid #9ae6b4;
+}
+
+.saveMessage.error {
+  background: #fed7d7;
+  color: #742a2a;
+  border: 2px solid #fc8181;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .privacyButtons {
+    grid-template-columns: 1fr;
+  }
+
+  .privacyButton {
+    padding: 1.25rem 1rem;
+  }
+
+  .infoBox {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header {
+    padding: 1.5rem;
+  }
+
+  .header h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .settingItem {
+    padding: 1.25rem;
+  }
+
+  .settingLabel {
+    font-size: 1rem;
+  }
+
+  .saveButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

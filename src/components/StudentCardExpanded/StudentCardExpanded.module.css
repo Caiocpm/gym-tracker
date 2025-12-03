@@ -1,0 +1,293 @@
+.studentCard {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
+}
+
+.studentCard:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Header */
+.studentHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.studentAvatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.studentInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.studentInfo h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0 0 0.25rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.studentInfo p {
+  font-size: 0.875rem;
+  color: #718096;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.expandButton {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  color: #667eea;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.expandButton:hover {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+/* Métricas Rápidas */
+.quickMetrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.metricBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: #f7fafc;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.metricIcon {
+  font-size: 1.25rem;
+}
+
+.metricContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.metricLabel {
+  font-size: 0.75rem;
+  color: #718096;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metricValue {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2d3748;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Conteúdo Expandido */
+.expandedContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+  margin-bottom: 1rem;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: #f7fafc;
+  border-radius: 0.5rem;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+.statValue {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.noteItem {
+  padding: 0.75rem;
+  background: #f7fafc;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #4a5568;
+  line-height: 1.5;
+}
+
+.noteItem strong {
+  color: #2d3748;
+}
+
+/* Ações */
+.studentActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.viewButton,
+.unlinkButton {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.viewButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.viewButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.unlinkButton {
+  background: white;
+  color: #e53e3e;
+  border: 1px solid #e53e3e;
+}
+
+.unlinkButton:hover {
+  background: #e53e3e;
+  color: white;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .studentCard {
+    padding: 1rem;
+  }
+
+  .quickMetrics {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .studentActions {
+    flex-direction: column;
+  }
+
+  .metricBadge {
+    padding: 0.5rem;
+  }
+
+  .metricLabel,
+  .statLabel {
+    font-size: 0.7rem;
+  }
+
+  .metricValue,
+  .statValue {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .quickMetrics {
+    grid-template-columns: 1fr;
+  }
+
+  .studentHeader {
+    flex-wrap: wrap;
+  }
+
+  .expandButton {
+    order: 3;
+    width: 100%;
+  }
+}

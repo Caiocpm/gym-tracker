@@ -1,0 +1,433 @@
+/* src/components/WorkoutTracker/WorkoutTracker.module.css */
+
+.workoutTracker {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #f8f5f5;
+}
+
+/* ✅ HEADER SIMPLIFICADO */
+.headerCard {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  position: relative;
+  overflow: hidden;
+}
+
+.headerCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #535557, #4c00ff, #06b6d4);
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.headerText {
+  flex: 1;
+  min-width: 0;
+}
+
+.headerText h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+}
+
+.headerText p {
+  margin: 0;
+  color: #64748b;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.settingsButton {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #475569;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.settingsButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.settingsButton:hover {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-color: #94a3b8;
+}
+
+.settingsButton:hover::before {
+  opacity: 0.1;
+}
+
+.settingsButton:active {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* ✅ RESHARE CONTAINER - Novo design elegante */
+.reshareContainer {
+  margin-top: 10px;
+  padding: 0 0 20px 0;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reshareButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+}
+
+.reshareButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #06b6d4 100%);
+}
+
+.reshareButton:hover {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-color: #919191;
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.2);
+  transform: translateY(-2px);
+}
+
+.reshareButton:active {
+  transform: translateY(0);
+}
+
+.reshareIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.reshareContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  flex: 1;
+}
+
+.reshareTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000000;
+  line-height: 1.2;
+}
+
+.reshareSubtitle {
+  font-size: 0.85rem;
+  color: #363636;
+  line-height: 1.2;
+}
+
+/* ✅ RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .workoutTracker {
+    padding: 16px;
+  }
+
+  .headerCard {
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+  }
+
+  .headerContent {
+    gap: 16px;
+  }
+
+  .headerText h2 {
+    font-size: 1.5rem;
+  }
+
+  .headerText p {
+    font-size: 0.9rem;
+  }
+
+  .settingsButton {
+    width: 48px;
+    height: 48px;
+    padding: 12px;
+    font-size: 1.2rem;
+    border-radius: 10px;
+  }
+
+  .reshareContainer {
+    padding: 0 0 16px 0;
+  }
+
+  .reshareButton {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .reshareIcon {
+    font-size: 1.25rem;
+  }
+
+  .reshareTitle {
+    font-size: 0.95rem;
+  }
+
+  .reshareSubtitle {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .workoutTracker {
+    padding: 12px;
+  }
+
+  .headerCard {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .headerContent {
+    gap: 12px;
+  }
+
+  .headerText h2 {
+    font-size: 1.25rem;
+  }
+
+  .headerText p {
+    font-size: 0.85rem;
+  }
+
+  .settingsButton {
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    font-size: 1.1rem;
+  }
+
+  .reshareContainer {
+    padding: 0 0 12px 0;
+  }
+
+  .reshareButton {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .reshareIcon {
+    font-size: 1.1rem;
+  }
+
+  .reshareTitle {
+    font-size: 0.9rem;
+  }
+
+  .reshareSubtitle {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .workoutTracker {
+    padding: 8px;
+  }
+
+  .headerCard {
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+  }
+
+  .headerCard::before {
+    height: 3px;
+  }
+
+  .headerContent {
+    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .headerText h2 {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+
+  .headerText p {
+    font-size: 0.8rem;
+  }
+
+  .settingsButton {
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    font-size: 1rem;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .reshareContainer {
+    padding: 0 0 8px 0;
+  }
+
+  .reshareButton {
+    padding: 12px 12px;
+    gap: 8px;
+  }
+
+  .reshareIcon {
+    font-size: 1rem;
+  }
+
+  .reshareTitle {
+    font-size: 0.85rem;
+  }
+
+  .reshareSubtitle {
+    font-size: 0.7rem;
+  }
+}
+
+/* ✅ ANIMAÇÕES */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.headerCard {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ✅ ACESSIBILIDADE */
+.settingsButton:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.settingsButton:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.reshareButton:focus {
+  outline: 2px solid #22c55e;
+  outline-offset: 2px;
+}
+
+.reshareButton:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ✅ DARK MODE SUPPORT */
+@media (prefers-color-scheme: dark) {
+  .headerCard {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+  }
+
+  .headerText h2 {
+    background: linear-gradient(135deg, #f1f5f9 0%, #3b82f6 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .headerText p {
+    color: #94a3b8;
+  }
+
+  .settingsButton {
+    background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+    border-color: #6b7280;
+    color: #d1d5db;
+  }
+
+  .settingsButton:hover {
+    background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+    border-color: #9ca3af;
+  }
+}

@@ -1,0 +1,982 @@
+/* src/components/StudentDashboard/StudentDashboard.module.css */
+
+/* ===== CSS VARIABLES - ALINHADO COM PROFILE ===== */
+:root {
+  --primary-color-start: #667eea;
+  --primary-color-end: #764ba2;
+  --text-color-dark: #1a1a1a;
+  --text-color-medium: #495057;
+  --text-color-light: #6c757d;
+  --white-alpha-95: rgba(255, 255, 255, 0.95);
+  --white-alpha-70: rgba(255, 255, 255, 0.7);
+  --white-alpha-50: rgba(255, 255, 255, 0.5);
+  --white-alpha-30: rgba(255, 255, 255, 0.3);
+  --white-alpha-20: rgba(255, 255, 255, 0.2);
+  --border-light: #e5e5e5;
+  --shadow-light: rgba(0, 0, 0, 0.04);
+  --shadow-medium: rgba(0, 0, 0, 0.1);
+  --shadow-hover: rgba(0, 0, 0, 0.15);
+  --transition-speed: all 0.3s ease;
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-pill: 25px;
+}
+
+/* ===== DASHBOARD MAIN CONTAINER - ESTILO PROFILE.CSS EXATO ===== */
+.dashboard {
+  background: var(--white-alpha-95);
+  backdrop-filter: blur(10px);
+  border-radius: var(--border-radius-xl);
+  padding: 2rem;
+  box-shadow: 0 8px 32px var(--shadow-medium);
+  border: 1px solid var(--white-alpha-20);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* ===== HEADER - ESTILO PROFILE.CSS EXATO ===== */
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.headerContent h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-color-dark);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.headerContent p {
+  color: var(--text-color-light);
+  font-size: 1rem;
+}
+
+/* ===== TABS CONTAINER & HEADER - ADAPTADO DO PROFILE.CSS ===== */
+.tabsContainer {
+  /* No direct equivalent in Profile.css, keeping it minimal */
+  margin-bottom: 2rem; /* Aligned with profile-tabs margin-bottom */
+  background: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+}
+
+.tabsHeader {
+  text-align: center;
+  margin-bottom: 2rem; /* Consistent spacing */
+}
+
+.tabsHeader h2 {
+  font-size: 1.8rem; /* Similar to dashboard-header h2 */
+  font-weight: 700;
+  color: var(--text-color-medium);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.tabsHeader p {
+  color: var(--text-color-light);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* ===== TABS - ESTILO PROFILE.CSS EXATO (.profile-tabs) ===== */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  background: #ffffff;
+  border-radius: var(--border-radius-md);
+  padding: 0.5rem;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.tab {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: transparent;
+  color: #666666;
+  border-radius: var(--border-radius-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-speed);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  justify-content: center;
+  min-width: 120px;
+}
+
+.tab:hover {
+  background: #f8f8f8;
+  color: #333333;
+}
+
+.tab.active {
+  background: #000000;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* ===== TAB BADGE - INDICADOR VISUAL (ADAPTADO DO PROFILE.CSS) ===== */
+.tabBadge {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: #ff6b6b; /* Using a warning/alert color from Profile.css delete button */
+  border-radius: 50%;
+  animation: studentDashboardPulse 2s infinite;
+  flex-shrink: 0;
+  margin-top: 4px;
+  box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); /* Initial shadow for pulse */
+}
+
+@keyframes studentDashboardPulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7);
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+    box-shadow: 0 0 0 6px rgba(255, 107, 107, 0);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0);
+  }
+}
+
+/* ===== CONTENT & SECTION - ADAPTADO DO PROFILE.CSS ===== */
+.content {
+  background: var(--white-alpha-70); /* Similar to profile-form-container */
+  backdrop-filter: blur(5px);
+  border-radius: var(--border-radius-lg);
+  padding: 1.5rem;
+  border: 1px solid var(--white-alpha-30);
+}
+
+.section h2 {
+  color: var(--text-color-medium);
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color-start) 0%,
+    var(--primary-color-end) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ===== STATS GRID - ESTILO PROFILE.CSS EXATO (.dashboard-cards-container, .info-card) ===== */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  background: var(--white-alpha-95);
+  backdrop-filter: blur(15px);
+  border-radius: var(--border-radius-xl);
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px var(--shadow-medium);
+  border: 1px solid var(--white-alpha-30);
+  transition: var(--transition-speed);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 120px;
+}
+
+.statCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px var(--shadow-hover);
+}
+
+.statIcon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.1) 0%,
+    rgba(118, 75, 162, 0.1) 100%
+  );
+  border-radius: var(--border-radius-lg);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  color: var(--primary-color-start); /* Ensure icon color matches */
+}
+
+.statContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.statContent h3 {
+  /* Added h3 for consistency, assuming statLabel is a p or span */
+  color: var(--text-color-medium);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statValue {
+  color: #212529; /* Slightly darker for emphasis */
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.25rem;
+}
+
+.statLabel {
+  color: var(--text-color-light);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* ===== RECENT NOTIFICATIONS - NO PROFILE.CSS EQUIVALENT, ADAPTED AESTHETIC ===== */
+.recentNotifications {
+  background: var(--white-alpha-95);
+  backdrop-filter: blur(15px);
+  border-radius: var(--border-radius-xl);
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px var(--shadow-medium);
+  border: 1px solid var(--white-alpha-30);
+  margin-bottom: 2rem;
+}
+
+.recentNotifications h3 {
+  color: var(--text-color-medium);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.notificationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.notificationItem {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.75rem;
+  background: var(--white-alpha-70);
+  backdrop-filter: blur(5px);
+  border-radius: var(--border-radius-md);
+  border-left: 3px solid var(--primary-color-start);
+  transition: var(--transition-speed);
+  border: 1px solid var(--white-alpha-30);
+}
+
+.notificationItem:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.notificationDot {
+  width: 10px;
+  height: 10px;
+  background: var(--primary-color-start);
+  border-radius: 50%;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.notificationTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-color-medium);
+  margin: 0 0 4px 0;
+}
+
+.notificationPreview {
+  font-size: 0.85rem;
+  color: var(--text-color-light);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ===== EMPTY STATE - ESTILO PROFILE.CSS EXATO (.profile-empty-state) ===== */
+.emptyState {
+  background: var(--white-alpha-95);
+  backdrop-filter: blur(15px);
+  border-radius: var(--border-radius-xl);
+  padding: 3rem 2rem;
+  box-shadow: 0 8px 32px var(--shadow-medium);
+  border: 1px solid var(--white-alpha-30);
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  color: var(--text-color-light);
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.emptyState p {
+  color: var(--text-color-light);
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.emptySubtext {
+  font-size: 0.9rem;
+  color: var(--text-color-light);
+  margin-bottom: 1rem;
+}
+
+/* ===== NOTES - NO PROFILE.CSS EQUIVALENT, ADAPTED AESTHETIC ===== */
+.notesList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.noteCard {
+  background: var(--white-alpha-70);
+  backdrop-filter: blur(5px);
+  border-radius: var(--border-radius-lg);
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--white-alpha-30);
+  transition: var(--transition-speed);
+}
+
+.noteCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.noteHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.noteTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary-color-start);
+  margin: 0;
+  flex: 1;
+}
+
+.noteCategory {
+  background-color: #1d1e1f; /* Dark background for category, similar to active tab */
+  color: var(--white-alpha-95);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.noteContent {
+  font-size: 0.95rem;
+  color: var(--text-color-medium);
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+.noteMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-color-light);
+  border-top: 1px solid var(--white-alpha-30);
+  padding-top: 0.5rem;
+}
+
+.noteDate {
+  font-weight: 600;
+}
+
+.noteTags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background-color: var(--white-alpha-70);
+  color: var(--text-color-medium);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.75rem;
+  border: 1px dashed var(--white-alpha-30);
+}
+
+/* ===== GOALS - NO PROFILE.CSS EQUIVALENT, ADAPTED AESTHETIC ===== */
+.goalsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.goalCard {
+  background: var(--white-alpha-70);
+  backdrop-filter: blur(5px);
+  border-radius: var(--border-radius-lg);
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--white-alpha-30);
+  transition: var(--transition-speed);
+}
+
+.goalCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.goalCard.completed {
+  border: 2px solid #28a745; /* Green for completed */
+  background: rgba(40, 167, 69, 0.05); /* Light green background */
+}
+
+.goalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.goalTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary-color-start);
+  margin: 0;
+  flex: 1;
+}
+
+.completedBadge {
+  background-color: #28a745;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.goalDescription {
+  font-size: 0.95rem;
+  color: var(--text-color-medium);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.progressContainer {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.progressBar {
+  flex: 1;
+  height: 8px;
+  background: var(--white-alpha-30);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--primary-color-start) 0%,
+    var(--primary-color-end) 100%
+  );
+  border-radius: var(--border-radius-sm);
+  transition: width 0.5s ease-in-out;
+}
+
+.progressText {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-color-start);
+  min-width: 45px;
+  text-align: right;
+}
+
+.goalValues {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--white-alpha-50);
+  border-radius: var(--border-radius-md);
+  border: 1px dashed var(--white-alpha-30);
+}
+
+.goalValues > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.goalValues .label {
+  font-size: 0.75rem;
+  color: var(--text-color-light);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.goalValues .value {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--text-color-medium);
+}
+
+/* ===== EVALUATIONS - NO PROFILE.CSS EQUIVALENT, ADAPTED AESTHETIC ===== */
+.evaluationsSection {
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  color: var(--text-color-medium);
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color-start) 0%,
+    var(--primary-color-end) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.evaluationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.evaluationCard {
+  background: var(--white-alpha-70);
+  backdrop-filter: blur(5px);
+  border-radius: var(--border-radius-lg);
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--white-alpha-30);
+  border-left: 5px solid var(--primary-color-start); /* Highlight with primary color */
+  transition: var(--transition-speed);
+}
+
+.evaluationCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.evaluationCard.past {
+  opacity: 0.7;
+  border-left-color: #28a745; /* Green for past evaluations */
+}
+
+.evalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.evalTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary-color-start);
+  margin: 0;
+  flex: 1;
+}
+
+.evalType {
+  background-color: var(--primary-color-start);
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.evalMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-color-light);
+  border-top: 1px solid var(--white-alpha-30);
+  padding-top: 0.5rem;
+}
+
+.evalDateTime,
+.evalLocation {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* ===== RESPONSIVIDADE - ALINHADO COM PROFILE.CSS ===== */
+
+/* Desktop (>1024px) */
+@media (min-width: 1025px) {
+  .dashboard {
+    padding: 2rem; /* Keep consistent with base */
+  }
+
+  .header {
+    margin-bottom: 2rem;
+  }
+
+  .headerContent h1 {
+    font-size: 2rem; /* Keep consistent with base */
+  }
+
+  .headerContent p {
+    font-size: 1rem; /* Keep consistent with base */
+  }
+
+  .tabs {
+    max-width: 1000px; /* Same as main container */
+    margin: 0 auto 2rem auto;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(4, 1fr); /* 4 columns for stats */
+  }
+
+  .content {
+    padding: 1.5rem; /* Keep consistent with base */
+  }
+}
+
+/* Tablet (769px - 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .dashboard {
+    padding: 1.5rem;
+    max-width: 900px;
+  }
+
+  .header {
+    margin-bottom: 1.5rem;
+  }
+
+  .headerContent h1 {
+    font-size: 1.8rem;
+  }
+
+  .headerContent p {
+    font-size: 0.95rem;
+  }
+
+  .tabs {
+    gap: 0.5rem;
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tab {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.85rem;
+    min-width: 100px;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for stats */
+    gap: 1rem;
+  }
+
+  .statCard {
+    padding: 1.25rem;
+    min-height: 100px;
+  }
+
+  .statIcon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+  }
+
+  .statValue {
+    font-size: 1.5rem;
+  }
+
+  .content {
+    padding: 1.25rem;
+  }
+
+  .notesList,
+  .goalsList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile (max-width: 768px) */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem;
+    margin: 0 1rem;
+  }
+
+  .header {
+    margin-bottom: 1.5rem;
+  }
+
+  .headerContent h1 {
+    font-size: 1.6rem;
+  }
+
+  .headerContent p {
+    font-size: 0.9rem;
+  }
+
+  .tabsContainer {
+    margin-bottom: 1.5rem;
+  }
+
+  .tabsHeader h2 {
+    font-size: 1.5rem;
+  }
+
+  .tabs {
+    display: grid; /* Change to grid for mobile, similar to profile-mobile-nav */
+    grid-template-columns: repeat(3, 1fr); /* 3 columns for tabs */
+    gap: 0.5rem;
+    background: #ffffff;
+    border-radius: var(--border-radius-md);
+    padding: 0.5rem;
+    border: 1px solid var(--border-light);
+    box-shadow: 0 2px 8px var(--shadow-light);
+  }
+
+  .tab {
+    flex: none; /* Override flex: 1 from desktop */
+    min-width: unset;
+    padding: 0.75rem 0.5rem;
+    font-size: 0.8rem;
+    text-align: center;
+    flex-direction: column; /* Stack icon and text */
+    gap: 0.25rem;
+  }
+
+  .tabBadge {
+    margin-top: 0; /* Adjust badge position for stacked layout */
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for stats */
+    gap: 1rem;
+  }
+
+  .statCard {
+    padding: 1.25rem;
+    min-height: 100px;
+  }
+
+  .statIcon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+  }
+
+  .statValue {
+    font-size: 1.5rem;
+  }
+
+  .content {
+    padding: 1rem;
+  }
+
+  .section h2 {
+    font-size: 1.1rem;
+  }
+
+  .notesList,
+  .goalsList,
+  .evaluationsList {
+    grid-template-columns: 1fr; /* Single column for lists */
+  }
+
+  .noteCard,
+  .goalCard,
+  .evaluationCard {
+    padding: 1.25rem;
+  }
+
+  .goalValues {
+    grid-template-columns: 1fr; /* Single column for goal values */
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+}
+
+/* Mobile Pequeno (max-width: 480px) */
+@media (max-width: 480px) {
+  .dashboard {
+    padding: 0.75rem;
+    margin: 0 0.75rem;
+  }
+
+  .headerContent h1 {
+    font-size: 1.4rem;
+  }
+
+  .headerContent p {
+    font-size: 0.85rem;
+  }
+
+  .tabs {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for tabs */
+    gap: 0.4rem;
+    padding: 0.4rem;
+  }
+
+  .tab {
+    padding: 0.6rem 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr; /* Single column for stats */
+    gap: 0.75rem;
+  }
+
+  .statCard {
+    padding: 1rem;
+    flex-direction: column; /* Stack icon and text */
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  .statIcon {
+    font-size: 1.8rem;
+    width: 45px;
+    height: 45px;
+  }
+
+  .statValue {
+    font-size: 1.2rem;
+  }
+
+  .content {
+    padding: 0.75rem;
+  }
+
+  .section h2 {
+    font-size: 1rem;
+  }
+
+  .recentNotifications,
+  .emptyState,
+  .noteCard,
+  .goalCard,
+  .evaluationCard {
+    padding: 1rem;
+  }
+
+  .notificationItem {
+    padding: 0.6rem;
+  }
+
+  .noteTitle,
+  .goalTitle {
+    font-size: 1rem;
+  }
+
+  .goalValues {
+    padding: 0.5rem;
+  }
+}
+
+/* Mobile Muito Pequeno (max-width: 360px) */
+@media (max-width: 360px) {
+  .dashboard {
+    padding: 0.5rem;
+    margin: 0 0.5rem;
+  }
+
+  .headerContent h1 {
+    font-size: 1.2rem;
+  }
+
+  .headerContent p {
+    font-size: 0.8rem;
+  }
+
+  .tabs {
+    grid-template-columns: 1fr; /* Single column for tabs */
+    gap: 0.3rem;
+    padding: 0.3rem;
+  }
+
+  .tab {
+    padding: 0.5rem 0.3rem;
+    font-size: 0.7rem;
+  }
+
+  .statCard {
+    padding: 0.75rem;
+  }
+
+  .statIcon {
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+  }
+
+  .statValue {
+    font-size: 1rem;
+  }
+
+  .content {
+    padding: 0.5rem;
+  }
+
+  .section h2 {
+    font-size: 0.9rem;
+  }
+
+  .recentNotifications,
+  .emptyState,
+  .noteCard,
+  .goalCard,
+  .evaluationCard {
+    padding: 0.75rem;
+  }
+}

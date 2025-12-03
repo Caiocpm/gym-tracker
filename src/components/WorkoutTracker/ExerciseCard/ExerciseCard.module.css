@@ -1,0 +1,531 @@
+/* src/components/WorkoutTracker/ExerciseCard/ExerciseCard.module.css */
+
+.exerciseCard {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ✅ BARRA DE PROGRESSO NO TOPO */
+.exerciseCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #06b6d4 100%);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+  z-index: 1;
+}
+
+.exerciseCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #d1d5db;
+}
+
+/* ✅ MODO FORÇA */
+.exerciseCard.strengthMode {
+  border-left: 4px solid #667eea;
+}
+
+.exerciseCard.strengthMode::before {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+/* ✅ MODO RESISTÊNCIA - Cor discreta */
+.exerciseCard.resistanceMode {
+  border-left: 4px solid #e7e7e7;
+}
+
+.exerciseCard.resistanceMode::before {
+  background: linear-gradient(90deg, #cbd5e1 0%, #94a3b8 100%);
+}
+
+/* ✅ CARD COMPLETADO - Apenas barra verde + badge */
+.exerciseCard.completedCard::before {
+  background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+  transform: scaleX(1);
+}
+
+/* ✅ BADGE DE CONCLUSÃO - Menor e discreto */
+.exerciseCard.completedCard::after {
+  content: "✓";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+  z-index: 2;
+  animation: badgeBounce 0.6s ease-out;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes badgeBounce {
+  0% {
+    opacity: 0;
+    transform: scale(0) translateY(-10px);
+  }
+  70% {
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ✅ NOME DO EXERCÍCIO */
+.exerciseName {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+  padding-right: 0;
+  word-wrap: break-word;
+}
+
+/* ✅ STATS GRID */
+.exerciseStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.statItem {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.statItem:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-bottom: 6px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statValue {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* ✅ NOTAS DO EXERCÍCIO */
+.exerciseNotes {
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  color: #92400e;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+/* ✅ INFO DE CONCLUSÃO */
+.completedInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.completedBadge {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  padding: 2px 8px;
+  background: #e2e8f0;
+  border-radius: 6px;
+}
+
+/* ✅ BADGE DE RECORDE */
+.recordBadge {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ffffff;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+  animation: recordPulse 2s ease-in-out infinite;
+}
+
+@keyframes recordPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.5);
+  }
+}
+
+.completedDate {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-left: auto;
+}
+
+/* ✅ AÇÕES */
+.exerciseActions {
+  display: flex;
+  gap: 12px;
+}
+
+/* ✅ BOTÃO EXECUTAR - Cor discreta */
+.executeButton {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.executeButton:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.executeButton:active {
+  transform: translateY(0);
+}
+
+/* ✅ BOTÃO CONCLUÍDO - Verde discreto */
+.executeButton.completedButton {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #272727;
+}
+
+.executeButton.completedButton:hover {
+  background: #dcfce7;
+  border-color: #86efac;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+}
+
+.executeButton.completedButton:active {
+  transform: translateY(0);
+}
+
+/* ✅ RESPONSIVE - TABLET */
+@media (max-width: 1024px) {
+  .exerciseStats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .statItem {
+    padding: 10px;
+  }
+
+  .statLabel {
+    font-size: 0.7rem;
+  }
+
+  .statValue {
+    font-size: 0.95rem;
+  }
+
+  .exerciseName {
+    padding-right: 0;
+  }
+}
+
+/* ✅ RESPONSIVE - MOBILE */
+@media (max-width: 768px) {
+  .exerciseCard {
+    padding: 14px;
+    margin-bottom: 0;
+  }
+
+  .exerciseName {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
+
+  /* ✅ 2 COLUNAS - Reduzir espaçamento */
+  .exerciseStats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .statItem {
+    padding: 6px;
+  }
+
+  .statLabel {
+    font-size: 0.6rem;
+    margin-bottom: 2px;
+  }
+
+  .statValue {
+    font-size: 0.8rem;
+  }
+
+  .exerciseNotes {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    display: none; /* ✅ OCULTAR NOTAS EM MOBILE */
+  }
+
+  .completedInfo {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 6px 8px;
+    font-size: 0.75rem;
+  }
+
+  .completedBadge {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+
+  .recordBadge {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+  }
+
+  .completedDate {
+    font-size: 0.7rem;
+    margin-left: auto;
+  }
+
+  .executeButton {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    gap: 4px;
+  }
+
+  .executeButton span {
+    font-size: 0.85rem;
+  }
+
+  /* ✅ BADGE REDUZIDA */
+  .exerciseCard.completedCard::after {
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    top: 6px;
+    right: 6px;
+  }
+}
+
+/* ✅ RESPONSIVE - SMALL MOBILE */
+@media (max-width: 480px) {
+  .exerciseCard {
+    padding: 12px;
+    margin-bottom: 0;
+  }
+
+  .exerciseName {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+
+  .exerciseStats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+    margin-bottom: 6px;
+  }
+
+  .statItem {
+    padding: 5px;
+  }
+
+  .statLabel {
+    font-size: 0.55rem;
+    margin-bottom: 2px;
+  }
+
+  .statValue {
+    font-size: 0.75rem;
+  }
+
+  .exerciseNotes {
+    display: none;
+  }
+
+  .completedInfo {
+    display: flex;
+    gap: 5px;
+    margin-top: 6px;
+    padding: 5px 6px;
+    font-size: 0.7rem;
+  }
+
+  .completedBadge {
+    font-size: 0.65rem;
+    padding: 2px 5px;
+  }
+
+  .recordBadge {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+  }
+
+  .completedDate {
+    font-size: 0.65rem;
+    margin-left: auto;
+  }
+
+  .executeButton {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+    gap: 3px;
+  }
+
+  .executeButton span {
+    font-size: 0.8rem;
+  }
+
+  /* ✅ BADGE REDUZIDA */
+  .exerciseCard.completedCard::after {
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+    top: 5px;
+    right: 5px;
+  }
+}
+
+/* ===== DESKTOP (LAYOUT ORIGINAL) ===== */
+@media (min-width: 1024px) {
+  .exerciseCard {
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .exerciseName {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    padding-right: 120px;
+  }
+
+  .exerciseStats {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .statItem {
+    padding: 12px;
+  }
+
+  .statLabel {
+    font-size: 0.75rem;
+    margin-bottom: 6px;
+  }
+
+  .statValue {
+    font-size: 1rem;
+  }
+
+  .exerciseNotes {
+    display: block;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .completedInfo {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .completedBadge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    padding: 2px 8px;
+    background: #e2e8f0;
+    border-radius: 6px;
+  }
+
+  .recordBadge {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ffffff;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+  }
+
+  .completedDate {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-left: auto;
+  }
+
+  .executeButton {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    gap: 8px;
+  }
+
+  /* ✅ BADGE NORMAL */
+  .exerciseCard.completedCard::after {
+    content: "✓ Concluído";
+    width: auto;
+    height: auto;
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-size: 12px;
+    top: 12px;
+    right: 12px;
+  }
+}

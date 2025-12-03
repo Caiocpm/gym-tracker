@@ -1,0 +1,265 @@
+.devTools {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.toggleButton {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s;
+}
+
+.toggleButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.panel {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 400px;
+  max-width: calc(100vw - 40px);
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.content {
+  padding: 1.25rem;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.section h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.description {
+  font-size: 0.875rem;
+  color: #718096;
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+}
+
+.message {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.message.success {
+  background: #c6f6d5;
+  color: #2f855a;
+  border-left: 4px solid #2f855a;
+}
+
+.message.error {
+  background: #fed7d7;
+  color: #c53030;
+  border-left: 4px solid #c53030;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #f7fafc;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.info strong {
+  color: #2d3748;
+}
+
+.active {
+  color: #2f855a;
+  font-weight: 500;
+}
+
+.inactive {
+  color: #e53e3e;
+  font-weight: 500;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.seedButton,
+.clearButton {
+  width: 100%;
+  padding: 0.875rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.seedButton {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.seedButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.clearButton {
+  background: white;
+  color: #e53e3e;
+  border: 1px solid #e53e3e;
+}
+
+.clearButton:hover:not(:disabled) {
+  background: #e53e3e;
+  color: white;
+}
+
+.seedButton:disabled,
+.clearButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.infoItem:last-child {
+  border-bottom: none;
+}
+
+.infoItem span {
+  font-weight: 500;
+  color: #718096;
+}
+
+.infoItem code {
+  font-family: monospace;
+  font-size: 0.8125rem;
+  color: #2d3748;
+  background: #f7fafc;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Scrollbar */
+.content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: #f7fafc;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .panel {
+    width: calc(100vw - 40px);
+    max-height: 60vh;
+  }
+
+  .devTools {
+    bottom: 80px;
+  }
+}

@@ -1,0 +1,201 @@
+/* src/components/WorkoutTracker/WorkoutDayHeader/WorkoutDayHeader.module.css */
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.titleSection {
+  flex: 1;
+  min-width: 0;
+}
+
+.dayName {
+  margin: 0 0 4px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.exerciseCount {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.controlsSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.trainingToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.toggleLabel {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+}
+
+.toggleSwitch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.toggleInput {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggleSlider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #cbd5e1;
+  border-radius: 24px;
+  transition: all 0.3s ease;
+}
+
+.toggleSlider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggleInput:checked + .toggleSlider {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.toggleInput:checked + .toggleSlider:before {
+  transform: translateX(20px);
+}
+
+.toggleText {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+  min-width: 70px;
+  text-align: left;
+}
+
+.infoButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #3b82f6;
+  background: white;
+  color: #3b82f6;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.infoButton:hover {
+  background: #3b82f6;
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.infoButton:focus {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .headerContainer {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .titleSection {
+    text-align: center;
+  }
+
+  .dayName {
+    font-size: 1.25rem;
+  }
+
+  .controlsSection {
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .trainingToggle {
+    padding: 6px 10px;
+  }
+
+  .toggleText {
+    font-size: 0.8rem;
+    min-width: 60px;
+  }
+
+  .infoButton {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .headerContainer {
+    padding: 12px;
+  }
+
+  .dayName {
+    font-size: 1.1rem;
+  }
+
+  .exerciseCount {
+    font-size: 0.8rem;
+  }
+
+  .controlsSection {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .trainingToggle {
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+  }
+}

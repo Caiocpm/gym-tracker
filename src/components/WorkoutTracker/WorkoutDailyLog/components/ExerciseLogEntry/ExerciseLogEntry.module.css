@@ -1,0 +1,157 @@
+/* src/components/WorkoutTracker/components/WorkoutDailyLog/components/ExerciseLogEntry/ExerciseLogEntry.module.css */
+
+.exerciseLogEntry {
+  background-color: var(--background-color-light);
+  border-radius: 10px;
+  padding: 1.2rem;
+  box-shadow: var(--shadow-small);
+  border: 1px solid var(--border-color-light);
+  transition: all 0.2s ease-in-out;
+}
+
+.exerciseLogEntry:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.exerciseName {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-color-primary);
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color-light);
+  padding-bottom: 0.5rem;
+}
+
+.inputRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup label {
+  font-size: 0.85rem;
+  color: var(--text-color-secondary);
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+}
+
+.inputField,
+.textareaField {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border-color-medium);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--text-color-primary);
+  background-color: white;
+  transition: border-color 0.2s ease;
+}
+
+.inputField:focus,
+.textareaField:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.textareaField {
+  resize: vertical;
+}
+
+.toggleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  background-color: var(--background-color-card);
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color-light);
+}
+
+.toggleLabel {
+  font-weight: 500;
+  color: var(--text-color-primary);
+  font-size: 0.9rem;
+  flex-grow: 1;
+}
+
+/* Estilos para o toggle switch (reaproveitados) */
+.toggleSwitch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 24px;
+}
+
+.toggleSwitch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--color-primary);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--color-primary);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(16px);
+  -ms-transform: translateX(16px);
+  transform: translateX(16px);
+}
+
+.advancedMetrics {
+  border-top: 1px dashed var(--border-color-light);
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+/* Variáveis de exemplo, ajuste conforme seu tema global */
+:root {
+  --background-color-light: #f0f4f8;
+  --background-color-card: #ffffff;
+  --text-color-primary: #343a40;
+  --text-color-secondary: #6c757d;
+  --color-primary: #667eea;
+  --border-color-light: #e9ecef;
+  --border-color-medium: #ced4da;
+  --shadow-small: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-medium: 0 3px 8px rgba(0, 0, 0, 0.1);
+}

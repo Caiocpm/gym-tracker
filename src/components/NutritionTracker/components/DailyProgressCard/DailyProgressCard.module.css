@@ -1,0 +1,815 @@
+/* src/components/NutritionTracker/DailyProgressCard.module.css */
+
+/* ===== DAILY PROGRESS CARD - DESIGN NEUTRO ===== */
+.dailyProgressCard {
+  background: #ffffff;
+  border-radius: 10px; /* Slightly smaller radius for subtle look */
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0; /* Explicit light grey border */
+}
+
+.dailyProgressCard h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 15px 0;
+  text-align: left;
+}
+
+.dailyProgressCard h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 15px 0 10px 0;
+  text-align: left;
+}
+
+/* ===== ESTATÍSTICAS PRINCIPAIS - TONS NEUTROS ===== */
+.progressOverview {
+  margin-bottom: 20px;
+}
+
+.progressStats {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.progressStat {
+  flex: 1;
+  min-width: 150px;
+  background: #fdfdfd; /* Lighter background for inner cards */
+  border-radius: 6px; /* Slightly smaller radius */
+  padding: 15px;
+  border: 1px solid #eee; /* Lighter border */
+  text-align: center;
+}
+
+/* Changed from colors to shades of grey */
+.progressStat.planned {
+  border-left: 3px solid #adb5bd; /* Light grey */
+}
+
+.progressStat.consumed {
+  border-left: 3px solid #6c757d; /* Medium grey */
+}
+
+.progressStat.completion {
+  border-left: 3px solid #343a40; /* Dark grey */
+}
+
+.statIcon {
+  font-size: 16px;
+  margin-bottom: 8px; /* More spacing */
+  display: block;
+  color: #666; /* Icon grey */
+}
+
+.statInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statLabel {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statValue {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+}
+
+.statCalories {
+  font-size: 12px;
+  color: #888;
+  font-weight: 500;
+}
+
+/* ===== BARRA DE CONCLUSÃO NEUTRA ===== */
+.completionBar {
+  width: 100%;
+  height: 4px;
+  background: #e0e0e0;
+  border-radius: 2px; /* Keep */
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.completionFill {
+  height: 100%;
+  background: linear-gradient(90deg, #6c757d, #495057); /* Gradient grey */
+  border-radius: 2px; /* Keep */
+  transition: width 0.3s ease;
+}
+
+/* ===== PROGRESSO POR REFEIÇÃO - NEUTRO ===== */
+.mealsProgress {
+  margin-bottom: 15px;
+}
+
+.mealsProgressGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.mealProgressItem {
+  background: #fdfdfd; /* Lighter background */
+  border-radius: 6px; /* Keep */
+  padding: 12px; /* Slightly more padding */
+  border: 1px solid #e0e0e0;
+}
+
+.mealProgressHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.mealIcon {
+  font-size: 16px; /* Slightly larger icon */
+}
+
+.mealName {
+  flex: 1;
+  margin-left: 8px; /* More spacing */
+  font-weight: 500;
+  font-size: 13px; /* Slightly larger text */
+  color: #333;
+}
+
+.mealPercentage {
+  font-weight: 600;
+  font-size: 12px;
+  color: #495057; /* Dark grey instead of blue */
+}
+
+.mealProgressBar {
+  width: 100%;
+  height: 3px;
+  background: #f0f0f0; /* Lighter bar background */
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.mealProgressFill {
+  height: 100%;
+  background: #6c757d; /* Keep medium grey */
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.mealProgressDetails {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #666;
+}
+
+/* Items in grey tones */
+.consumedItems {
+  color: #495057; /* Dark grey instead of green */
+  font-weight: 500;
+}
+
+.plannedItems {
+  color: #6c757d; /* Medium grey instead of yellow */
+  font-weight: 500;
+}
+
+.totalCalories {
+  font-weight: 500;
+  color: #333;
+}
+
+/* ===== PROGRESSO DA ÁGUA - NEUTRO ===== */
+.waterProgress {
+  margin-bottom: 0;
+}
+
+.waterProgressItem {
+  background: #fdfdfd; /* Lighter background */
+  border-radius: 6px; /* Keep */
+  padding: 12px; /* Slightly more padding */
+  border: 1px solid #e0e0e0;
+  border-left: 3px solid #adb5bd; /* Light grey instead of blue */
+}
+
+.waterProgressHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.waterIcon {
+  font-size: 16px; /* Slightly larger icon */
+}
+
+.waterName {
+  flex: 1;
+  margin-left: 8px; /* More spacing */
+  font-weight: 500;
+  font-size: 13px; /* Slightly larger text */
+  color: #333;
+}
+
+.waterPercentage {
+  font-weight: 600;
+  font-size: 12px;
+  color: #6c757d; /* Grey instead of blue */
+}
+
+.waterProgressBar {
+  width: 100%;
+  height: 3px;
+  background: #f0f0f0; /* Lighter bar background */
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.waterProgressFill {
+  height: 100%;
+  background: #adb5bd; /* Light grey */
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.waterProgressDetails {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #666;
+}
+
+.consumedWater {
+  color: #6c757d; /* Grey instead of blue */
+  font-weight: 500;
+}
+
+.plannedWater {
+  color: #adb5bd; /* Light grey instead of yellow */
+  font-weight: 500;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  .dailyProgressCard {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .dailyProgressCard h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .dailyProgressCard h4 {
+    font-size: 14px;
+    margin: 12px 0 8px 0;
+  }
+
+  .progressStats {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .progressStat {
+    min-width: auto;
+    padding: 12px;
+  }
+
+  .mealsProgressGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .mealProgressItem,
+  .waterProgressItem {
+    padding: 8px;
+  }
+
+  .statValue {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dailyProgressCard {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .dailyProgressCard h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .dailyProgressCard h4 {
+    font-size: 13px;
+    margin: 10px 0 6px 0;
+  }
+
+  .progressStat {
+    padding: 10px;
+  }
+
+  .statLabel {
+    font-size: 11px;
+  }
+
+  .statValue {
+    font-size: 13px;
+  }
+
+  .statCalories {
+    font-size: 11px;
+  }
+
+  .mealProgressDetails,
+  .waterProgressDetails {
+    font-size: 9px;
+  }
+}
+
+/* ===== HOVER SUTIL ===== */
+.progressStat:hover,
+.mealProgressItem:hover,
+.waterProgressItem:hover {
+  background: #f0f0f0;
+  border-color: #d0d0d0; /* Hover in grey */
+}
+
+/* ===== ESTADOS ESPECIAIS ===== */
+.progressStat.completion .completionFill {
+  background: linear-gradient(
+    90deg,
+    #495057,
+    #343a40
+  ); /* Darker gradient for completion */
+}
+
+/* ===== CONSISTÊNCIA COM O RESTO DO APP ===== */
+.dailyProgressCard {
+  /* Same styles as other app cards */
+  background: #ffffff; /* Keep white */
+  border-radius: 10px; /* Consistent radius */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0; /* Consistent border */
+}
+
+.progressStat,
+.mealProgressItem,
+.waterProgressItem {
+  /* Same styles as internal cards */
+  background: #fdfdfd; /* Consistent lighter background */
+  border: 1px solid #e0e0e0;
+}
+/* src/components/NutritionTracker/DailyProgressCard.module.css */
+
+/* ===== CARD PRINCIPAL ===== */
+.dailyProgressCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.dailyProgressCard h3 {
+  margin: 0 0 1.5rem 0;
+  color: #333;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+/* ===== PROGRESSO GERAL ===== */
+.progressOverview {
+  margin-bottom: 2rem;
+}
+
+.progressStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.progressStat {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.progressStat:hover {
+  transform: translateY(-2px);
+}
+
+.progressStat.planned {
+  background: #fffbeb;
+  border: 1px solid #fed7aa;
+}
+
+.progressStat.consumed {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.progressStat.completion {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+}
+
+.statIcon {
+  font-size: 1.5rem;
+  min-width: 32px;
+}
+
+.statInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.statValue {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.statCalories {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* ===== BARRA DE CONCLUSÃO ===== */
+.completionBar {
+  width: 100%;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.completionFill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* ===== PROGRESSO POR REFEIÇÃO ===== */
+.mealsProgress {
+  margin-bottom: 2rem;
+}
+
+.mealsProgress h4 {
+  margin: 0 0 1rem 0;
+  color: #374151;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.mealsProgressGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.mealProgressItem {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  transition: all 0.2s ease;
+}
+
+.mealProgressItem:hover {
+  background: #f3f4f6;
+  transform: translateY(-1px);
+}
+
+.mealProgressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.mealIcon {
+  font-size: 1.25rem;
+}
+
+.mealName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  flex: 1;
+  margin-left: 0.5rem;
+}
+
+.mealPercentage {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.mealProgressBar {
+  width: 100%;
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.mealProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.mealProgressDetails {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.consumedItems {
+  color: #16a34a;
+}
+
+.plannedItems {
+  color: #f59e0b;
+}
+
+.totalCalories {
+  color: #6b7280;
+}
+
+/* ===== PROGRESSO DA ÁGUA ===== */
+.waterProgress h4 {
+  margin: 0 0 1rem 0;
+  color: #374151;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.waterProgressItem {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.waterProgressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.waterIcon {
+  font-size: 1.25rem;
+}
+
+.waterName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  flex: 1;
+  margin-left: 0.5rem;
+}
+
+.waterPercentage {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.waterProgressBar {
+  width: 100%;
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.waterProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #06b6d4, #0891b2);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.waterProgressDetails {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.consumedWater {
+  color: #0891b2;
+}
+
+.plannedWater {
+  color: #f59e0b;
+}
+
+/* ===== LAYOUT MOBILE ===== */
+@media (max-width: 768px) {
+  .mobileLayout {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .mobileLayout h3 {
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+  }
+
+  /* ✅ PROGRESSO GERAL - 3 COLUNAS NO MOBILE */
+  .mobileOverview {
+    margin-bottom: 1.5rem;
+  }
+
+  .mobileStats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .mobileStats .progressStat {
+    flex-direction: column;
+    text-align: center;
+    padding: 0.75rem 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .mobileStats .statIcon {
+    font-size: 1.25rem;
+    min-width: auto;
+  }
+
+  .mobileStats .statInfo {
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  .mobileStats .statLabel {
+    font-size: 0.75rem;
+  }
+
+  .mobileStats .statValue {
+    font-size: 0.875rem;
+  }
+
+  .mobileStats .statCalories {
+    font-size: 0.7rem;
+  }
+
+  .mobileStats .completionBar {
+    width: 80%;
+    height: 4px;
+    margin-top: 0.25rem;
+  }
+
+  /* ✅ REFEIÇÕES - 2 COLUNAS NO MOBILE */
+  .mobileGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .mobileItem {
+    padding: 0.75rem;
+  }
+
+  .mobileItem .mealProgressHeader {
+    margin-bottom: 0.5rem;
+  }
+
+  .mobileItem .mealIcon {
+    font-size: 1rem;
+  }
+
+  .mobileItem .mealName {
+    font-size: 0.75rem;
+    margin-left: 0.25rem;
+  }
+
+  .mobileItem .mealPercentage {
+    font-size: 0.75rem;
+  }
+
+  .mobileItem .mealProgressBar {
+    margin-bottom: 0.5rem;
+    height: 3px;
+  }
+
+  .mobileItem .mealProgressDetails {
+    font-size: 0.7rem;
+    gap: 0.25rem;
+  }
+
+  /* ✅ ÁGUA - LAYOUT COMPACTO NO MOBILE */
+  .mobileWater {
+    margin-bottom: 0;
+  }
+
+  .mobileWater h4 {
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .mobileWaterItem {
+    padding: 0.75rem;
+  }
+
+  .mobileWaterItem .waterProgressHeader {
+    margin-bottom: 0.5rem;
+  }
+
+  .mobileWaterItem .waterIcon {
+    font-size: 1rem;
+  }
+
+  .mobileWaterItem .waterName {
+    font-size: 0.75rem;
+    margin-left: 0.25rem;
+  }
+
+  .mobileWaterItem .waterPercentage {
+    font-size: 0.75rem;
+  }
+
+  .mobileWaterItem .waterProgressBar {
+    margin-bottom: 0.5rem;
+    height: 3px;
+  }
+
+  .mobileWaterItem .waterProgressDetails {
+    font-size: 0.7rem;
+  }
+}
+
+/* ===== MOBILE MUITO PEQUENO ===== */
+@media (max-width: 480px) {
+  .mobileGrid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .mobileStats {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .mobileStats .progressStat {
+    flex-direction: row;
+    text-align: left;
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .mobileStats .statInfo {
+    align-items: flex-start;
+  }
+}
+
+/* ===== MOBILE LANDSCAPE ===== */
+@media (max-width: 768px) and (orientation: landscape) {
+  .mobileGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .mobileStats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

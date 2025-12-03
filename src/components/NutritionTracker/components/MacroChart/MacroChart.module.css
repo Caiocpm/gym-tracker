@@ -1,0 +1,189 @@
+/* src/components/NutritionTracker/MacroChart.module.css */
+
+/* ===== MACRO CHART SECTION ===== */
+.macroChartSection {
+  /* Renomeado de macro-chart-section */
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 25px;
+}
+
+.macroChartSection h4 {
+  /* Renomeado de macro-chart-section h4 */
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
+.chartContainer {
+  /* Renomeado de chart-container */
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.emptyChart {
+  /* Renomeado de empty-chart */
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #ddd;
+}
+
+.emptyChart p {
+  /* Renomeado de empty-chart p */
+  font-size: 16px;
+  margin: 0;
+  font-style: italic;
+}
+
+/* ===== MACRO LEGEND ===== */
+.macroLegend {
+  /* Renomeado de macro-legend */
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  /* Renomeado de legend-item */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.legendColor {
+  /* Renomeado de legend-color */
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ===== MACRO TOOLTIP ===== */
+.macroTooltip {
+  /* Renomeado de macro-tooltip */
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: none;
+}
+
+.macroTooltip p {
+  /* Renomeado de macro-tooltip p */
+  margin: 0;
+  line-height: 1.4;
+}
+
+.macroTooltip p:first-child {
+  /* Renomeado de macro-tooltip p:first-child */
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .macroChartSection {
+    /* Renomeado de macro-chart-section */
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .macroChartSection h4 {
+    /* Renomeado de macro-chart-section h4 */
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .chartContainer {
+    /* Renomeado de chart-container */
+    margin-bottom: 15px;
+  }
+
+  .macroLegend {
+    /* Renomeado de macro-legend */
+    gap: 15px;
+    justify-content: space-around;
+  }
+
+  .legendItem {
+    /* Renomeado de legend-item */
+    font-size: 13px;
+  }
+
+  .legendColor {
+    /* Renomeado de legend-color */
+    width: 14px;
+    height: 14px;
+  }
+
+  .emptyChart {
+    /* Renomeado de empty-chart */
+    padding: 40px 15px;
+  }
+
+  .emptyChart p {
+    /* Renomeado de empty-chart p */
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .macroChartSection {
+    /* Renomeado de macro-chart-section */
+    padding: 15px;
+  }
+
+  .macroChartSection h4 {
+    /* Renomeado de macro-chart-section h4 */
+    font-size: 16px;
+  }
+
+  .macroLegend {
+    /* Renomeado de macro-legend */
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .legendItem {
+    /* Renomeado de legend-item */
+    font-size: 12px;
+  }
+
+  .legendColor {
+    /* Renomeado de legend-color */
+    width: 12px;
+    height: 12px;
+  }
+
+  .emptyChart {
+    /* Renomeado de empty-chart */
+    padding: 30px 10px;
+  }
+
+  .emptyChart p {
+    /* Renomeado de empty-chart p */
+    font-size: 13px;
+  }
+
+  .macroTooltip {
+    /* Renomeado de macro-tooltip */
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+}

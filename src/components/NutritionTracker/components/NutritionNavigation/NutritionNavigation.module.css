@@ -1,0 +1,158 @@
+/* src/components/NutritionTracker/NutritionNavigation.module.css */
+
+/* ===== NUTRITION NAVIGATION - EXATO COMO PERFIL ===== */
+.nutritionNavigationCard {
+  /* Renomeado de nutrition-navigation-card */
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 2rem;
+}
+
+.nutritionNavHeader {
+  /* Renomeado de nutrition-nav-header */
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.nutritionNavHeader h2 {
+  /* Renomeado de nutrition-nav-header h2 */
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.nutritionNavHeader p {
+  /* Renomeado de nutrition-nav-header p */
+  color: #6c757d;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* ===== NAVEGAÇÃO HORIZONTAL - ÍCONES EMPILHADOS (e ajustes para 3 botões) ===== */
+.nutritionNavOptions {
+  /* Renomeado de nutrition-nav-options */
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0;
+  flex-wrap: wrap;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 0.5rem;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.nutritionNavOption {
+  /* Renomeado de nutrition-nav-option */
+  padding: 0.75rem 1rem; /* ← Reduzido padding horizontal para 3 botões */
+  border: none;
+  background: transparent;
+  color: #666666;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column; /* ✅ EMPILHAR: ícone em cima, texto embaixo */
+  align-items: center;
+  gap: 0.5rem; /* ✅ Espaço entre ícone e texto */
+  flex: 1;
+  justify-content: center;
+  min-width: 100px; /* ← Reduzido min-width para 3 botões */
+  max-width: 140px; /* ← Adicionado max-width */
+}
+
+.nutritionNavOption:hover {
+  /* Renomeado de nutrition-nav-option:hover */
+  background: #f8f8f8;
+  color: #333333;
+}
+
+.active {
+  /* Renomeado de nutrition-nav-option.active */
+  background: #000000;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* ===== ÍCONES E LABELS EMPILHADOS ===== */
+.navOptionIcon {
+  /* Renomeado de nav-option-icon */
+  font-size: 1.2rem;
+  display: block;
+}
+
+.navOptionLabel {
+  /* Renomeado de nav-option-label */
+  font-size: 0.85rem; /* ← Texto um pouco menor para 3 botões */
+  font-weight: inherit;
+  color: inherit;
+  text-align: center;
+  line-height: 1;
+}
+
+/* ===== RESPONSIVO PARA 3 BOTÕES ===== */
+@media (max-width: 768px) {
+  .nutritionNavOption {
+    /* Renomeado de nutrition-nav-option */
+    padding: 0.65rem 0.8rem;
+    font-size: 0.85rem;
+    min-width: 90px;
+  }
+
+  .navOptionIcon {
+    /* Renomeado de nav-option-icon */
+    font-size: 1.1rem;
+  }
+
+  .navOptionLabel {
+    /* Renomeado de nav-option-label */
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .nutritionNavOptions {
+    /* Renomeado de nutrition-nav-options */
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .nutritionNavOption {
+    /* Renomeado de nutrition-nav-option */
+    flex-direction: row;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    gap: 0.5rem;
+    max-width: none;
+    min-width: auto;
+  }
+
+  .navOptionIcon {
+    /* Renomeado de nav-option-icon */
+    font-size: 1rem;
+  }
+
+  .navOptionLabel {
+    /* Renomeado de nav-option-label */
+    font-size: 0.85rem;
+  }
+}
+
+/* ===== VARIAÇÃO PARA QUANDO ESTIVER DENTRO DE UM CARD (se aplicável) ===== */
+/* Esta regra é mais genérica e pode ser movida para um arquivo de estilos globais ou de layout,
+   mas por enquanto, se o NutritionNavigationCard puder estar dentro de outro card,
+   manteremos aqui e ajustaremos o seletor.
+   Como o componente é NutritionNavigationCard, não faz sentido ele estar dentro de si mesmo.
+   Removi a regra específica para "nutrition-navigation-card .date-selector-section"
+   e "nutrition-navigation-card .date-nav-btn" pois não se aplicam diretamente aqui.
+   Se houver um componente pai que envolva este, essa regra precisaria ser ajustada ou movida.
+*/

@@ -1,0 +1,692 @@
+/* ✅ CONTAINER PRINCIPAL */
+.micronutrientSelector {
+  position: relative;
+  width: 100%;
+}
+
+.selectorTrigger {
+  width: 100%;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #4caf50, #45a049);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.selectorTrigger:hover {
+  background: linear-gradient(135deg, #45a049, #3d8b40);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.selectorTrigger:active {
+  transform: translateY(0);
+}
+
+/* ✅ DROPDOWN */
+.selectorDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  z-index: 100000; /* Z-index muito alto para ficar acima de modais dentro de modais */
+  margin-top: 8px;
+  max-height: 500px;
+  overflow: hidden;
+  animation: slideDown 0.2s ease-out;
+  isolation: isolate; /* Cria novo stacking context */
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ✅ HEADER COM TOGGLE */
+.selectorHeader {
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.modeToggle {
+  display: flex;
+  gap: 4px;
+  background: #e0e0e0;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.toggleBtn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #666;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggleBtn.active {
+  background: white;
+  color: #333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggleBtn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* ✅ FILTROS */
+.selectorFilters {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+}
+
+.categoryFilter {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.categoryFilter:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+}
+
+/* ✅ LISTA DE OPÇÕES */
+.optionsList {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.optionItem {
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  margin-bottom: 4px;
+}
+
+.optionItem:hover {
+  background: #f8f9fa;
+  border-color: #e9ecef;
+  transform: translateX(2px);
+}
+
+.optionMain {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.optionName {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.optionValue {
+  font-size: 12px;
+  color: #4caf50;
+  font-weight: 600;
+  background: rgba(76, 175, 80, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.optionCategory {
+  font-size: 11px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.optionDescription {
+  font-size: 12px;
+  color: #888;
+  line-height: 1.3;
+}
+
+/* ✅ MENSAGEM SEM OPÇÕES */
+.noOptions {
+  padding: 32px 16px;
+  text-align: center;
+  color: #666;
+}
+
+.noOptions p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.noOptions small {
+  font-size: 12px;
+  color: #888;
+}
+
+/* ✅ MODO PERSONALIZADO */
+.customMode {
+  padding: 16px;
+}
+
+.customHeader {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.customHeader h4 {
+  margin: 0 0 4px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.customHeader p {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.customInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inputGroup label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+}
+
+.customInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.customInput:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+}
+
+.customActions {
+  display: flex;
+  gap: 12px;
+}
+
+.cancelCustom {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelCustom:hover {
+  background: #f5f5f5;
+  border-color: #ccc;
+}
+
+.addCustom {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #4caf50;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addCustom:hover:not(:disabled) {
+  background: #45a049;
+  transform: translateY(-1px);
+}
+
+.addCustom:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ✅ SCROLLBAR CUSTOMIZADA */
+.optionsList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.optionsList::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.optionsList::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.optionsList::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* ✅ OVERLAY PARA MOBILE */
+.modalOverlay {
+  display: none; /* Escondido no desktop */
+}
+
+@media (max-width: 768px) {
+  /* Overlay escuro que aparece atrás do dropdown */
+  .modalOverlay {
+    display: block;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 999998 !important; /* ✅ Z-index logo abaixo do dropdown */
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+/* ✅ RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .selectorTrigger {
+    padding: 14px 16px;
+    font-size: 0.95rem;
+    min-height: 44px; /* Touch target */
+  }
+
+  .selectorDropdown {
+    position: fixed !important; /* ✅ FORÇA position fixed para quebrar stacking context */
+    top: 50% !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90vw;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: 999999 !important; /* ✅ Z-index extremamente alto */
+    margin: 0 !important; /* Remove margens que podem afetar posicionamento */
+  }
+
+  .selectorHeader {
+    padding: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #fafafa;
+  }
+
+  .toggleBtn {
+    padding: 10px 14px;
+    font-size: 0.875rem;
+    min-height: 44px; /* Touch target */
+  }
+
+  .searchInput,
+  .categoryFilter {
+    font-size: 16px; /* Previne zoom no iOS */
+    padding: 12px 14px;
+    min-height: 48px;
+  }
+
+  .customInput {
+    font-size: 16px; /* Previne zoom no iOS */
+    padding: 12px 14px;
+    min-height: 48px;
+  }
+
+  .unitSelector {
+    font-size: 16px; /* Previne zoom no iOS */
+    padding: 12px;
+    min-height: 44px;
+  }
+
+  .optionItem {
+    padding: 14px 12px;
+    min-height: 44px; /* Touch target */
+  }
+
+  /* Remove hover effects on touch devices */
+  .selectorTrigger:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .toggleBtn:hover:not(.active) {
+    background: transparent;
+  }
+
+  .optionItem:hover {
+    transform: none;
+  }
+
+  .customActions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cancelCustom,
+  .addCustom {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    min-height: 44px; /* Touch target */
+  }
+
+  .addCustom:hover:not(:disabled) {
+    transform: none;
+  }
+
+  .selectorFilters {
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .customMode {
+    padding: 14px;
+  }
+
+  .optionsList {
+    padding: 10px;
+    max-height: 400px;
+  }
+}
+
+/* ✅ MOBILE PEQUENO (iPhone 12/13: 390px) */
+@media (max-width: 480px) {
+  .selectorTrigger {
+    padding: 12px 14px;
+    font-size: 0.9rem;
+    min-height: 44px;
+  }
+
+  .selectorDropdown {
+    position: fixed !important; /* ✅ FORÇA position fixed */
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 95vw;
+    max-height: 85vh;
+    border-radius: 16px;
+    z-index: 999999 !important; /* ✅ Z-index extremamente alto */
+    margin: 0 !important;
+  }
+
+  .selectorHeader {
+    padding: 12px;
+  }
+
+  .modeToggle {
+    padding: 3px;
+  }
+
+  .toggleBtn {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    min-height: 44px;
+  }
+
+  .selectorFilters {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .searchInput,
+  .categoryFilter {
+    font-size: 16px;
+    padding: 12px;
+    min-height: 44px;
+  }
+
+  .optionsList {
+    max-height: 350px;
+    padding: 8px;
+  }
+
+  .optionItem {
+    padding: 12px 10px;
+    margin-bottom: 6px;
+  }
+
+  .optionName {
+    font-size: 0.875rem;
+  }
+
+  .optionCategory {
+    font-size: 0.7rem;
+  }
+
+  .optionDescription {
+    font-size: 0.75rem;
+  }
+
+  .customMode {
+    padding: 12px;
+  }
+
+  .customHeader h4 {
+    font-size: 0.95rem;
+  }
+
+  .customHeader p {
+    font-size: 0.75rem;
+  }
+
+  .inputGroup label {
+    font-size: 0.8rem;
+  }
+
+  .customInput {
+    font-size: 16px;
+    padding: 12px;
+    min-height: 44px;
+  }
+
+  .unitSelector {
+    font-size: 16px;
+    padding: 10px;
+    min-height: 44px;
+  }
+
+  .customActions {
+    gap: 8px;
+  }
+
+  .cancelCustom,
+  .addCustom {
+    padding: 12px 14px;
+    font-size: 0.9rem;
+    min-height: 44px;
+  }
+
+  .customPreview {
+    padding: 12px;
+    font-size: 0.85rem;
+  }
+
+  .noOptions {
+    padding: 24px 12px;
+  }
+
+  .noOptions p {
+    font-size: 0.875rem;
+  }
+
+  .noOptions small {
+    font-size: 0.75rem;
+  }
+}
+
+/* ✅ MODO ESCURO */
+@media (prefers-color-scheme: dark) {
+  .selectorDropdown {
+    background: #2d2d2d;
+    border-color: #444;
+  }
+
+  .selectorHeader {
+    background: #333;
+    border-bottom-color: #444;
+  }
+
+  .modeToggle {
+    background: #444;
+  }
+
+  .toggleBtn.active {
+    background: #555;
+    color: #fff;
+  }
+
+  .searchInput,
+  .categoryFilter,
+  .customInput {
+    background: #333;
+    border-color: #555;
+    color: #fff;
+  }
+
+  .optionItem:hover {
+    background: #333;
+    border-color: #555;
+  }
+
+  .optionName {
+    color: #fff;
+  }
+
+  .cancelCustom {
+    background: #333;
+    border-color: #555;
+    color: #fff;
+  }
+}
+
+/* ✅ ADICIONE AO MicronutrientSelector.module.css */
+
+.valueUnitRow {
+  display: flex;
+  gap: 1rem;
+  align-items: end;
+}
+
+.valueUnitRow .inputGroup:first-child {
+  flex: 2;
+}
+
+.valueUnitRow .inputGroup:last-child {
+  flex: 1;
+}
+
+.unitSelector {
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: white;
+  font-size: 0.875rem;
+  width: 100%;
+}
+
+.unitSelector:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.customPreview {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: #f3f4f6;
+  border-radius: 0.375rem;
+  border-left: 4px solid #3b82f6;
+}
+
+.previewLabel {
+  font-weight: 600;
+  color: #374151;
+  margin-right: 0.5rem;
+}
+
+.previewValue {
+  color: #3b82f6;
+  font-weight: 500;
+}

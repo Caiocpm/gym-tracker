@@ -1,0 +1,75 @@
+/* src/components/NutritionTracker/views/NutritionMeals.module.css */
+
+.nutritionMeals {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.mealsHeader {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.mealsHeader h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+.mealsHeader p {
+  color: #666;
+  font-size: 16px;
+  margin: 0;
+}
+
+.mealsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  .nutritionMeals {
+    gap: 20px;
+  }
+
+  .mealsHeader {
+    padding: 20px 15px;
+  }
+
+  .mealsHeader h3 {
+    font-size: 20px;
+  }
+
+  .mealsHeader p {
+    font-size: 14px;
+  }
+
+  .mealsContainer {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nutritionMeals {
+    gap: 15px;
+  }
+
+  .mealsHeader {
+    padding: 15px;
+  }
+
+  .mealsHeader h3 {
+    font-size: 18px;
+  }
+
+  .mealsHeader p {
+    font-size: 13px;
+  }
+}

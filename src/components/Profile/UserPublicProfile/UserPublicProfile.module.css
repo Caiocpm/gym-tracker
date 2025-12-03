@@ -1,0 +1,386 @@
+/* src/components/Profile/UserPublicProfile/UserPublicProfile.module.css */
+
+/* ===== MODAL OVERLAY ===== */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modalContent {
+  position: relative;
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background: rgba(0, 0, 0, 0.2);
+  transform: scale(1.1);
+}
+
+.loading {
+  padding: 40px;
+  text-align: center;
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+  padding: 0;
+}
+
+/* ===== PROFILE HEADER ===== */
+.profileHeader {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0 0 24px 0;
+  position: relative;
+}
+
+.profileBanner {
+  height: 120px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.profileAvatarWrapper {
+  position: absolute;
+  bottom: -40px;
+  z-index: 2;
+}
+
+.profileAvatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid #ffffff;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.profileAvatarPlaceholder {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid #ffffff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: 700;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.profileInfo {
+  text-align: center;
+  padding: 56px 24px 0 24px;
+  color: #ffffff;
+}
+
+.profileName {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #ffffff;
+}
+
+.profileBio {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+/* ===== QUICK STATS ===== */
+.quickStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.quickStat {
+  text-align: center;
+}
+
+.quickStatValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.quickStatLabel {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== TABS ===== */
+.tabsContainer {
+  display: flex;
+  gap: 8px;
+  padding: 24px 24px 0 24px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.tabButton {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+  position: relative;
+  bottom: -2px;
+}
+
+.tabButton:hover {
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.tabButton.activeTab {
+  color: #667eea;
+  border-bottom-color: #667eea;
+}
+
+/* ===== TAB CONTENT ===== */
+.tabContent {
+  padding: 24px;
+}
+
+.statsSection,
+.badgesSection {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .modalOverlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .modalContent {
+    max-width: 100%;
+    max-height: 95vh;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .loading {
+    padding: 2rem;
+    font-size: 1rem;
+  }
+
+  .profileHeader {
+    padding: 0 0 16px 0;
+  }
+
+  .profileBanner {
+    height: 100px;
+  }
+
+  .profileAvatarWrapper {
+    bottom: -35px;
+  }
+
+  .profileAvatar,
+  .profileAvatarPlaceholder {
+    width: 70px;
+    height: 70px;
+    border: 3px solid #ffffff;
+  }
+
+  .profileAvatarPlaceholder {
+    font-size: 28px;
+  }
+
+  .profileInfo {
+    padding: 42px 16px 0 16px;
+  }
+
+  .profileName {
+    font-size: 1.35rem;
+    margin-bottom: 6px;
+  }
+
+  .profileBio {
+    font-size: 0.875rem;
+    margin-bottom: 16px;
+  }
+
+  .quickStats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .quickStatValue {
+    font-size: 1.25rem;
+    margin-bottom: 3px;
+  }
+
+  .quickStatLabel {
+    font-size: 0.7rem;
+    letter-spacing: 0.3px;
+  }
+
+  .tabsContainer {
+    padding: 16px 16px 0 16px;
+    gap: 6px;
+  }
+
+  .tabButton {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+
+  .tabContent {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .loading {
+    padding: 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .profileBanner {
+    height: 85px;
+  }
+
+  .profileAvatarWrapper {
+    bottom: -30px;
+  }
+
+  .profileAvatar,
+  .profileAvatarPlaceholder {
+    width: 60px;
+    height: 60px;
+    border: 3px solid #ffffff;
+  }
+
+  .profileAvatarPlaceholder {
+    font-size: 24px;
+  }
+
+  .profileInfo {
+    padding: 36px 12px 0 12px;
+  }
+
+  .profileName {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+  }
+
+  .profileBio {
+    font-size: 0.825rem;
+    margin-bottom: 14px;
+  }
+
+  .quickStats {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .quickStatValue {
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+  }
+
+  .quickStatLabel {
+    font-size: 0.65rem;
+    letter-spacing: 0.25px;
+  }
+
+  .tabsContainer {
+    padding: 12px 12px 0 12px;
+    gap: 5px;
+  }
+
+  .tabButton {
+    font-size: 0.8rem;
+    padding: 9px 10px;
+  }
+
+  .tabContent {
+    padding: 10px;
+  }
+
+  .closeButton {
+    width: 32px;
+    height: 32px;
+    top: 12px;
+    right: 12px;
+    font-size: 18px;
+  }
+}
