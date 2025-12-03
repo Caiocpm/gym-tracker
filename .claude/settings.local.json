@@ -25,7 +25,10 @@
       "Bash(npx firebase deploy:*)",
       "Bash(timeout 5 npx tsc:*)",
       "Bash(node:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
