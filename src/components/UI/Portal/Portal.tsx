@@ -7,11 +7,12 @@ interface PortalProps {
 }
 
 export function Portal({ children }: PortalProps) {
-  // ✅ VERIFICAÇÃO simples e direta
   if (typeof document === "undefined") {
     return null;
   }
 
-  // ✅ RENDERIZAR diretamente no body
-  return createPortal(children, document.body);
+  // ✅ USAR modal-root se existir, senão usar body
+  const portalRoot = document.getElementById("modal-root") || document.body;
+
+  return createPortal(children, portalRoot);
 }

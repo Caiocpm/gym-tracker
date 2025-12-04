@@ -10,7 +10,7 @@
   bottom: 0;
   background: rgba(0, 0, 0, 0.7);
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* Alinha no topo para permitir scroll natural */
   justify-content: center;
   z-index: 1000;
   padding: 20px;
@@ -30,6 +30,7 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
   position: relative; /* Para z-index funcionar */
+  margin-bottom: 20px; /* Espaço no final para não grudar no fundo */
 }
 
 /* ===== HEADER ===== */

@@ -1,21 +1,45 @@
 /* src/components/WorkoutTracker/ExerciseExecution/ExerciseExecution.module.css */
 
+/* ===== MODAL OVERLAY ===== */
+.modalOverlay {
+  position: fixed;
+  top: 150;
+  left: 0;
+  right: 0;
+  bottom: 10;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center; /* ✅ Centraliza verticalmente */
+  justify-content: center; /* ✅ Centraliza horizontalmente */
+  z-index: 1000;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 20px;
+}
+
 .exerciseExecution {
   max-width: 600px;
-  margin: 0 auto;
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 0; /* ✅ Sem margin que afaste */
   padding: 20px;
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   animation: slideIn 0.3s ease-out;
+  position: relative;
+  max-height: 85vh; /* ✅ MUDADO: 85vh para caber bem */
+  display: flex;
+  flex-direction: column;
 }
 
-/* ===== HEADER CORRIGIDO ===== */
+/* ===== HEADER ===== */
 .executionHeader {
-  margin-bottom: 30px;
-  padding-bottom: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
   border-bottom: 1px solid #e9ecef;
   position: relative;
+  flex-shrink: 0;
 }
 
 .exerciseName {
@@ -25,7 +49,8 @@
   margin: 0 0 15px 0;
   line-height: 1.2;
   text-align: center;
-  padding-right: 40px; /* ✅ Espaço para o botão X sutil */
+  padding-right: 40px;
+  word-break: break-word;
 }
 
 .progressInfo {
@@ -49,22 +74,21 @@
   text-align: center;
 }
 
-/* ===== INDICADOR ATIVO VERDE ===== */
+/* ===== INDICADOR ATIVO ===== */
 .activeIndicator {
-  background: #28a745; /* ✅ Verde ao invés de vermelho */
+  background: #28a745;
   color: white;
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
-  animation: pulseGreen 2s infinite; /* ✅ Nova animação verde */
+  animation: pulseGreen 2s infinite;
   white-space: nowrap;
   display: inline-block;
   margin-top: 5px;
   box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
 }
 
-/* ===== INDICADOR DE PROGRESSO SALVO ===== */
 .progressIndicator {
   background: #17a2b8;
   color: white;
@@ -81,12 +105,12 @@
 /* ===== INFORMAÇÕES DE RECORDES ===== */
 .recordsInfo {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 12px;
-  margin-top: 16px;
-  padding: 16px;
+  margin-top: 14px;
+  padding: 14px;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-radius: 12px;
+  border-radius: 10px;
   border: 2px solid #dee2e6;
 }
 
@@ -97,20 +121,20 @@
 }
 
 .recordLabel {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: #6c757d;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .recordValue {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: #212529;
 }
 
-/* ===== BOTÃO CANCELAR - OPÇÃO 2: ÍCONE X MAIS SUTIL ===== */
+/* ===== BOTÃO CANCELAR ===== */
 .cancelButton {
   position: absolute;
   top: 0;
@@ -128,6 +152,7 @@
   align-items: center;
   justify-content: center;
   z-index: 10;
+  flex-shrink: 0;
 }
 
 .cancelButton:hover {
@@ -151,53 +176,56 @@
 .currentSetForm {
   background: #f8f9fa;
   border-radius: 12px;
-  padding: 25px;
-  margin-bottom: 30px;
+  padding: 20px;
+  margin-bottom: 25px;
   border: 1px solid #e9ecef;
+  flex-shrink: 0;
 }
 
 .currentSetForm h3 {
-  margin: 0 0 20px 0;
-  font-size: 1.3rem;
+  margin: 0 0 15px 0;
+  font-size: 1.2rem;
   color: #333;
   text-align: center;
   font-weight: 600;
 }
 
+/* ✅ INPUTS: 2 colunas, PEQUENOS */
 .inputGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 15px;
-  margin-bottom: 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .inputGroup label {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #555;
 }
 
 .numberInput,
 .textArea {
-  padding: 12px;
+  padding: 8px;
   border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
   transition: all 0.2s ease;
   background: white;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* ✅ CORREÇÃO: Corrigir inputs numéricos com vendor prefixes */
 .numberInput {
-  appearance: none; /* ✅ Propriedade padrão */
-  -webkit-appearance: none; /* ✅ Webkit */
-  -moz-appearance: textfield; /* ✅ Firefox */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
 }
 
 .numberInput::-webkit-outer-spin-button,
@@ -215,48 +243,43 @@
 
 .textArea {
   resize: vertical;
-  min-height: 60px;
+  min-height: 45px;
   font-family: inherit;
-  max-height: 120px;
+  max-height: 90px;
 }
 
-/* ===== BOTÕES DE RPE ===== */
+/* ===== RPE - GRUPO SEPARADO ===== */
+.inputGroup:has(.rpeButtons) {
+  grid-column: 1 / -1;
+}
+
+/* ===== BOTÕES DE RPE - Responsivo ===== */
 .rpeButtons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 5px;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-top: 6px;
+  width: 100%;
 }
 
 .rpeButton {
   background-color: #f8f9fa;
   color: #495057;
   border: 1px solid #dee2e6;
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 0.9rem;
+  border-radius: 6px;
+  padding: 6px 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 40px;
   text-align: center;
-  flex-grow: 1;
-  flex-basis: calc(20% - 8px);
-  max-width: calc(20% - 8px);
-}
-
-@media (max-width: 600px) {
-  .rpeButton {
-    flex-basis: calc(25% - 8px);
-    max-width: calc(25% - 8px);
-  }
-}
-
-@media (max-width: 400px) {
-  .rpeButton {
-    flex-basis: calc(33.333% - 8px);
-    max-width: calc(33.333% - 8px);
-  }
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .rpeButton:hover {
@@ -272,21 +295,18 @@
   transform: scale(1.05);
 }
 
-.clearRpeButton {
-  background-color: #ffc107;
-  color: #212529;
-  border-color: #ffc107;
-}
-
-.clearRpeButton:hover {
-  background-color: #ffca2c;
+/* ===== NOTAS TEXTAREA ===== */
+.inputGroup:last-of-type {
+  grid-column: 1 / -1;
 }
 
 /* ===== ACTION BUTTONS ===== */
 .actionButtons {
   display: flex;
-  gap: 12px;
-  margin-top: 20px;
+  gap: 10px;
+  margin-top: 15px;
+  width: 100%;
+  flex-shrink: 0;
 }
 
 .completeSetButton {
@@ -295,12 +315,14 @@
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 15px 20px;
-  font-size: 1.1rem;
+  padding: 12px 18px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-height: 50px;
+  min-height: 46px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .completeSetButton:hover {
@@ -320,12 +342,14 @@
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 15px 20px;
-  font-size: 0.9rem;
+  padding: 12px 18px;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-height: 50px;
+  min-height: 46px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .skipSetButton:hover {
@@ -338,29 +362,31 @@
   outline-offset: 2px;
 }
 
-/* ===== COMPLETED SETS CORRIGIDO ===== */
+/* ===== COMPLETED SETS ===== */
 .completedSets {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .completedSets h3 {
-  margin: 0 0 15px 0;
-  font-size: 1.2rem;
+  margin: 0 0 12px 0;
+  font-size: 1.1rem;
   color: #333;
   font-weight: 600;
+  flex-shrink: 0;
 }
 
-/* ✅ Estrutura corrigida para corresponder ao JSX */
 .completedSet {
   background: #e9ecef;
   border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
   border: 1px solid #dee2e6;
   transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .completedSet:hover {
@@ -375,7 +401,6 @@
   margin-bottom: 4px;
 }
 
-/* ✅ Linha principal com dados da série */
 .setData {
   font-size: 1rem;
   font-weight: 600;
@@ -383,7 +408,6 @@
   margin-bottom: 5px;
 }
 
-/* ✅ RPE e tempo de descanso como elementos inline */
 .rpe {
   font-size: 0.85rem;
   color: #667eea;
@@ -430,7 +454,6 @@
   }
 }
 
-/* ===== NOVA ANIMAÇÃO VERDE ===== */
 @keyframes pulseGreen {
   0% {
     opacity: 1;
@@ -450,78 +473,237 @@
 }
 
 /* ===== RESPONSIVIDADE ===== */
-@media (max-width: 768px) {
+
+/* ✅ DESKTOP: 1025px+ */
+@media (min-width: 1025px) {
+  .modalOverlay {
+    bottom: 0;
+    align-items: normal; /* ✅ Centraliza verticalmente */
+    justify-content: center; /* ✅ Centraliza horizontalmente */
+    padding: 0px;
+  }
+
   .exerciseExecution {
+    max-height: 85vh;
+    margin-bottom: 0;
+  }
+}
+
+/* ✅ TABLET: 768px - 1024px */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .modalOverlay {
     padding: 15px;
-    margin: 10px;
+    bottom: 50px;
+    align-items: flex-start; /* ✅ No topo para tablet */
+    padding-top: 15px;
+  }
+
+  .exerciseExecution {
+    padding: 18px;
+    margin-bottom: 18px;
+    max-height: calc(100vh - 100px);
   }
 
   .exerciseName {
     font-size: 1.5rem;
-    padding-right: 35px;
+    margin-bottom: 12px;
   }
 
-  .trainingType {
-    font-size: 0.8rem;
+  .recordsInfo {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 12px;
   }
 
-  .cancelButton {
-    width: 26px;
-    height: 26px;
-    font-size: 0.8rem;
+  .recordLabel {
+    font-size: 0.75rem;
+  }
+
+  .recordValue {
+    font-size: 1rem;
   }
 
   .currentSetForm {
-    padding: 20px;
+    padding: 18px;
+    margin-bottom: 22px;
   }
 
   .inputGrid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .actionButtons {
-    flex-direction: column;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
 
-  .rpe,
-  .restTime {
-    margin-right: 5px;
-    margin-bottom: 3px;
+  .numberInput,
+  .textArea {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  .rpeButtons {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+  }
+
+  .rpeButton {
+    padding: 6px 3px;
+    font-size: 0.75rem;
+    min-height: 32px;
+  }
+
+  .completeSetButton,
+  .skipSetButton {
+    padding: 11px 16px;
+    min-height: 44px;
   }
 }
 
-@media (max-width: 480px) {
+/* ✅ MOBILE: até 768px */
+@media (max-width: 768px) {
+  .modalOverlay {
+    padding: 10px;
+    top: 0;
+    bottom: 50px;
+    align-items: flex-start; /* ✅ No topo para mobile */
+    padding-top: 10px;
+  }
+
   .exerciseExecution {
-    padding: 12px;
-    margin: 5px;
+    padding: 14px;
+    margin-bottom: 14px;
+    margin-top: 0;
+    border-radius: 12px;
+    max-height: calc(100vh - 80px);
+  }
+
+  .executionHeader {
+    margin-bottom: 14px;
+    padding-bottom: 10px;
   }
 
   .exerciseName {
     font-size: 1.3rem;
-    padding-right: 32px;
+    padding-right: 28px;
+    margin-bottom: 8px;
+  }
+
+  .setProgress {
+    font-size: 0.95rem;
   }
 
   .trainingType {
     font-size: 0.75rem;
   }
 
+  .activeIndicator,
+  .progressIndicator {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+  }
+
   .cancelButton {
     width: 24px;
     height: 24px;
+    font-size: 0.75rem;
+  }
+
+  /* ✅ RECORDES INFO */
+  .recordsInfo {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 10px;
+    margin-top: 10px;
+  }
+
+  .recordLabel {
     font-size: 0.7rem;
   }
 
+  .recordValue {
+    font-size: 0.95rem;
+  }
+
   .currentSetForm {
-    padding: 15px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .currentSetForm h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+
+  /* ✅ INPUTS: Pequenos, 2 colunas */
+  .inputGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .inputGroup label {
+    font-size: 0.75rem;
+  }
+
+  .numberInput,
+  .textArea {
+    padding: 7px;
+    font-size: 0.8rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .textArea {
+    min-height: 40px;
+  }
+
+  /* ✅ RPE: 5 por linha, mas responsivo */
+  .rpeButtons {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    margin-top: 5px;
+    width: 100%;
+  }
+
+  .rpeButton {
+    padding: 5px 2px;
+    font-size: 0.7rem;
+    min-height: 28px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .actionButtons {
+    gap: 8px;
+    margin-top: 12px;
+    width: 100%;
   }
 
   .completeSetButton,
   .skipSetButton {
-    padding: 12px;
-    font-size: 1rem;
-    min-height: 45px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    min-height: 40px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .completedSets {
+    margin-bottom: 15px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .completedSets h3 {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
+
+  .completedSet {
+    padding: 10px;
+    margin-bottom: 6px;
+  }
+
+  .setNumber {
+    font-size: 0.75rem;
   }
 
   .setData {
@@ -530,8 +712,190 @@
 
   .rpe,
   .restTime {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     padding: 1px 6px;
+  }
+
+  .setNotes {
+    font-size: 0.75rem;
+    padding: 6px;
+  }
+}
+
+/* ✅ MOBILE PEQUENO: até 480px */
+@media (max-width: 480px) {
+  .modalOverlay {
+    padding: 6px;
+    top: 0;
+    bottom: 68px;
+    align-items: center; /* ✅ No topo para mobile pequeno */
+    padding-top: 6px;
+  }
+
+  .exerciseExecution {
+    padding: 12px;
+    margin-bottom: 10px;
+    margin-top: 0;
+    border-radius: 10px;
+    max-height: calc(100vh - 70px);
+  }
+
+  .executionHeader {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+
+  .exerciseName {
+    font-size: 1.15rem;
+    padding-right: 24px;
+    margin-bottom: 8px;
+  }
+
+  .setProgress {
+    font-size: 0.8rem;
+  }
+
+  .trainingType {
+    font-size: 0.65rem;
+  }
+
+  .activeIndicator,
+  .progressIndicator {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    margin-top: 3px;
+  }
+
+  .cancelButton {
+    width: 20px;
+    height: 20px;
+    font-size: 0.65rem;
+  }
+
+  /* ✅ RECORDES INFO: Mais compacto */
+  .recordsInfo {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 8px;
+    margin-top: 8px;
+  }
+
+  .recordItem {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .recordLabel {
+    font-size: 0.65rem;
+  }
+
+  .recordValue {
+    font-size: 0.85rem;
+  }
+
+  .currentSetForm {
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+
+  .currentSetForm h3 {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+
+  /* ✅ INPUTS: Muito pequenos, 2 colunas, width 100% */
+  .inputGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .inputGroup label {
+    font-size: 0.7rem;
+  }
+
+  .numberInput,
+  .textArea {
+    padding: 6px;
+    font-size: 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .textArea {
+    min-height: 35px;
+  }
+
+  /* ✅ RPE: 5 por linha, responsive com overflow hidden */
+  .rpeButtons {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+    margin-top: 4px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .rpeButton {
+    padding: 4px 1px;
+    font-size: 0.65rem;
+    min-height: 24px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .actionButtons {
+    gap: 6px;
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .completeSetButton,
+  .skipSetButton {
+    padding: 9px 10px;
+    font-size: 0.85rem;
+    min-height: 36px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .completedSets {
+    margin-bottom: 10px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .completedSets h3 {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
+
+  .completedSet {
+    padding: 8px;
+    margin-bottom: 4px;
+  }
+
+  .setNumber {
+    font-size: 0.7rem;
+  }
+
+  .setData {
+    font-size: 0.8rem;
+  }
+
+  .rpe,
+  .restTime {
+    font-size: 0.65rem;
+    padding: 1px 5px;
+    margin-right: 4px;
+  }
+
+  .setNotes {
+    font-size: 0.7rem;
+    padding: 4px;
   }
 }
 

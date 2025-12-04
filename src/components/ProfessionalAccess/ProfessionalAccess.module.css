@@ -2,7 +2,7 @@
 
 .professionalAccessContainer {
   position: relative;
-  z-index: 1000;
+  z-index: 2100; /* ✅ Acima do header/bottom navigation (2000) */
 }
 
 .becomeProfessionalButton {
@@ -78,8 +78,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: transparent;
-  z-index: 999;
+  background: rgba(0, 0, 0, 0.3); /* ✅ Leve escurecimento para melhor visualização */
+  z-index: 2050; /* ✅ Abaixo do dropdown mas acima da navegação */
 }
 
 .dropdown {
@@ -93,7 +93,7 @@
   max-width: 400px;
   max-height: 500px;
   overflow: hidden;
-  z-index: 1000;
+  z-index: 2100; /* ✅ Acima de tudo */
   display: flex;
   flex-direction: column;
 }
@@ -102,22 +102,55 @@
   padding: 1rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
 }
 
 .professionalInfo {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .professionalName {
   font-size: 1rem;
   font-weight: 600;
+  word-wrap: break-word;
 }
 
 .professionalType {
   font-size: 0.75rem;
   opacity: 0.9;
+}
+
+.closeButton {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.closeButton:active {
+  transform: scale(0.95);
 }
 
 .dropdownDivider {
@@ -325,13 +358,12 @@
 
   .dropdown {
     position: fixed;
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-width: 100%;
-    border-radius: 1rem 1rem 0 0;
-    max-height: 80vh;
+    /* top e right são controlados via inline style */
+    max-width: calc(100vw - 20px);
+    width: 340px;
+    border-radius: 1rem;
+    max-height: calc(100vh - 100px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   }
 
   .dropdownHeader {
@@ -419,13 +451,12 @@
 
   .dropdown {
     position: fixed;
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-width: 100%;
-    border-radius: 1rem 1rem 0 0;
-    max-height: 80vh;
+    /* top e right são controlados via inline style */
+    max-width: calc(100vw - 20px);
+    width: 320px;
+    border-radius: 1rem;
+    max-height: 400px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   }
 
   .dropdownHeader {

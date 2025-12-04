@@ -1,5 +1,6 @@
 // src/components/NutritionTracker/GoalsSettings.tsx
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import type { UserGoals } from "../../../../types/goals";
 import { useGoals } from "../../../../hooks/useGoals";
 import MicronutrientSelector from "../MicronutrientSelector";
@@ -56,30 +57,34 @@ export const GoalsSettings: React.FC<GoalsSettingsProps> = ({ onClose }) => {
     onClose();
   };
 
-  const addMicronutrient = (name: string, defaultValue: number) => {
-    setFormData({
-      ...formData,
+  const addMicronutrient = (name: string, defaultValue: number, unit?: string) => {
+    console.log('Adding micronutrient:', { name, defaultValue, unit }); // Debug
+    setFormData((prevData) => ({
+      ...prevData,
       micronutrients: {
-        ...formData.micronutrients,
+        ...prevData.micronutrients,
         [name]: defaultValue,
       },
-    });
+    }));
   };
 
   const removeMicronutrient = (key: string) => {
-    const newMicronutrients = { ...formData.micronutrients };
-    delete newMicronutrients[key];
-    setFormData({
-      ...formData,
-      micronutrients: newMicronutrients,
+    setFormData((prevData) => {
+      const newMicronutrients = { ...prevData.micronutrients };
+      delete newMicronutrients[key];
+      return {
+        ...prevData,
+        micronutrients: newMicronutrients,
+      };
     });
   };
 
   const existingMicronutrients = Object.keys(formData.micronutrients);
 
-  return (
-    <div className={styles.goalsSettingsOverlay}>
-      <div className={styles.goalsSettingsModal}>
+  // Renderizar usando portal diretamente
+  return createPortal(
+    <div className={styles.goalsSettingsOverlay} onClick={onClose}>
+      <div className={styles.goalsSettingsModal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.goalsSettingsHeader}>
           <h2>⚙️ Configurar Metas Diárias</h2>
           <button className={styles.closeButton} onClick={onClose}>
@@ -317,7 +322,8 @@ export const GoalsSettings: React.FC<GoalsSettingsProps> = ({ onClose }) => {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

@@ -1,5 +1,6 @@
 // src/components/WorkoutTracker/WorkoutSettings/WorkoutSettings.tsx
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useWorkout } from "../../../contexts/WorkoutContext";
 import type { WorkoutDay, PlannedExercise, ExerciseDefinition } from "../../../types";
 import styles from "./WorkoutSettings.module.css";
@@ -223,9 +224,14 @@ export function WorkoutSettings({ onClose }: WorkoutSettingsProps) {
   const renderWorkoutEditModal = () => {
     if (!editingWorkout || editMode !== "workout") return null;
 
-    return (
-      <div className={styles.modalOverlay}>
-        <div className={styles.modalContent}>
+    // Calcular padding baseado no scroll para centralizar o modal
+    const scrollY = window.scrollY || window.pageYOffset;
+    const viewportHeight = window.innerHeight;
+    const modalPaddingTop = Math.max(20, scrollY + (viewportHeight * 0.05));
+
+    return createPortal(
+      <div className={styles.modalOverlay} onClick={handleCancelEditWorkout} style={{ paddingTop: `${modalPaddingTop}px` }}>
+        <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
           <div className={styles.modalHeader}>
             <h3>
               {state.workoutDays.find((d) => d.id === editingWorkout.id)
@@ -287,7 +293,8 @@ export function WorkoutSettings({ onClose }: WorkoutSettingsProps) {
             </button>
           </div>
         </div>
-      </div>
+      </div>,
+      document.body
     );
   };
 
@@ -298,9 +305,14 @@ export function WorkoutSettings({ onClose }: WorkoutSettingsProps) {
       .find((d) => d.id === editingWorkoutId)
       ?.exercises.find((e) => e.id === editingExercise.id);
 
-    return (
-      <div className={styles.modalOverlay}>
-        <div className={`${styles.modalContent} ${styles.largeModal}`}>
+    // Calcular padding baseado no scroll para centralizar o modal
+    const scrollY = window.scrollY || window.pageYOffset;
+    const viewportHeight = window.innerHeight;
+    const modalPaddingTop = Math.max(20, scrollY + (viewportHeight * 0.05));
+
+    return createPortal(
+      <div className={styles.modalOverlay} onClick={handleCancelEditExercise} style={{ paddingTop: `${modalPaddingTop}px` }}>
+        <div className={`${styles.modalContent} ${styles.largeModal}`} onClick={(e) => e.stopPropagation()}>
           <div className={styles.modalHeader}>
             <h3>{isNew ? "➕ Adicionar Exercício" : "✏️ Editar Exercício"}</h3>
             <button
@@ -580,7 +592,8 @@ export function WorkoutSettings({ onClose }: WorkoutSettingsProps) {
             </button>
           </div>
         </div>
-      </div>
+      </div>,
+      document.body
     );
   };
 

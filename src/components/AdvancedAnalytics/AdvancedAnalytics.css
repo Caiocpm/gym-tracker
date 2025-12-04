@@ -216,7 +216,11 @@
   display: inline-flex;
   align-items: center;
   padding: 0.4rem 0.9rem;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.15) 0%,
+    rgba(118, 75, 162, 0.1) 100%
+  );
   color: #667eea;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -227,7 +231,11 @@
 
 .exercise-count:hover {
   transform: scale(1.05);
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.15) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.2) 0%,
+    rgba(118, 75, 162, 0.15) 100%
+  );
 }
 
 .muscle-group-filter {
@@ -280,7 +288,11 @@
 }
 
 .level-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.9) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(248, 249, 250, 0.9) 100%
+  );
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 1.75rem;
@@ -292,13 +304,27 @@
   animation: fadeInUp 0.4s ease-out backwards;
 }
 
-.level-card:nth-child(1) { animation-delay: 0.05s; }
-.level-card:nth-child(2) { animation-delay: 0.1s; }
-.level-card:nth-child(3) { animation-delay: 0.15s; }
-.level-card:nth-child(4) { animation-delay: 0.2s; }
-.level-card:nth-child(5) { animation-delay: 0.25s; }
-.level-card:nth-child(6) { animation-delay: 0.3s; }
-.level-card:nth-child(n+7) { animation-delay: 0.35s; }
+.level-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.level-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.level-card:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.level-card:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.level-card:nth-child(5) {
+  animation-delay: 0.25s;
+}
+.level-card:nth-child(6) {
+  animation-delay: 0.3s;
+}
+.level-card:nth-child(n + 7) {
+  animation-delay: 0.35s;
+}
 
 @keyframes fadeInUp {
   from {
@@ -349,15 +375,14 @@
 
 .level-badge {
   display: inline-flex;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  border-radius: 24px;
-  font-size: 0.85rem;
-  font-weight: 700;
+  padding: 0.6rem 0.9rem; /* Aumentado de 0.5rem 0.5rem */
+  border-radius: 15px;
+  font-size: 0.95rem; /* Aumentado de 0.1rem */
+  font-weight: 500;
   margin-bottom: 1.25rem;
   border: 2px solid;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.1px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: all 0.2s ease;
 }
@@ -367,22 +392,38 @@
 }
 
 .level-badge.iniciante {
-  background: linear-gradient(135deg, rgba(33, 150, 243, 0.15) 0%, rgba(25, 118, 210, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(33, 150, 243, 0.15) 0%,
+    rgba(25, 118, 210, 0.1) 100%
+  );
   color: #1565c0;
   border-color: rgba(25, 118, 210, 0.4);
 }
 .level-badge.intermediário {
-  background: linear-gradient(135deg, rgba(255, 167, 38, 0.15) 0%, rgba(251, 140, 0, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 167, 38, 0.15) 0%,
+    rgba(251, 140, 0, 0.1) 100%
+  );
   color: #e65100;
   border-color: rgba(255, 152, 0, 0.4);
 }
 .level-badge.avançado {
-  background: linear-gradient(135deg, rgba(102, 187, 106, 0.15) 0%, rgba(76, 175, 80, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(102, 187, 106, 0.15) 0%,
+    rgba(76, 175, 80, 0.1) 100%
+  );
   color: #2e7d32;
   border-color: rgba(76, 175, 80, 0.4);
 }
 .level-badge.elite {
-  background: linear-gradient(135deg, rgba(171, 71, 188, 0.15) 0%, rgba(156, 39, 176, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(171, 71, 188, 0.15) 0%,
+    rgba(156, 39, 176, 0.1) 100%
+  );
   color: #6a1b9a;
   border-color: rgba(156, 39, 176, 0.4);
 }
@@ -418,7 +459,11 @@
   color: #2c3e50;
   font-weight: 700;
   font-size: 1.05rem;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.1) 0%,
+    rgba(118, 75, 162, 0.05) 100%
+  );
   padding: 0.25rem 0.75rem;
   border-radius: 8px;
 }
@@ -752,7 +797,7 @@
     display: grid; /* Usa grid como no Perfil */
     grid-template-columns: repeat(
       auto-fit,
-      minmax(80px, 1fr)
+      minmax(70px, 1fr)
     ); /* Flexível para 5 itens */
     gap: 0.5rem;
     background: #ffffff;
@@ -789,7 +834,7 @@
   }
 
   .analytics-mobile-nav .analytics-mobile-nav-icon {
-    font-size: 1.1rem;
+    font-size: 1rem; /* Ajustado */
     margin-bottom: 0.25rem;
     display: block;
   }
@@ -808,8 +853,20 @@
 
   /* Outras seções responsivas */
   .workout-stats {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* Grid 2x2 para tablet */
     gap: 1rem;
+  }
+
+  .stat-card {
+    padding: 1rem; /* Ajustado */
+  }
+
+  .stat-card h4 {
+    font-size: 0.85rem; /* Ajustado */
+  }
+
+  .stat-value {
+    font-size: 1.7rem; /* Ajustado */
   }
 
   .analytics-content {
@@ -822,6 +879,15 @@
   .predictions-cards,
   .percentile-analysis {
     padding: 1rem;
+  }
+
+  .chart-container h4 {
+    font-size: 1.1rem; /* Ajustado */
+  }
+
+  /* Chart height adjustment */
+  .chart-container .recharts-responsive-container {
+    height: 250px !important;
   }
 
   .strength-levels-header {
@@ -856,14 +922,11 @@
   }
 
   .levels-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(200px, 1fr)
+    ); /* Ajustado para tablet */
     gap: 1rem;
-  }
-
-  .balance-grid,
-  .predictions-grid,
-  .percentile-grid {
-    grid-template-columns: 1fr;
   }
 
   .level-card {
@@ -877,8 +940,8 @@
   }
 
   .level-badge {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.75rem;
+    padding: 0.5rem 0.8rem; /* Ajustado para tablet */
+    font-size: 0.85rem; /* Ajustado para tablet */
     margin-bottom: 1rem;
   }
 
@@ -893,23 +956,406 @@
   .level-card p strong {
     font-size: 0.95rem;
   }
+
+  .balance-grid,
+  .predictions-grid,
+  .percentile-grid {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(200px, 1fr)
+    ); /* Ajustado para tablet */
+  }
+
+  .training-type-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .training-type-stats .stat-card {
+    padding: 1rem;
+  }
+
+  .training-type-stats .stat-value {
+    font-size: 2rem;
+  }
+
+  .rpe-analysis-cards h4,
+  .rest-time-cards h4 {
+    font-size: 1.2rem;
+  }
 }
 
 @media (max-width: 480px) {
-  .workout-stats {
-    grid-template-columns: 1fr;
+  .advanced-analytics {
+    padding: 0.75rem; /* Mais compacto */
   }
 
   .analytics-header {
     padding: 1rem;
+    margin-bottom: 1.5rem;
   }
 
   .analytics-header h3 {
-    font-size: 1.4rem;
+    font-size: 1.3rem; /* Ajustado */
+  }
+
+  .analytics-header p {
+    font-size: 0.9rem;
+  }
+
+  .analytics-mobile-nav {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(60px, 1fr)
+    ); /* Mais compacto */
+    margin-bottom: 1.5rem;
+  }
+
+  .analytics-mobile-nav .analytics-mobile-nav-icon {
+    font-size: 0.9rem; /* Ajustado */
+  }
+
+  .analytics-mobile-nav .analytics-mobile-nav-label {
+    font-size: 0.65rem; /* Ajustado */
+  }
+
+  .workout-stats {
+    grid-template-columns: repeat(2, 1fr); /* Força 2x2 */
+    gap: 0.8rem; /* Ajustado */
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-card {
+    padding: 0.8rem; /* Ajustado */
+  }
+
+  .stat-card h4 {
+    font-size: 0.75rem; /* Ajustado */
+    margin-bottom: 0.6rem;
   }
 
   .stat-value {
-    font-size: 1.5rem;
+    font-size: 1.4rem; /* Ajustado */
+  }
+
+  .analytics-content {
+    padding: 1rem; /* Mais compacto */
+  }
+
+  .chart-container,
+  .strength-levels,
+  .muscle-balance-cards,
+  .predictions-cards,
+  .percentile-analysis {
+    padding: 0.8rem; /* Mais compacto */
+    margin-bottom: 1.5rem;
+  }
+
+  .chart-container h4 {
+    font-size: 1rem; /* Ajustado */
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+  }
+
+  /* Chart height adjustment */
+  .chart-container .recharts-responsive-container {
+    height: 200px !important;
+  }
+
+  .strength-levels-header {
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .strength-levels h4 {
+    font-size: 1rem;
+  }
+
+  .exercise-count {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.6rem;
+  }
+
+  .muscle-group-filter label {
+    font-size: 0.8rem;
+  }
+
+  .muscle-group-select {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .levels-grid {
+    grid-template-columns: 1fr; /* Uma coluna para mobile */
+    gap: 0.8rem;
+  }
+
+  .level-card {
+    padding: 1rem;
+  }
+
+  .level-card h5 {
+    font-size: 0.95rem;
+    min-height: auto; /* Permite que o texto flua naturalmente */
+    margin-bottom: 0.6rem;
+  }
+
+  .level-badge {
+    padding: 0.4rem 0.7rem; /* Ajustado para mobile */
+    font-size: 0.75rem; /* Ajustado para mobile */
+    margin-bottom: 0.8rem;
+  }
+
+  .level-card p {
+    font-size: 0.8rem;
+    padding: 0.3rem 0;
+  }
+
+  .level-card p strong {
+    font-size: 0.85rem;
+  }
+
+  .balance-grid,
+  .predictions-grid,
+  .percentile-grid {
+    grid-template-columns: 1fr; /* Uma coluna para mobile */
+    gap: 0.8rem;
+  }
+
+  .balance-card,
+  .prediction-card,
+  .percentile-card {
+    padding: 1rem;
+  }
+
+  .balance-card h5,
+  .prediction-card h5,
+  .percentile-card h5 {
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .training-type-stats {
+    grid-template-columns: 1fr; /* Uma coluna para mobile */
+    gap: 0.8rem;
+  }
+
+  .training-type-stats .stat-card {
+    padding: 0.8rem;
+  }
+
+  .training-type-stats .stat-value {
+    font-size: 1.8rem;
+  }
+
+  .rpe-analysis-cards h4,
+  .rest-time-cards h4 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .strength-sub-nav-mobile {
+    grid-template-columns: repeat(2, 1fr); /* Mantém 2 colunas */
+    gap: 0.5rem;
+    padding: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .strength-sub-nav-mobile .sub-nav-icon {
+    font-size: 1.1rem; /* Ajustado */
+    margin-bottom: 0.2rem;
+  }
+
+  .strength-sub-nav-mobile .sub-nav-label {
+    font-size: 0.65rem; /* Ajustado */
+  }
+}
+
+@media (max-width: 360px) {
+  .advanced-analytics {
+    padding: 0.5rem; /* Ultra compacto */
+  }
+
+  .analytics-header {
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .analytics-header h3 {
+    font-size: 1.1rem; /* Ajustado */
+  }
+
+  .analytics-header p {
+    font-size: 0.8rem;
+  }
+
+  .analytics-mobile-nav {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(50px, 1fr)
+    ); /* Ultra compacto */
+    margin-bottom: 1rem;
+    padding: 0.3rem;
+  }
+
+  .analytics-mobile-nav .analytics-mobile-nav-icon {
+    font-size: 0.8rem; /* Ajustado */
+  }
+
+  .analytics-mobile-nav .analytics-mobile-nav-label {
+    font-size: 0.6rem; /* Ajustado */
+  }
+
+  .workout-stats {
+    grid-template-columns: repeat(2, 1fr); /* Mantém 2x2 */
+    gap: 0.6rem; /* Ajustado */
+    margin-bottom: 1rem;
+  }
+
+  .stat-card {
+    padding: 0.7rem; /* Ajustado */
+  }
+
+  .stat-card h4 {
+    font-size: 0.65rem; /* Ajustado */
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-value {
+    font-size: 1.2rem; /* Ajustado */
+  }
+
+  .analytics-content {
+    padding: 0.75rem; /* Ultra compacto */
+  }
+
+  .chart-container,
+  .strength-levels,
+  .muscle-balance-cards,
+  .predictions-cards,
+  .percentile-analysis {
+    padding: 0.7rem; /* Ultra compacto */
+    margin-bottom: 1rem;
+  }
+
+  .chart-container h4 {
+    font-size: 0.9rem; /* Ajustado */
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.4rem;
+  }
+
+  /* Chart height adjustment */
+  .chart-container .recharts-responsive-container {
+    height: 180px !important;
+  }
+
+  .strength-levels-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .strength-levels h4 {
+    font-size: 0.95rem;
+  }
+
+  .exercise-count {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .muscle-group-filter label {
+    font-size: 0.75rem;
+  }
+
+  .muscle-group-select {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.75rem;
+  }
+
+  .levels-grid {
+    grid-template-columns: 1fr; /* Uma coluna */
+    gap: 0.6rem;
+  }
+
+  .level-card {
+    padding: 0.8rem;
+  }
+
+  .level-card h5 {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .level-badge {
+    padding: 0.3rem 0.6rem; /* Ajustado para ultra-pequeno */
+    font-size: 0.65rem; /* Ajustado para ultra-pequeno */
+    margin-bottom: 0.6rem;
+  }
+
+  .level-card p {
+    font-size: 0.75rem;
+    padding: 0.25rem 0;
+  }
+
+  .level-card p strong {
+    font-size: 0.8rem;
+  }
+
+  .balance-grid,
+  .predictions-grid,
+  .percentile-grid {
+    grid-template-columns: 1fr; /* Uma coluna */
+    gap: 0.6rem;
+  }
+
+  .balance-card,
+  .prediction-card,
+  .percentile-card {
+    padding: 0.8rem;
+  }
+
+  .balance-card h5,
+  .prediction-card h5,
+  .percentile-card h5 {
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .training-type-stats {
+    grid-template-columns: 1fr; /* Uma coluna */
+    gap: 0.6rem;
+  }
+
+  .training-type-stats .stat-card {
+    padding: 0.7rem;
+  }
+
+  .training-type-stats .stat-value {
+    font-size: 1.6rem;
+  }
+
+  .rpe-analysis-cards h4,
+  .rest-time-cards h4 {
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .strength-sub-nav-mobile {
+    grid-template-columns: repeat(2, 1fr); /* Mantém 2 colunas */
+    gap: 0.4rem;
+    padding: 0.3rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .strength-sub-nav-mobile .sub-nav-icon {
+    font-size: 1rem; /* Ajustado */
+    margin-bottom: 0.15rem;
+  }
+
+  .strength-sub-nav-mobile .sub-nav-label {
+    font-size: 0.6rem; /* Ajustado */
   }
 }
 
@@ -1069,27 +1515,6 @@
   font-size: 0.95rem;
   font-weight: 500;
   margin-top: 0.5rem;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .training-type-stats {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  .training-type-stats .stat-card {
-    padding: 1rem;
-  }
-
-  .training-type-stats .stat-value {
-    font-size: 2rem;
-  }
-
-  .rpe-analysis-cards h4,
-  .rest-time-cards h4 {
-    font-size: 1.2rem;
-  }
 }
 
 /* ===== SUB-NAVEGAÇÃO PARA FORÇA (DESKTOP) ===== */

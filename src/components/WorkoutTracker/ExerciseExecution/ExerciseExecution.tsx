@@ -1,10 +1,15 @@
 // src/components/WorkoutTracker/ExerciseExecution/ExerciseExecution.tsx
 import { useState, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useWorkout } from "../../../contexts/WorkoutContext";
 import { useTimerToast } from "../../../hooks/useTimerToast";
 import { useNotifications } from "../../../hooks/useNotifications";
 import { useAppNavigation } from "../../../contexts/AppNavigationContext";
-import { useExerciseRecords, isNewWeightRecord, isNewVolumeRecord } from "../../../hooks/useExerciseRecords";
+import {
+  useExerciseRecords,
+  isNewWeightRecord,
+  isNewVolumeRecord,
+} from "../../../hooks/useExerciseRecords";
 import { ConfirmationModal } from "../../UI/ConfirmationModal/ConfirmationModal";
 import { RecordBadge } from "../RecordBadge/RecordBadge";
 import type {
@@ -197,7 +202,9 @@ export function ExerciseExecution({
           : undefined;
 
       // ✅ Verificar se algum set bateu recorde
-      const hasPersonalRecord = finalExecution.completedSets.some(set => set.isPersonalRecord);
+      const hasPersonalRecord = finalExecution.completedSets.some(
+        (set) => set.isPersonalRecord
+      );
 
       // ✅ NOVO: Adicionar completedSets com detalhes de cada série
       const loggedExercise: LoggedExercise = {
@@ -271,10 +278,16 @@ export function ExerciseExecution({
     );
 
     // ✅ Verificar se bateu recorde ANTES de criar o set
-    const isWeightRecord = isNewWeightRecord(currentSetData.weight, exerciseRecords.maxWeight);
+    const isWeightRecord = isNewWeightRecord(
+      currentSetData.weight,
+      exerciseRecords.maxWeight
+    );
     const currentSetVolume = currentSetData.weight * currentSetData.reps;
     const previousMaxVolume = exerciseRecords.maxVolume;
-    const isVolumeRecord = isNewVolumeRecord(currentSetVolume, previousMaxVolume);
+    const isVolumeRecord = isNewVolumeRecord(
+      currentSetVolume,
+      previousMaxVolume
+    );
     const isPersonalRecord = isWeightRecord || isVolumeRecord;
 
     const completedSet: ExecutedSet = {
@@ -463,214 +476,223 @@ export function ExerciseExecution({
     currentSetData.weight !== exercise.plannedWeight ||
     currentSetData.notes.trim() !== "";
 
-  return (
-    <div className={styles.exerciseExecution}>
-      <header className={styles.executionHeader}>
-        <h2 className={styles.exerciseName}>{exercise.name}</h2>
-        <div className={styles.progressInfo}>
-          <span className={styles.setProgress}>
-            Série {execution.currentSet} de {execution.totalSets}
-          </span>
-          <span className={styles.trainingType}>
-            {isStrengthTraining ? "💪 Força" : "🏃 Resistência"}
-          </span>
-          {state.activeExercise?.id === exercise.id && (
-            <span className={styles.activeIndicator}>Ativo</span>
-          )}
-          {savedProgress && (
-            <span className={styles.progressIndicator}>📝 Progresso Salvo</span>
-          )}
-          <button className={styles.cancelButton} onClick={handleCancel}>
-            ✕
-          </button>
-        </div>
-
-        {/* ✅ NOVO: Informações de recordes */}
-        {exerciseRecords.totalPerformances > 0 && (
-          <div className={styles.recordsInfo}>
-            <div className={styles.recordItem}>
-              <span className={styles.recordLabel}>🏆 Melhor Peso:</span>
-              <span className={styles.recordValue}>{exerciseRecords.maxWeight.toFixed(1)}kg</span>
-            </div>
-            <div className={styles.recordItem}>
-              <span className={styles.recordLabel}>💪 Melhor Volume:</span>
-              <span className={styles.recordValue}>{exerciseRecords.maxVolume.toFixed(0)}</span>
-            </div>
-            <div className={styles.recordItem}>
-              <span className={styles.recordLabel}>📊 Vezes realizadas:</span>
-              <span className={styles.recordValue}>{exerciseRecords.totalPerformances}x</span>
-            </div>
-            {exerciseRecords.lastPerformed && (
-              <div className={styles.recordItem}>
-                <span className={styles.recordLabel}>📅 Último treino:</span>
-                <span className={styles.recordValue}>
-                  {new Date(exerciseRecords.lastPerformed.date).toLocaleDateString('pt-BR')}
-                </span>
-              </div>
-            )}
-          </div>
-        )}
-      </header>
-
-      {execution.currentSet <= execution.totalSets && (
-        <div className={styles.currentSetForm}>
-          <h3>Série {execution.currentSet}</h3>
-
-          <div className={styles.inputGrid}>
-            <div className={styles.inputGroup}>
-              <label>Peso (kg)</label>
-              <input
-                type="number"
-                value={currentSetData.weight}
-                onChange={(e) =>
-                  setCurrentSetData((prev) => ({
-                    ...prev,
-                    weight: Number(e.target.value),
-                  }))
-                }
-                onFocus={(e) => e.target.select()}
-                className={styles.numberInput}
-                step="0.5"
-                min="0"
-              />
-            </div>
-
-            <div className={styles.inputGroup}>
-              <label>Repetições</label>
-              <input
-                type="number"
-                value={currentSetData.reps}
-                onChange={(e) =>
-                  setCurrentSetData((prev) => ({
-                    ...prev,
-                    reps: Number(e.target.value),
-                  }))
-                }
-                onFocus={(e) => e.target.select()}
-                className={styles.numberInput}
-                min="1"
-              />
-            </div>
-
-            <div className={styles.inputGroup}>
-              <label>RPE (1-10)</label>
-              <div className={styles.rpeButtons}>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rpeValue) => (
-                  <button
-                    key={rpeValue}
-                    className={`${styles.rpeButton} ${
-                      currentSetData.rpe === rpeValue ? styles.activeRpe : ""
-                    }`}
-                    onClick={() =>
-                      setCurrentSetData((prev) => ({
-                        ...prev,
-                        rpe: rpeValue,
-                      }))
-                    }
-                  >
-                    {rpeValue}
-                  </button>
-                ))}
-                {currentSetData.rpe !== undefined && (
-                  <button
-                    className={`${styles.rpeButton} ${styles.clearRpeButton}`}
-                    onClick={() =>
-                      setCurrentSetData((prev) => ({
-                        ...prev,
-                        rpe: undefined,
-                      }))
-                    }
-                  >
-                    Limpar
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.inputGroup}>
-            <label>Notas (opcional)</label>
-            <textarea
-              value={currentSetData.notes}
-              onChange={(e) =>
-                setCurrentSetData((prev) => ({
-                  ...prev,
-                  notes: e.target.value,
-                }))
-              }
-              className={styles.textArea}
-              placeholder="Ex: Técnica boa, peso adequado..."
-              rows={2}
-            />
-          </div>
-
-          <div className={styles.actionButtons}>
-            <button
-              className={styles.completeSetButton}
-              onClick={completeCurrentSet}
-            >
-              {execution.currentSet === execution.totalSets
-                ? "Finalizar Exercício"
-                : "Completar Série"}
-            </button>
-
-            <button className={styles.skipSetButton} onClick={skipCurrentSet}>
-              Pular Série
-            </button>
-          </div>
-        </div>
-      )}
-
-      <div className={styles.completedSets}>
-        <h3>Séries Completadas</h3>
-        {execution.completedSets.map((set, index) => (
-          <div key={index} className={styles.completedSet}>
-            <span className={styles.setNumber}>#{set.setNumber}</span>
-            <span className={styles.setData}>
-              {set.reps} reps × {set.weight}kg
+  return createPortal(
+    <div className={styles.modalOverlay} onClick={handleCancel}>
+      <div
+        className={styles.exerciseExecution}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <header className={styles.executionHeader}>
+          <h2 className={styles.exerciseName}>{exercise.name}</h2>
+          <div className={styles.progressInfo}>
+            <span className={styles.setProgress}>
+              Série {execution.currentSet} de {execution.totalSets}
             </span>
-            {set.rpe !== undefined && (
-              <span className={styles.rpe}>RPE: {set.rpe}</span>
+            <span className={styles.trainingType}>
+              {isStrengthTraining ? "💪 Força" : "🏃 Resistência"}
+            </span>
+            {state.activeExercise?.id === exercise.id && (
+              <span className={styles.activeIndicator}>Ativo</span>
             )}
-            {set.restTime && (
-              <span className={styles.restTime}>
-                Descanso: {Math.floor(set.restTime / 60)}:
-                {(set.restTime % 60).toString().padStart(2, "0")}
+            {savedProgress && (
+              <span className={styles.progressIndicator}>
+                📝 Progresso Salvo
               </span>
             )}
-            {set.notes && set.notes !== "Série pulada" && (
-              <div className={styles.setNotes}>{set.notes}</div>
-            )}
+            <button className={styles.cancelButton} onClick={handleCancel}>
+              ✕
+            </button>
           </div>
-        ))}
+
+          {/* ✅ NOVO: Informações de recordes */}
+          {exerciseRecords.totalPerformances > 0 && (
+            <div className={styles.recordsInfo}>
+              <div className={styles.recordItem}>
+                <span className={styles.recordLabel}>🏆 Melhor Peso:</span>
+                <span className={styles.recordValue}>
+                  {exerciseRecords.maxWeight.toFixed(1)}kg
+                </span>
+              </div>
+              <div className={styles.recordItem}>
+                <span className={styles.recordLabel}>💪 Melhor Volume:</span>
+                <span className={styles.recordValue}>
+                  {exerciseRecords.maxVolume.toFixed(0)}
+                </span>
+              </div>
+              <div className={styles.recordItem}>
+                <span className={styles.recordLabel}>📊 Vezes realizadas:</span>
+                <span className={styles.recordValue}>
+                  {exerciseRecords.totalPerformances}x
+                </span>
+              </div>
+              {exerciseRecords.lastPerformed && (
+                <div className={styles.recordItem}>
+                  <span className={styles.recordLabel}>📅 Último treino:</span>
+                  <span className={styles.recordValue}>
+                    {new Date(
+                      exerciseRecords.lastPerformed.date
+                    ).toLocaleDateString("pt-BR")}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+        </header>
+
+        {execution.currentSet <= execution.totalSets && (
+          <div className={styles.currentSetForm}>
+            <h3>Série {execution.currentSet}</h3>
+
+            <div className={styles.inputGrid}>
+              <div className={styles.inputGroup}>
+                <label>Peso (kg)</label>
+                <input
+                  type="number"
+                  value={currentSetData.weight}
+                  onChange={(e) =>
+                    setCurrentSetData((prev) => ({
+                      ...prev,
+                      weight: Number(e.target.value),
+                    }))
+                  }
+                  onFocus={(e) => e.target.select()}
+                  className={styles.numberInput}
+                  step="0.5"
+                  min="0"
+                />
+              </div>
+
+              <div className={styles.inputGroup}>
+                <label>Repetições</label>
+                <input
+                  type="number"
+                  value={currentSetData.reps}
+                  onChange={(e) =>
+                    setCurrentSetData((prev) => ({
+                      ...prev,
+                      reps: Number(e.target.value),
+                    }))
+                  }
+                  onFocus={(e) => e.target.select()}
+                  className={styles.numberInput}
+                  min="1"
+                />
+              </div>
+
+              <div className={styles.inputGroup}>
+                <label>RPE (1-10)</label>
+                <div className={styles.rpeButtons}>
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rpeValue) => (
+                    <button
+                      key={rpeValue}
+                      type="button"
+                      className={`${styles.rpeButton} ${
+                        currentSetData.rpe === rpeValue ? styles.activeRpe : ""
+                      }`}
+                      onClick={() =>
+                        setCurrentSetData((prev) => ({
+                          ...prev,
+                          rpe: rpeValue,
+                        }))
+                      }
+                    >
+                      {rpeValue}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label>Notas (opcional)</label>
+              <textarea
+                value={currentSetData.notes}
+                onChange={(e) =>
+                  setCurrentSetData((prev) => ({
+                    ...prev,
+                    notes: e.target.value,
+                  }))
+                }
+                className={styles.textArea}
+                placeholder="Ex: Técnica boa, peso adequado..."
+                rows={2}
+              />
+            </div>
+
+            <div className={styles.actionButtons}>
+              <button
+                type="button"
+                className={styles.completeSetButton}
+                onClick={completeCurrentSet}
+              >
+                {execution.currentSet === execution.totalSets
+                  ? "Finalizar Exercício"
+                  : "Completar Série"}
+              </button>
+
+              <button
+                type="button"
+                className={styles.skipSetButton}
+                onClick={skipCurrentSet}
+              >
+                Pular Série
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className={styles.completedSets}>
+          <h3>Séries Completadas</h3>
+          {execution.completedSets.map((set, index) => (
+            <div key={index} className={styles.completedSet}>
+              <span className={styles.setNumber}>#{set.setNumber}</span>
+              <span className={styles.setData}>
+                {set.reps} reps × {set.weight}kg
+              </span>
+              {set.rpe !== undefined && (
+                <span className={styles.rpe}>RPE: {set.rpe}</span>
+              )}
+              {set.restTime && (
+                <span className={styles.restTime}>
+                  Descanso: {Math.floor(set.restTime / 60)}:
+                  {(set.restTime % 60).toString().padStart(2, "0")}
+                </span>
+              )}
+              {set.notes && set.notes !== "Série pulada" && (
+                <div className={styles.setNotes}>{set.notes}</div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <ConfirmationModal
+          isOpen={showCancelModal}
+          title="Cancelar Exercício"
+          message={`Tem certeza que deseja cancelar "${exercise.name}"?`}
+          details={hasProgress ? getProgressDetails() : undefined}
+          confirmText="Sim, Cancelar"
+          cancelText="Continuar Exercício"
+          onConfirm={confirmCancel}
+          onCancel={cancelCancel}
+          type="danger"
+        />
+
+        {/* ✅ NOVO: Badges de Recorde */}
+        <RecordBadge
+          type="weight"
+          currentValue={currentSetData.weight}
+          previousRecord={exerciseRecords.maxWeight}
+          isVisible={showWeightRecord}
+        />
+
+        <RecordBadge
+          type="volume"
+          currentValue={currentSetData.weight * currentSetData.reps}
+          previousRecord={exerciseRecords.maxVolume}
+          isVisible={showVolumeRecord}
+        />
       </div>
-
-      <ConfirmationModal
-        isOpen={showCancelModal}
-        title="Cancelar Exercício"
-        message={`Tem certeza que deseja cancelar "${exercise.name}"?`}
-        details={hasProgress ? getProgressDetails() : undefined}
-        confirmText="Sim, Cancelar"
-        cancelText="Continuar Exercício"
-        onConfirm={confirmCancel}
-        onCancel={cancelCancel}
-        type="danger"
-      />
-
-      {/* ✅ NOVO: Badges de Recorde */}
-      <RecordBadge
-        type="weight"
-        currentValue={currentSetData.weight}
-        previousRecord={exerciseRecords.maxWeight}
-        isVisible={showWeightRecord}
-      />
-
-      <RecordBadge
-        type="volume"
-        currentValue={currentSetData.weight * currentSetData.reps}
-        previousRecord={exerciseRecords.maxVolume}
-        isVisible={showVolumeRecord}
-      />
-    </div>
+    </div>,
+    document.body
   );
 }

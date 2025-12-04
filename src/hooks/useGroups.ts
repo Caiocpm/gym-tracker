@@ -19,6 +19,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { useAuth } from "../contexts/AuthContext";
+import { notificationService } from "../services/notificationService";
 import type { Group, WorkoutPost, Comment, PostLike, GroupChallenge } from "../types/social";
 
 export function useGroups() {
@@ -304,7 +305,7 @@ export function useGroups() {
 
         for (const post of postsSnapshot.docs) {
           // Deletar likes do post
-          const likesRef = collection(db, "likes");
+          const likesRef = collection(db, "postLikes");
           const likesQuery = query(likesRef, where("postId", "==", post.id));
           const likesSnapshot = await getDocs(likesQuery);
           for (const like of likesSnapshot.docs) {
@@ -312,7 +313,7 @@ export function useGroups() {
           }
 
           // Deletar comentários do post
-          const commentsRef = collection(db, "comments");
+          const commentsRef = collection(db, "postComments");
           const commentsQuery = query(
             commentsRef,
             where("postId", "==", post.id)
@@ -471,15 +472,15 @@ export function useGroups() {
   // ==========================================================================
 
   const likePost = useCallback(
-    async (postId: string): Promise<boolean> => {
+    async (postId: string): Promise<{ success: boolean; added: boolean }> => {
       if (!currentUser) {
         setError("You must be logged in");
-        return false;
+        return { success: false, added: false };
       }
 
       try {
         // Check if already liked
-        const likesRef = collection(db, "likes");
+        const likesRef = collection(db, "postLikes");
         const q = query(
           likesRef,
           where("postId", "==", postId),
@@ -493,9 +494,10 @@ export function useGroups() {
           await updateDoc(doc(db, "posts", postId), {
             likesCount: increment(-1),
           });
+          return { success: true, added: false };
         } else {
           // Add like
-          await addDoc(collection(db, "likes"), {
+          await addDoc(collection(db, "postLikes"), {
             postId,
             userId: currentUser.uid,
             createdAt: new Date().toISOString(),
@@ -503,14 +505,41 @@ export function useGroups() {
           await updateDoc(doc(db, "posts", postId), {
             likesCount: increment(1),
           });
-        }
 
-        return true;
+          // ✅ Criar notificação para o autor do post
+          try {
+            const postDoc = await getDoc(doc(db, "posts", postId));
+            if (postDoc.exists()) {
+              const postData = postDoc.data();
+              const postAuthorId = postData.userId;
+              const groupId = postData.groupId;
+
+              // Buscar nome do usuário que curtiu
+              const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+              const userName = userDoc.exists()
+                ? userDoc.data()?.displayName || "Alguém"
+                : "Alguém";
+
+              await notificationService.createPostLikeNotification(
+                postId,
+                postAuthorId,
+                currentUser.uid,
+                userName,
+                groupId
+              );
+            }
+          } catch (notifError) {
+            console.warn("Erro ao criar notificação de like:", notifError);
+            // Não falhar a operação de like por causa da notificação
+          }
+
+          return { success: true, added: true };
+        }
       } catch (err) {
         const firestoreError = err as FirestoreError;
         console.error("Error liking post:", firestoreError);
         setError(firestoreError.message);
-        return false;
+        return { success: false, added: false };
       }
     },
     [currentUser]
@@ -522,7 +551,7 @@ export function useGroups() {
       try {
         console.log("📤 Buscando likes para post:", postId);
 
-        const likesRef = collection(db, "likes");
+        const likesRef = collection(db, "postLikes");
         const q = query(likesRef, where("postId", "==", postId));
 
         const querySnapshot = await getDocs(q);
@@ -625,8 +654,8 @@ export function useGroups() {
 
         console.log("💾 Dados do comentário:", commentData);
 
-        // ✅ Adicionar comentário na coleção 'comments'
-        const docRef = await addDoc(collection(db, "comments"), commentData);
+        // ✅ Adicionar comentário na coleção 'postComments'
+        const docRef = await addDoc(collection(db, "postComments"), commentData);
         console.log("✅ Comentário criado com ID:", docRef.id);
 
         // Update post comment count
@@ -634,6 +663,35 @@ export function useGroups() {
           commentsCount: increment(1),
         });
         console.log("✅ Contador de comentários atualizado");
+
+        // ✅ Criar notificação para o autor do post
+        try {
+          const postDoc = await getDoc(doc(db, "posts", postId));
+          if (postDoc.exists()) {
+            const postData = postDoc.data();
+            const postAuthorId = postData.userId;
+            const groupId = postData.groupId;
+
+            // Buscar nome do usuário que comentou
+            const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+            const userName = userDoc.exists()
+              ? userDoc.data()?.displayName || "Alguém"
+              : "Alguém";
+
+            await notificationService.createPostCommentNotification(
+              postId,
+              docRef.id,
+              postAuthorId,
+              currentUser.uid,
+              userName,
+              text,
+              groupId
+            );
+          }
+        } catch (notifError) {
+          console.warn("Erro ao criar notificação de comentário:", notifError);
+          // Não falhar a operação de comentário por causa da notificação
+        }
 
         return {
           id: docRef.id,
@@ -654,7 +712,7 @@ export function useGroups() {
       try {
         console.log("💬 Buscando comentários para post:", postId);
 
-        const commentsRef = collection(db, "comments");
+        const commentsRef = collection(db, "postComments");
         const q = query(
           commentsRef,
           where("postId", "==", postId),

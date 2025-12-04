@@ -1,5 +1,6 @@
 // src/components/NutritionTracker/AddFoodModal.tsx
 import { useState, useMemo } from "react";
+import { createPortal } from "react-dom";
 import {
   searchFoods,
   getFoodsByCategory,
@@ -209,8 +210,14 @@ export default function AddFoodModal({
 
   if (!isOpen) return null;
 
-  return (
-    <div className={styles.modalOverlay} onClick={onClose}>
+  // Calcular o padding top baseado no scroll atual para centralizar o modal
+  const scrollY = window.scrollY || window.pageYOffset;
+  const viewportHeight = window.innerHeight;
+  const modalPaddingTop = Math.max(20, scrollY + (viewportHeight * 0.05)); // 5vh do topo da viewport atual
+
+  // Renderizar usando portal diretamente
+  return createPortal(
+    <div className={styles.modalOverlay} onClick={onClose} style={{ paddingTop: `${modalPaddingTop}px` }}>
       <div className={styles.addFoodModal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
           <h2>Adicionar Alimento - {getMealName(meal)}</h2>
@@ -591,6 +598,7 @@ export default function AddFoodModal({
           </p>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -1,3 +1,5 @@
+/* src/components/Groups/GroupFeed/GroupFeed.module.css */
+
 /* Group Feed Container */
 .feedContainer {
   max-width: 800px;
@@ -34,6 +36,7 @@
 
 .backButton:hover {
   background: #edf2f7;
+  transform: translateY(-1px);
 }
 
 .groupInfo h1 {
@@ -54,6 +57,7 @@
   gap: 1.5rem;
   font-size: 0.875rem;
   color: #718096;
+  flex-wrap: wrap;
 }
 
 .inviteCode {
@@ -78,7 +82,6 @@
 .postCard {
   background: white;
   border-radius: 1rem;
-  /* Removido overflow: hidden para evitar corte de box-shadow no hover (Problema 1) */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: box-shadow 0.3s ease;
 }
@@ -90,6 +93,9 @@
 .postHeader {
   padding: 1.25rem;
   border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .userInfo {
@@ -100,6 +106,7 @@
   border-radius: 8px;
   padding: 4px;
   margin: -4px;
+  flex: 1;
 }
 
 .userInfo:hover {
@@ -169,7 +176,7 @@
   line-height: 1.6;
 }
 
-/* Workout Stats Grid */
+/* Workout Stats Grid - Otimizado para Mobile 2x2 */
 .workoutStats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -218,7 +225,7 @@
   color: #1a202c;
 }
 
-/* ✅ Record Card - Estilo especial dourado */
+/* Record Card - Estilo especial dourado */
 .recordCard {
   background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important;
   border: 2px solid #d4af37 !important;
@@ -255,7 +262,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-bottom: 1rem; /* Mantido para espaçamento adequado (Problema 1) */
+  margin-bottom: 1rem;
   position: relative;
   overflow: hidden;
 }
@@ -297,17 +304,15 @@
 
 /* Exercises List */
 .exercisesList {
-  display: none; /* Alterado para display: none para estado colapsado (Problema 1) */
+  display: none;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1rem;
-  /* Removido max-height, overflow, opacity e transition para estado colapsado */
-  margin-top: 1rem; /* Mantido para espaçamento */
+  margin-top: 1rem;
 }
 
 .exercisesList.expanded {
-  display: grid; /* Alterado para display: grid para estado expandido (Problema 2) */
-  /* Removido max-height, opacity e transition para estado expandido */
-  margin-bottom: 1rem; /* Mantido para espaçamento */
+  display: grid;
+  margin-bottom: 1rem;
 }
 
 /* Exercise Card */
@@ -328,7 +333,7 @@
   transform: translateY(-2px);
 }
 
-/* ✅ Exercise Card com Recorde - Destaque dourado */
+/* Exercise Card com Recorde - Destaque dourado */
 .recordExercise {
   background: linear-gradient(135deg, #fff9e6 0%, #fffaed 100%) !important;
   border: 2px solid #ffd700 !important;
@@ -348,7 +353,8 @@
 }
 
 @keyframes recordPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -458,17 +464,20 @@
   transform: scale(1.02);
 }
 
-/* Post Actions */
+/* Post Actions - Layout horizontal em uma linha */
 .postActions {
   display: flex;
   gap: 1rem;
   padding: 1rem 1.25rem;
   border-top: 1px solid #f0f0f0;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .actionButton {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   background: #f7fafc;
@@ -479,10 +488,23 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
 }
 
 .actionButton:hover {
   background: #edf2f7;
+  transform: translateY(-1px);
+}
+
+.actionButton:active {
+  transform: translateY(0);
+}
+
+.actionButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Comments Section */
@@ -525,6 +547,7 @@
 
 .addComment button:hover {
   background: #5568d3;
+  transform: translateY(-1px);
 }
 
 /* Loading & Empty States */
@@ -555,75 +578,6 @@
   color: #718096;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .feedContainer {
-    padding: 1rem;
-  }
-
-  .workoutStats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .exercisesList {
-    grid-template-columns: 1fr;
-  }
-
-  .postActions {
-    flex-wrap: wrap;
-  }
-
-  .photos {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .toggleExercisesButton {
-    font-size: 0.8125rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .feedContainer {
-    padding: 0.75rem;
-  }
-
-  .workoutStats {
-    grid-template-columns: 1fr;
-  }
-
-  .exercisesList {
-    grid-template-columns: 1fr;
-  }
-
-  .postActions {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .actionButton {
-    flex: 1;
-    justify-content: center;
-  }
-
-  .photos {
-    grid-template-columns: 1fr;
-  }
-
-  .groupInfo h1 {
-    font-size: 1.5rem;
-  }
-
-  .setItem {
-    grid-template-columns: auto auto;
-    gap: 0.5rem;
-  }
-
-  .setVolume {
-    grid-column: 1 / -1;
-    text-align: left;
-  }
-}
-
 /* Botão de delete no header */
 .deleteButton {
   background: none;
@@ -639,6 +593,7 @@
   min-width: 40px;
   min-height: 40px;
   color: #6c757d;
+  flex-shrink: 0;
 }
 
 .deleteButton:hover {
@@ -656,16 +611,7 @@
   outline-offset: 2px;
 }
 
-/* Responsividade */
-@media (max-width: 480px) {
-  .deleteButton {
-    min-width: 36px;
-    min-height: 36px;
-    font-size: 1rem;
-  }
-}
-
-/* ✅ Tabs Container */
+/* Tabs Container */
 .tabsContainer {
   display: flex;
   gap: 0.5rem;
@@ -704,7 +650,7 @@
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-/* ✅ Challenges Section */
+/* Challenges Section */
 .challengesSection {
   background: white;
   border-radius: 1rem;
@@ -740,6 +686,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .createChallengeButton:hover {
@@ -775,21 +722,118 @@
   margin-bottom: 1.5rem;
 }
 
-/* Responsive Challenges */
+/* ========================================== */
+/* RESPONSIVE DESIGN - DESKTOP (769px+) */
+/* ========================================== */
+
+@media (min-width: 769px) {
+  .workoutStats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .exercisesList {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  .photos {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  .photo {
+    height: 150px;
+  }
+
+  .postActions {
+    gap: 1rem;
+  }
+
+  .actionButton {
+    flex: 0 1 auto;
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* ========================================== */
+/* RESPONSIVE DESIGN - TABLET (481px - 768px) */
+/* ========================================== */
+
 @media (max-width: 768px) {
+  .feedContainer {
+    padding: 1rem;
+  }
+
+  .workoutStats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .statCard {
+    padding: 0.875rem;
+  }
+
+  .statIcon {
+    font-size: 1.375rem;
+  }
+
+  .statLabel {
+    font-size: 0.65rem;
+  }
+
+  .statValue {
+    font-size: 1rem;
+  }
+
+  .exercisesList {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .exerciseCard {
+    padding: 0.875rem;
+    gap: 0.625rem;
+  }
+
+  .photos {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.625rem;
+  }
+
+  .photo {
+    height: 140px;
+  }
+
+  .toggleExercisesButton {
+    font-size: 0.8125rem;
+    padding: 0.75rem 0.875rem;
+  }
+
+  .postActions {
+    gap: 0.5rem;
+    padding: 0.875rem 1rem;
+  }
+
+  .actionButton {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+    gap: 0.375rem;
+  }
+
   .tabsContainer {
     padding: 0.375rem;
+    gap: 0.375rem;
   }
 
   .tabButton {
     padding: 0.75rem 1rem;
     font-size: 0.875rem;
-    flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.375rem;
   }
 
   .challengesGrid {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 
   .challengesHeader {
@@ -801,5 +845,402 @@
   .createChallengeButton {
     width: 100%;
     justify-content: center;
+  }
+
+  .postHeader {
+    padding: 1rem;
+  }
+
+  .postContent {
+    padding: 1rem;
+  }
+
+  .postContent h3 {
+    font-size: 1rem;
+  }
+
+  .postContent p {
+    font-size: 0.8125rem;
+  }
+
+  .groupInfo h1 {
+    font-size: 1.625rem;
+  }
+
+  .setItem {
+    grid-template-columns: auto 1fr auto;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .exerciseCard h4 {
+    font-size: 0.875rem;
+  }
+
+  .exerciseVolumeBadge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .exerciseStat {
+    font-size: 0.7rem;
+  }
+}
+
+/* ========================================== */
+/* RESPONSIVE DESIGN - MOBILE (481px - 767px) */
+/* ========================================== */
+
+@media (max-width: 480px) {
+  .feedContainer {
+    padding: 0.75rem;
+  }
+
+  .feedHeader {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .backButton {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8125rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .groupInfo h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.375rem;
+  }
+
+  .groupInfo p {
+    font-size: 0.8125rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .groupMeta {
+    gap: 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .postHeader {
+    padding: 0.875rem;
+  }
+
+  .deleteButton {
+    min-width: 36px;
+    min-height: 36px;
+    font-size: 1rem;
+    padding: 6px;
+  }
+
+  .postContent {
+    padding: 0.875rem;
+  }
+
+  .postContent h3 {
+    font-size: 1rem;
+    margin-bottom: 0.375rem;
+  }
+
+  .postContent p {
+    font-size: 0.8125rem;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Workout Stats - Grid 2x2 */
+  .workoutStats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 0.875rem;
+  }
+
+  .statCard {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.75rem;
+    border-radius: 0.625rem;
+  }
+
+  .statIcon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .statContent {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .statLabel {
+    font-size: 0.65rem;
+    letter-spacing: 0.25px;
+  }
+
+  .statValue {
+    font-size: 1rem;
+  }
+
+  .toggleExercisesButton {
+    font-size: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .exerciseCounter {
+    width: 22px;
+    height: 22px;
+    font-size: 0.7rem;
+  }
+
+  .exercisesList {
+    grid-template-columns: 1fr;
+    gap: 0.625rem;
+    margin-top: 0.75rem;
+  }
+
+  .exercisesList.expanded {
+    margin-bottom: 0.75rem;
+  }
+
+  .exerciseCard {
+    padding: 0.75rem;
+    gap: 0.5rem;
+    border-radius: 0.625rem;
+  }
+
+  .exerciseHeader {
+    gap: 0.375rem;
+  }
+
+  .exerciseCard h4 {
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  .exerciseVolumeBadge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+  }
+
+  .exerciseSummary {
+    gap: 0.375rem;
+  }
+
+  .exerciseStat {
+    font-size: 0.7rem;
+    gap: 0.2rem;
+  }
+
+  .setsList {
+    gap: 0.375rem;
+    margin-top: 0.375rem;
+  }
+
+  .setItem {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+  }
+
+  .setNumber {
+    font-size: 0.7rem;
+  }
+
+  .setDetails {
+    font-size: 0.75rem;
+  }
+
+  .setVolume {
+    font-size: 0.7rem;
+  }
+
+  .photos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.375rem;
+    margin-top: 0.875rem;
+  }
+
+  .photo {
+    height: 120px;
+    border-radius: 0.375rem;
+  }
+
+  /* Post Actions - Botões em linha */
+  .postActions {
+    display: flex;
+    gap: 0.375rem;
+    padding: 0.75rem 0.875rem;
+    border-top: 1px solid #f0f0f0;
+    flex-wrap: nowrap;
+    align-items: center;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .actionButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.5rem 0.625rem;
+    background: #f7fafc;
+    border: none;
+    border-radius: 0.5rem;
+    color: #2d3748;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex: 0 1 auto;
+    min-width: fit-content;
+  }
+
+  .actionButton:hover {
+    background: #edf2f7;
+  }
+
+  .tabsContainer {
+    padding: 0.375rem;
+    gap: 0.375rem;
+    margin-bottom: 1rem;
+  }
+
+  .tabButton {
+    flex: 1;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.75rem;
+    gap: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .challengesSection {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .challengesHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .challengesHeader h2 {
+    font-size: 1.25rem;
+    margin: 0;
+  }
+
+  .createChallengeButton {
+    width: 100%;
+    justify-content: center;
+    padding: 0.625rem 1rem;
+  }
+
+  .challengesGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .noChallengesSection {
+    padding: 2rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .noChallengesSection h3 {
+    font-size: 1.125rem;
+  }
+
+  .noChallengesSection p {
+    font-size: 0.8125rem;
+  }
+}
+
+/* ========================================== */
+/* RESPONSIVE DESIGN - MOBILE EXTRA PEQUENO (< 360px) */
+/* ========================================== */
+
+@media (max-width: 360px) {
+  .feedContainer {
+    padding: 0.625rem;
+  }
+
+  .feedHeader {
+    padding: 0.875rem;
+    margin-bottom: 0.875rem;
+  }
+
+  .groupInfo h1 {
+    font-size: 1.375rem;
+  }
+
+  .postHeader {
+    padding: 0.75rem;
+  }
+
+  .postContent {
+    padding: 0.75rem;
+  }
+
+  .workoutStats {
+    gap: 0.375rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .statCard {
+    padding: 0.625rem;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+  }
+
+  .statIcon {
+    font-size: 1.125rem;
+  }
+
+  .statLabel {
+    font-size: 0.6rem;
+  }
+
+  .statValue {
+    font-size: 0.95rem;
+  }
+
+  .actionButton {
+    padding: 0.5rem;
+    font-size: 0.65rem;
+  }
+
+  .exerciseCard {
+    padding: 0.625rem;
+  }
+
+  .exerciseCard h4 {
+    font-size: 0.8125rem;
+  }
+
+  .photos {
+    gap: 0.25rem;
+  }
+
+  .photo {
+    height: 100px;
+  }
+
+  .postActions {
+    gap: 0.25rem;
+    padding: 0.625rem;
   }
 }

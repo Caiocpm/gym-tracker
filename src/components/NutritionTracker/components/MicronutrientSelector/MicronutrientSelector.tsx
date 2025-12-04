@@ -1,5 +1,6 @@
 // src/components/NutritionTracker/components/MicronutrientSelector/MicronutrientSelector.tsx
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
+import { createPortal } from "react-dom";
 import { AVAILABLE_MICRONUTRIENTS } from "../../../../types/goals";
 import type { MicronutrientOption } from "../../../../types/goals";
 import styles from "./MicronutrientSelector.module.css";
@@ -32,22 +33,7 @@ const MicronutrientSelector: React.FC<MicronutrientSelectorProps> = ({
   const [customValue, setCustomValue] = useState<number>(0);
   const [customUnit, setCustomUnit] = useState<string>("mg"); // ✅ NOVO ESTADO
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Fechar dropdown ao clicar fora
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  // Não precisamos mais do dropdownRef pois usamos portal com overlay
 
   // Filtrar micronutrientes disponíveis
   const availableOptions = AVAILABLE_MICRONUTRIENTS.filter((option) => {
@@ -73,6 +59,8 @@ const MicronutrientSelector: React.FC<MicronutrientSelectorProps> = ({
   ];
 
   const handleSelectOption = (option: MicronutrientOption) => {
+    console.log('handleSelectOption called:', option); // Debug
+    console.log('Calling onSelect with:', { name: option.name, dailyValue: option.dailyValue, unit: option.unit }); // Debug
     onSelect(option.name, option.dailyValue, option.unit);
     setIsOpen(false);
     setSearchTerm("");
@@ -99,25 +87,16 @@ const MicronutrientSelector: React.FC<MicronutrientSelectorProps> = ({
     setCustomUnit("mg");
   };
 
-  return (
-    <div className={styles.micronutrientSelector} ref={dropdownRef}>
-      <button
-        type="button"
-        className={styles.selectorTrigger}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        ➕ Adicionar Micronutriente
-      </button>
-
-      {isOpen && (
-        <>
-          {/* Overlay escuro para mobile */}
-          <div
-            className={styles.modalOverlay}
-            onClick={() => setIsOpen(false)}
-          />
-          <div className={styles.selectorDropdown}>
-          {/* Header com toggle */}
+  // Renderizar o dropdown em um portal
+  const dropdownContent = isOpen && (
+    <>
+      {/* Overlay escuro para mobile */}
+      <div
+        className={styles.modalOverlay}
+        onClick={() => setIsOpen(false)}
+      />
+      <div className={styles.selectorDropdown}>
+          {/* Header com toggle e botão fechar */}
           <div className={styles.selectorHeader}>
             <div className={styles.modeToggle}>
               <button
@@ -139,6 +118,14 @@ const MicronutrientSelector: React.FC<MicronutrientSelectorProps> = ({
                 ✏️ Personalizado
               </button>
             </div>
+            <button
+              type="button"
+              className={styles.closeButton}
+              onClick={() => setIsOpen(false)}
+              aria-label="Fechar"
+            >
+              ✕
+            </button>
           </div>
 
           {!customMode ? (
@@ -307,9 +294,22 @@ const MicronutrientSelector: React.FC<MicronutrientSelectorProps> = ({
               </div>
             </div>
           )}
-        </div>
-        </>
-      )}
+      </div>
+    </>
+  );
+
+  return (
+    <div className={styles.micronutrientSelector}>
+      <button
+        type="button"
+        className={styles.selectorTrigger}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        ➕ Adicionar Micronutriente
+      </button>
+
+      {/* Renderizar dropdown em um portal diretamente no body */}
+      {dropdownContent && createPortal(dropdownContent, document.body)}
     </div>
   );
 };

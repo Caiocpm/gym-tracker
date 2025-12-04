@@ -33,6 +33,22 @@ export function AppContentWithNotifications() {
   const showProfessionalDashboard =
     isInProfessionalMode && !activeSession?.activeStudentId;
 
+  // ✅ Gerenciar navegação de notificações
+  const handleNotificationClick = (notification: any) => {
+    // Se tem postId ou groupId, navegar para a área de grupos
+    if ("postId" in notification || "groupId" in notification) {
+      setActiveView("groups");
+
+      // Armazenar dados para navegação no localStorage temporariamente
+      const navigationData = {
+        groupId: notification.groupId,
+        postId: notification.postId,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem("groupNavigationTarget", JSON.stringify(navigationData));
+    }
+  };
+
   return (
     <div className={styles.app}>
       <header className={styles.appHeader}>
@@ -41,7 +57,7 @@ export function AppContentWithNotifications() {
             <h1>🏋️ GymTracker</h1>
             <p>Seu companheiro de treino e nutrição</p>
           </div>
-          <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+          <div className={styles.headerActions}>
             <ProfessionalAccess />
             <NotificationCenter
               notifications={notifications}
@@ -49,6 +65,7 @@ export function AppContentWithNotifications() {
               onMarkAsRead={markAsRead}
               onMarkAllAsRead={markAllAsRead}
               onDelete={deleteNotification}
+              onNotificationClick={handleNotificationClick}
             />
           </div>
         </div>

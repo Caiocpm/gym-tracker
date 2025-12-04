@@ -1,6 +1,4 @@
-// src/components/ProgressCharts/ProgressCharts.tsx
-
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -16,60 +14,124 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import type { PieLabelRenderProps } from "recharts"; // ✅ type-only import
 import { format, subDays, isAfter } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useWorkout } from "../../contexts/WorkoutContext";
-import type { LoggedExercise } from "../../types"; // ✅ Renomeado de ExerciseHistory
+import type { LoggedExercise, MuscleGroup } from "../../types";
 import "./ProgressCharts.css";
+
+// Não precisamos mais de PieChartData e PieChartLabelProps customizados
+// Usaremos PieLabelRenderProps diretamente e faremos type assertion para payload
 
 export function ProgressCharts() {
   const { state } = useWorkout();
-  const [selectedExercise, setSelectedExercise] = useState<string>("");
-  const [timeRange, setTimeRange] = useState<number>(30); // dias
+  const [internalSelectedExercise, setInternalSelectedExercise] =
+    useState<string>(""); // ✅ Estado interno
+  const [muscleGroupFilter, setMuscleGroupFilter] = useState<
+    MuscleGroup | "Todos"
+  >("Todos");
+  const [timeRange, setTimeRange] = useState<number>(30);
 
-  // Filtrar dados por período
-  const filterByTimeRange = (history: LoggedExercise[]) => {
-    // ✅ Tipado history
-    const cutoffDate = subDays(new Date(), timeRange);
-    return history.filter((entry: LoggedExercise) =>
-      isAfter(new Date(entry.date), cutoffDate)
-    ); // ✅ Tipado entry
-  };
-
-  // Obter exercícios únicos
-  const uniqueExercises = Array.from(
-    new Set(
-      state.loggedExercises.map((entry: LoggedExercise) => entry.exerciseName)
-    ) // ✅ Renomeado e tipado entry
+  // ✅ Função getMuscleGroupFromExerciseName com useCallback
+  const getMuscleGroupFromExerciseName = useCallback(
+    (exerciseName: string): MuscleGroup | undefined => {
+      const exercise = state.exerciseDefinitions.find(
+        (e) => e.name === exerciseName
+      );
+      return exercise?.primaryMuscleGroup;
+    },
+    [state.exerciseDefinitions]
   );
 
-  // Dados para gráfico de evolução de peso
-  const getWeightProgressData = () => {
-    const filteredHistory = filterByTimeRange(state.loggedExercises); // ✅ Renomeado
-    const exerciseData = selectedExercise
-      ? filteredHistory.filter(
-          (entry: LoggedExercise) => entry.exerciseName === selectedExercise // ✅ Tipado entry
+  // ✅ Função filterByTimeRange com useMemo
+  const filterByTimeRange = useMemo(() => {
+    return (history: LoggedExercise[]) => {
+      const cutoffDate = subDays(new Date(), timeRange);
+      return history.filter((entry: LoggedExercise) =>
+        isAfter(new Date(entry.date), cutoffDate)
+      );
+    };
+  }, [timeRange]);
+
+  // ✅ Função filterByMuscleGroup com useMemo
+  const filterByMuscleGroup = useMemo(() => {
+    return (history: LoggedExercise[]) => {
+      if (muscleGroupFilter === "Todos") return history;
+      return history.filter((entry: LoggedExercise) => {
+        const muscleGroup = getMuscleGroupFromExerciseName(entry.exerciseName);
+        return muscleGroup === muscleGroupFilter;
+      });
+    };
+  }, [muscleGroupFilter, getMuscleGroupFromExerciseName]);
+
+  // ✅ Filtrar dados: tempo + grupo muscular
+  const filteredLoggedExercises = useMemo(() => {
+    const byTime = filterByTimeRange(state.loggedExercises);
+    return filterByMuscleGroup(byTime);
+  }, [state.loggedExercises, filterByTimeRange, filterByMuscleGroup]);
+
+  // ✅ Obter exercícios únicos
+  const uniqueExercises = useMemo(() => {
+    return Array.from(
+      new Set(
+        filteredLoggedExercises.map(
+          (entry: LoggedExercise) => entry.exerciseName
         )
-      : filteredHistory;
+      )
+    );
+  }, [filteredLoggedExercises]);
+
+  // ✅ selectedExercise agora é um estado derivado
+  const selectedExercise = useMemo(() => {
+    if (
+      internalSelectedExercise &&
+      !uniqueExercises.includes(internalSelectedExercise)
+    ) {
+      return ""; // Limpa se o exercício selecionado não está mais disponível
+    }
+    return internalSelectedExercise;
+  }, [internalSelectedExercise, uniqueExercises]);
+
+  // ✅ Obter grupos musculares únicos
+  const availableMuscleGroups = useMemo(() => {
+    return Array.from(
+      new Set(
+        state.loggedExercises
+          .map((entry) => getMuscleGroupFromExerciseName(entry.exerciseName))
+          .filter((group): group is MuscleGroup => group !== undefined)
+      )
+    ).sort();
+  }, [state.loggedExercises, getMuscleGroupFromExerciseName]);
+
+  // ✅ handleExerciseChange agora atualiza o estado interno
+  const handleExerciseChange = useCallback((value: string) => {
+    setInternalSelectedExercise(value);
+  }, []);
+
+  // ✅ Dados para gráfico de evolução de peso
+  const getWeightProgressData = useCallback(() => {
+    const exerciseData = selectedExercise
+      ? filteredLoggedExercises.filter(
+          (entry: LoggedExercise) => entry.exerciseName === selectedExercise
+        )
+      : filteredLoggedExercises;
 
     return exerciseData
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .map((entry: LoggedExercise) => ({
-        // ✅ Tipado entry
         date: format(new Date(entry.date), "dd/MM", { locale: ptBR }),
         peso: entry.weight,
         volume: entry.volume,
         exercicio: entry.exerciseName,
       }));
-  };
+  }, [selectedExercise, filteredLoggedExercises]);
 
-  // Dados para gráfico de volume por exercício
-  const getVolumeByExerciseData = () => {
-    const filteredHistory = filterByTimeRange(state.loggedExercises); // ✅ Renomeado
+  // ✅ Dados para gráfico de volume por exercício
+  const getVolumeByExerciseData = useCallback(() => {
     const exerciseVolumes: { [key: string]: number } = {};
 
-    filteredHistory.forEach((entry: LoggedExercise) => {
-      // ✅ Tipado entry
+    filteredLoggedExercises.forEach((entry: LoggedExercise) => {
       if (exerciseVolumes[entry.exerciseName]) {
         exerciseVolumes[entry.exerciseName] += entry.volume;
       } else {
@@ -81,16 +143,14 @@ export function ProgressCharts() {
       exercicio: name,
       volume,
     }));
-  };
+  }, [filteredLoggedExercises]);
 
-  // Dados para gráfico de treinos por dia da semana
-  const getWorkoutsByDayData = () => {
-    const filteredHistory = filterByTimeRange(state.loggedExercises); // ✅ Renomeado
+  // ✅ Dados para gráfico de treinos por dia da semana
+  const getWorkoutsByDayData = useCallback(() => {
     const dayNames = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
     const dayCount: { [key: number]: number } = {};
 
-    filteredHistory.forEach((entry: LoggedExercise) => {
-      // ✅ Tipado entry
+    filteredLoggedExercises.forEach((entry: LoggedExercise) => {
       const dayOfWeek = new Date(entry.date).getDay();
       dayCount[dayOfWeek] = (dayCount[dayOfWeek] || 0) + 1;
     });
@@ -99,7 +159,7 @@ export function ProgressCharts() {
       dia: name,
       treinos: dayCount[index] || 0,
     }));
-  };
+  }, [filteredLoggedExercises]);
 
   const weightProgressData = getWeightProgressData();
   const volumeByExerciseData = getVolumeByExerciseData();
@@ -114,8 +174,49 @@ export function ProgressCharts() {
     "#00f2fe",
   ];
 
-  if (state.loggedExercises.length === 0) {
-    // ✅ Renomeado
+  // ✅ CORRIGIDO: renderCustomizedLabel com type guard para midAngle e payload
+  const renderCustomizedLabel = (props: PieLabelRenderProps) => {
+    const { cx, cy, midAngle, outerRadius, percent, payload } = props;
+
+    // ✅ Type assertion para payload
+    const customPayload = payload as
+      | { exercicio: string; volume: number }
+      | undefined;
+
+    // ✅ Type guards para todas as propriedades
+    if (
+      cx === undefined ||
+      cy === undefined ||
+      midAngle === undefined ||
+      outerRadius === undefined ||
+      percent === undefined ||
+      !customPayload ||
+      !customPayload.exercicio // Garante que exercicio existe no payload
+    ) {
+      return null;
+    }
+
+    const RADIAN = Math.PI / 180;
+    const radius = outerRadius + 40;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor={x > cx ? "start" : "end"}
+        dominantBaseline="central"
+        fontSize="12"
+        fontWeight="600"
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+
+  if (filteredLoggedExercises.length === 0) {
     return (
       <div className="progress-charts">
         <div className="empty-charts">
@@ -133,22 +234,36 @@ export function ProgressCharts() {
 
         <div className="charts-controls">
           <div className="control-group">
+            <label htmlFor="muscle-group-select">Grupo Muscular:</label>
+            <select
+              id="muscle-group-select"
+              value={muscleGroupFilter}
+              onChange={(e) =>
+                setMuscleGroupFilter(e.target.value as MuscleGroup | "Todos")
+              }
+            >
+              <option value="Todos">Todos os grupos</option>
+              {availableMuscleGroups.map((group) => (
+                <option key={group} value={group}>
+                  {group}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="control-group">
             <label htmlFor="exercise-select">Exercício:</label>
             <select
               id="exercise-select"
-              value={selectedExercise}
-              onChange={(e) => setSelectedExercise(e.target.value)}
+              value={selectedExercise} // ✅ Usa o estado derivado
+              onChange={(e) => handleExerciseChange(e.target.value)} // ✅ Usa callback validado
             >
               <option value="">Todos os exercícios</option>
-              {uniqueExercises.map(
-                (
-                  exercise: string // ✅ Tipado exercise
-                ) => (
-                  <option key={exercise} value={exercise}>
-                    {exercise}
-                  </option>
-                )
-              )}
+              {uniqueExercises.map((exercise: string) => (
+                <option key={exercise} value={exercise}>
+                  {exercise}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -182,6 +297,7 @@ export function ProgressCharts() {
                   `${value}${name === "peso" ? "kg" : ""}`,
                   name === "peso" ? "Peso" : "Volume",
                 ]}
+                wrapperStyle={{ zIndex: 1000 }}
               />
               <Legend />
               <Line
@@ -208,7 +324,10 @@ export function ProgressCharts() {
                 height={80}
               />
               <YAxis />
-              <Tooltip formatter={(value) => [`${value}kg`, "Volume Total"]} />
+              <Tooltip
+                formatter={(value) => [`${value}kg`, "Volume Total"]}
+                wrapperStyle={{ zIndex: 1000 }}
+              />
               <Bar dataKey="volume" fill="#764ba2" />
             </BarChart>
           </ResponsiveContainer>
@@ -222,7 +341,10 @@ export function ProgressCharts() {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="dia" />
               <YAxis />
-              <Tooltip formatter={(value) => [`${value}`, "Exercícios"]} />
+              <Tooltip
+                formatter={(value) => [`${value}`, "Exercícios"]}
+                wrapperStyle={{ zIndex: 1000 }}
+              />
               <Bar dataKey="treinos" fill="#f093fb" />
             </BarChart>
           </ResponsiveContainer>
@@ -234,12 +356,13 @@ export function ProgressCharts() {
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
-                data={volumeByExerciseData.slice(0, 6)} // Top 6 exercícios
+                data={volumeByExerciseData.slice(0, 6)}
                 cx="50%"
                 cy="50%"
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="volume"
+                label={renderCustomizedLabel} // ✅ Type-safe com guards
               >
                 {volumeByExerciseData.slice(0, 6).map((_, index) => (
                   <Cell
@@ -251,7 +374,7 @@ export function ProgressCharts() {
               <Tooltip
                 formatter={(value) => {
                   const totalVolume = volumeByExerciseData.reduce(
-                    (sum: number, item) => sum + item.volume, // ✅ Tipado sum
+                    (sum: number, item) => sum + item.volume,
                     0
                   );
                   const percentage = (
@@ -260,32 +383,10 @@ export function ProgressCharts() {
                   ).toFixed(1);
                   return [`${value}kg (${percentage}%)`, "Volume"];
                 }}
+                wrapperStyle={{ zIndex: 1000 }}
               />
             </PieChart>
           </ResponsiveContainer>
-
-          {/* Legenda customizada para o gráfico de pizza */}
-          <div className="pie-legend">
-            {volumeByExerciseData.slice(0, 6).map((item, index) => {
-              const totalVolume = volumeByExerciseData.reduce(
-                (sum: number, data) => sum + data.volume, // ✅ Tipado sum
-                0
-              );
-              const percentage = ((item.volume / totalVolume) * 100).toFixed(1);
-
-              return (
-                <div key={item.exercicio} className="legend-item">
-                  <div
-                    className="legend-color"
-                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                  />
-                  <span className="legend-text">
-                    {item.exercicio} ({percentage}%)
-                  </span>
-                </div>
-              );
-            })}
-          </div>
         </div>
       </div>
 
@@ -293,10 +394,7 @@ export function ProgressCharts() {
       <div className="stats-summary">
         <div className="stat-card">
           <h4>Total de Exercícios</h4>
-          <span className="stat-value">
-            {state.loggedExercises.length}
-          </span>{" "}
-          {/* ✅ Renomeado */}
+          <span className="stat-value">{filteredLoggedExercises.length}</span>
         </div>
         <div className="stat-card">
           <h4>Exercícios Únicos</h4>
@@ -305,11 +403,11 @@ export function ProgressCharts() {
         <div className="stat-card">
           <h4>Volume Total</h4>
           <span className="stat-value">
-            {state.loggedExercises // ✅ Renomeado
+            {filteredLoggedExercises
               .reduce(
                 (sum: number, entry: LoggedExercise) => sum + entry.volume,
                 0
-              ) // ✅ Tipado sum e entry
+              )
               .toLocaleString()}
             kg
           </span>
@@ -318,12 +416,11 @@ export function ProgressCharts() {
           <h4>Peso Máximo</h4>
           <span className="stat-value">
             {Math.max(
-              ...state.loggedExercises.map(
+              ...filteredLoggedExercises.map(
                 (entry: LoggedExercise) => entry.weight
               ),
               0
-            )}{" "}
-            {/* ✅ Renomeado e tipado entry */}
+            )}
             kg
           </span>
         </div>

@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { useProfessional } from '../../hooks/useProfessional';
 import { useAuth } from '../../contexts/AuthContext';
@@ -7,6 +8,9 @@ import styles from './ProfessionalAccess.module.css';
 export function ProfessionalAccess() {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; right: number }>({ top: 0, right: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
   const {
     isProfessional,
     isInProfessionalMode,
@@ -18,6 +22,40 @@ export function ProfessionalAccess() {
     switchToProfessionalMode,
   } = useProfessional();
   const { currentUser } = useAuth();
+
+  // Calcular posição do dropdown baseado na posição do botão
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const buttonRect = buttonRef.current.getBoundingClientRect();
+      const windowWidth = window.innerWidth;
+
+      // Em mobile (≤480px), posicionar acima do botão
+      if (windowWidth <= 480) {
+        // Altura estimada do dropdown (400px max-height + padding)
+        const dropdownHeight = 410;
+
+        // Calcular top para que o dropdown fique acima do botão
+        // Se não houver espaço suficiente acima, ajustar para ficar visível
+        let calculatedTop = buttonRect.top - dropdownHeight - 10;
+
+        // Se for muito acima (negativo ou muito próximo do topo), ajustar
+        if (calculatedTop < 10) {
+          calculatedTop = 10;
+        }
+
+        setDropdownPosition({
+          top: calculatedTop,
+          right: 10
+        });
+      } else {
+        // Em tablet/desktop, posicionar abaixo do botão
+        setDropdownPosition({
+          top: buttonRect.bottom + 8,
+          right: window.innerWidth - buttonRect.right
+        });
+      }
+    }
+  }, [isOpen]);
 
   // Limpar busca quando o dropdown é fechado
   useEffect(() => {
@@ -68,6 +106,7 @@ export function ProfessionalAccess() {
   return (
     <div className={styles.professionalAccessContainer}>
       <button
+        ref={buttonRef}
         className={`${styles.professionalButton} ${isInProfessionalMode ? styles.active : ''}`}
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -80,12 +119,18 @@ export function ProfessionalAccess() {
         <span className={styles.arrow}>{isOpen ? '▲' : '▼'}</span>
       </button>
 
-      {isOpen && (
+      {isOpen && createPortal(
         <>
           {/* Overlay para fechar ao clicar fora */}
           <div className={styles.overlay} onClick={() => setIsOpen(false)} />
 
-          <div className={styles.dropdown}>
+          <div
+            className={styles.dropdown}
+            style={{
+              top: `${dropdownPosition.top}px`,
+              right: `${dropdownPosition.right}px`
+            }}
+          >
             <div className={styles.dropdownHeader}>
               <div className={styles.professionalInfo}>
                 <div className={styles.professionalName}>
@@ -99,6 +144,13 @@ export function ProfessionalAccess() {
                   {professionalProfile?.professionalType === 'outro' && 'Profissional'}
                 </div>
               </div>
+              <button
+                className={styles.closeButton}
+                onClick={() => setIsOpen(false)}
+                aria-label="Fechar"
+              >
+                ✕
+              </button>
             </div>
 
             <div className={styles.dropdownDivider} />
@@ -206,7 +258,8 @@ export function ProfessionalAccess() {
               )}
             </div>
           </div>
-        </>
+        </>,
+        document.body
       )}
     </div>
   );

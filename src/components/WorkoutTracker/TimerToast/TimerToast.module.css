@@ -10,7 +10,7 @@
   border-radius: 12px;
   padding: 8px 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
+  z-index: 100001; /* ✅ Acima de ExerciseCompletedModal (100000) */
   cursor: pointer;
   transition: all 0.2s ease;
   backdrop-filter: blur(10px);

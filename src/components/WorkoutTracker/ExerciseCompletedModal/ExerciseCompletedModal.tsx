@@ -1,7 +1,7 @@
 // src/components/WorkoutTracker/ExerciseCompletedModal/ExerciseCompletedModal.tsx
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { LoggedExercise } from "../../../types";
-import { Portal } from "../../UI/Portal/Portal"; // ✅ NOVO IMPORT
+import { Portal } from "../../UI/Portal/Portal";
 import styles from "./ExerciseCompletedModal.module.css";
 
 interface ExerciseCompletedModalProps {
@@ -17,21 +17,32 @@ export function ExerciseCompletedModal({
   onClose,
   onRestart,
 }: ExerciseCompletedModalProps) {
-  // ✅ ADICIONAR efeito para bloquear scroll do body
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  // ✅ CRÍTICO: Calcular viewport e posicionar modal
   useEffect(() => {
-    if (isOpen) {
-      // Bloquear scroll do body quando modal abrir
+    if (isOpen && overlayRef.current) {
       const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = "hidden";
 
-      // Restaurar scroll quando modal fechar
+      // ✅ Obter posição atual do scroll
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      const viewportHeight = window.innerHeight;
+
+      // ✅ Aplicar posicionamento absoluto na página
+      overlayRef.current.style.position = "absolute";
+      overlayRef.current.style.top = `${scrollY}px`;
+      overlayRef.current.style.left = "0";
+      overlayRef.current.style.width = "100%";
+      overlayRef.current.style.height = `${viewportHeight}px`;
+
       return () => {
         document.body.style.overflow = originalOverflow;
       };
     }
   }, [isOpen]);
 
-  // ✅ ADICIONAR handler para ESC key
+  // ✅ Handler para ESC key
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape" && isOpen) {
@@ -72,9 +83,11 @@ export function ExerciseCompletedModal({
 
   return (
     <Portal>
-      {" "}
-      {/* ✅ USAR PORTAL */}
-      <div className={styles.modalOverlay} onClick={handleOverlayClick}>
+      <div
+        ref={overlayRef}
+        className={styles.modalOverlay}
+        onClick={handleOverlayClick}
+      >
         <div
           className={styles.modalContent}
           onClick={(e) => e.stopPropagation()}

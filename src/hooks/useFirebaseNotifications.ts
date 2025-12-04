@@ -1,61 +1,143 @@
 // src/hooks/useFirebaseNotifications.ts
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { Notification } from "../types/professional";
+import type { Notification as SocialNotification } from "../types/social";
 import { notificationService } from "../services/notificationService";
 
-export function useFirebaseNotifications(studentId: string | null) {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+// Tipo unificado que combina ambas as notificações
+type UnifiedNotification = (Notification | SocialNotification) & {
+  read?: boolean;
+  isRead?: boolean;
+};
+
+export function useFirebaseNotifications(userId: string | null) {
+  const [notifications, setNotifications] = useState<UnifiedNotification[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
-  const unsubscribeRef = useRef<(() => void) | null>(null);
+  const professionalUnsubscribeRef = useRef<(() => void) | null>(null);
+  const socialUnsubscribeRef = useRef<(() => void) | null>(null);
 
-  // ✅ Carregar notificações em tempo real
+  // ✅ Carregar notificações profissionais e sociais em tempo real
   useEffect(() => {
-    if (!studentId) return;
+    if (!userId) return;
 
     try {
-      unsubscribeRef.current = notificationService.onStudentNotifications(
-        studentId,
-        (loadedNotifications) => {
-          // ✅ setState APENAS dentro do callback (assíncrono)
-          setNotifications(loadedNotifications);
-          const unread = loadedNotifications.filter((n) => !n.read).length;
-          setUnreadCount(unread);
-          setError(null);
+      // Listener para notificações profissionais (studentId)
+      professionalUnsubscribeRef.current =
+        notificationService.onStudentNotifications(
+          userId,
+          (professionalNotifs) => {
+            setNotifications((prev) => {
+              // Filtrar apenas notificações sociais anteriores
+              const socialNotifs = prev.filter(
+                (n) => "isRead" in n || "postId" in n || "groupId" in n
+              );
+              // Combinar com novas notificações profissionais
+              const combined = [...professionalNotifs, ...socialNotifs];
+              // Ordenar por data
+              combined.sort(
+                (a, b) =>
+                  new Date(b.createdAt).getTime() -
+                  new Date(a.createdAt).getTime()
+              );
+              return combined;
+            });
+          }
+        );
+
+      // Listener para notificações sociais/grupos (userId)
+      socialUnsubscribeRef.current = notificationService.onGroupNotifications(
+        userId,
+        (socialNotifs) => {
+          setNotifications((prev) => {
+            // Filtrar apenas notificações profissionais anteriores
+            const professionalNotifs = prev.filter(
+              (n) => "read" in n && !("isRead" in n)
+            );
+            // Combinar com novas notificações sociais
+            const combined = [...professionalNotifs, ...socialNotifs];
+            // Ordenar por data
+            combined.sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+            );
+            return combined;
+          });
         }
       );
     } catch (err) {
-      // ⚠️ Erro na subscription - não podemos fazer setState aqui
       console.error("Erro ao carregar notificações:", err);
     }
 
     // Cleanup
     return () => {
-      if (unsubscribeRef.current) {
-        unsubscribeRef.current();
-        unsubscribeRef.current = null;
+      if (professionalUnsubscribeRef.current) {
+        professionalUnsubscribeRef.current();
+        professionalUnsubscribeRef.current = null;
+      }
+      if (socialUnsubscribeRef.current) {
+        socialUnsubscribeRef.current();
+        socialUnsubscribeRef.current = null;
       }
     };
-  }, [studentId]);
+  }, [userId]);
 
-  // ✅ Marcar como lida
-  const markAsRead = useCallback(async (notificationId: string) => {
-    try {
-      await notificationService.markAsRead(notificationId);
-    } catch (err) {
-      console.error("Erro ao marcar como lida:", err);
-    }
-  }, []);
+  // ✅ Calcular unreadCount baseado em ambos os tipos
+  useEffect(() => {
+    const unread = notifications.filter((n) => {
+      // Notificações profissionais usam 'read'
+      if ("read" in n && !("isRead" in n)) {
+        return !n.read;
+      }
+      // Notificações sociais usam 'isRead'
+      if ("isRead" in n) {
+        return !n.isRead;
+      }
+      return false;
+    }).length;
+    setUnreadCount(unread);
+  }, [notifications]);
+
+  // ✅ Marcar como lida (funciona para ambos os tipos)
+  const markAsRead = useCallback(
+    async (notificationId: string) => {
+      try {
+        const notification = notifications.find((n) => n.id === notificationId);
+        if (!notification) return;
+
+        // Verificar se é notificação social
+        if ("isRead" in notification) {
+          await notificationService.markGroupNotificationAsRead(notificationId);
+        } else {
+          // Notificação profissional
+          await notificationService.markAsRead(notificationId);
+        }
+      } catch (err) {
+        console.error("Erro ao marcar como lida:", err);
+      }
+    },
+    [notifications]
+  );
 
   // ✅ Marcar todas como lidas
   const markAllAsRead = useCallback(async () => {
-    if (!studentId) return;
+    if (!userId) return;
     try {
-      await notificationService.markAllAsRead(studentId);
+      // Marcar notificações profissionais
+      await notificationService.markAllAsRead(userId);
+
+      // Marcar notificações sociais
+      const socialNotifs = notifications.filter((n) => "isRead" in n && !n.isRead);
+      await Promise.all(
+        socialNotifs.map((n) =>
+          notificationService.markGroupNotificationAsRead(n.id)
+        )
+      );
     } catch (err) {
       console.error("Erro ao marcar todas como lidas:", err);
     }
-  }, [studentId]);
+  }, [userId, notifications]);
 
   // ✅ Deletar notificação
   const deleteNotification = useCallback(async (notificationId: string) => {

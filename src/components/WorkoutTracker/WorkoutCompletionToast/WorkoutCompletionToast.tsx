@@ -1,5 +1,6 @@
 // src/components/WorkoutTracker/WorkoutCompletionToast/WorkoutCompletionToast.tsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import styles from "./WorkoutCompletionToast.module.css";
 
 interface WorkoutCompletionToastProps {
@@ -16,6 +17,52 @@ export function WorkoutCompletionToast({
   workoutName,
 }: WorkoutCompletionToastProps) {
   const [isDismissed, setIsDismissed] = useState(false);
+  const [position, setPosition] = useState<{ top: number; right: number | string; left: number | string }>({
+    top: 20,
+    right: 20,
+    left: 'auto'
+  });
+
+  // Calcula a posição do toast baseado no scroll e tamanho da tela
+  useEffect(() => {
+    if (!isVisible || isDismissed) return;
+
+    const updatePosition = () => {
+      const scrollY = window.scrollY || window.pageYOffset;
+      const windowWidth = window.innerWidth;
+
+      // Calcula o offset do topo baseado no breakpoint
+      let topOffset = 20;
+      let rightOffset = 20;
+
+      if (windowWidth <= 480) {
+        topOffset = 16;
+        rightOffset = 8;
+      } else if (windowWidth <= 768) {
+        topOffset = 20;
+        rightOffset = 12;
+      }
+
+      // Sempre fixa no lado direito
+      setPosition({
+        top: scrollY + topOffset,
+        right: rightOffset,
+        left: 'auto'
+      });
+    };
+
+    // Atualiza imediatamente
+    updatePosition();
+
+    // Atualiza ao rolar
+    window.addEventListener('scroll', updatePosition);
+    window.addEventListener('resize', updatePosition);
+
+    return () => {
+      window.removeEventListener('scroll', updatePosition);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [isVisible, isDismissed]);
 
   if (!isVisible || isDismissed) return null;
 
@@ -24,8 +71,15 @@ export function WorkoutCompletionToast({
     onDismiss();
   };
 
-  return (
-    <div className={styles.toast}>
+  return createPortal(
+    <div
+      className={styles.toast}
+      style={{
+        top: `${position.top}px`,
+        right: typeof position.right === 'number' ? `${position.right}px` : position.right,
+        left: typeof position.left === 'number' ? `${position.left}px` : position.left
+      }}
+    >
       <div className={styles.toastContent}>
         <div className={styles.toastMessage}>
           <span className={styles.icon}>🎉</span>
@@ -52,6 +106,7 @@ export function WorkoutCompletionToast({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -1,27 +1,22 @@
 /* src/components/WorkoutTracker/ExerciseCompletedModal/ExerciseCompletedModal.module.css */
 
-/* ✅ OVERLAY - Cobertura total da tela */
+/* ✅ OVERLAY - Position absolute (calculado via JS) */
 .modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
   background-color: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
-  z-index: 9999;
+  z-index: 100000;
 
-  /* ✅ FLEXBOX para centralização perfeita */
   display: flex;
   align-items: center;
   justify-content: center;
 
-  /* ✅ PADDING para evitar que toque as bordas */
-  padding: 20px;
-  box-sizing: border-box;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 
-  /* ✅ ANIMAÇÃO de entrada */
   animation: overlayFadeIn 0.3s ease-out;
+
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 /* ✅ CONTEÚDO DO MODAL */
@@ -30,26 +25,18 @@
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
 
-  /* ✅ TAMANHO responsivo */
   width: 100%;
-  max-width: 500px;
-  max-height: 90vh;
+  max-width: 600px;
+  max-height: 85vh;
 
-  /* ✅ SCROLL interno se necessário */
-  overflow: hidden;
+  margin: auto;
+
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
-  /* ✅ ANIMAÇÃO de entrada */
   animation: modalSlideIn 0.3s ease-out;
-
-  /* ✅ BORDA superior colorida */
   border-top: 4px solid #10b981;
-
-  /* ✅ RESET de posicionamento */
-  position: relative;
-  margin: 0;
-  transform: none;
 }
 
 /* ✅ HEADER fixo */
@@ -117,7 +104,7 @@
   outline-offset: 2px;
 }
 
-/* ✅ BODY com scroll */
+/* ✅ BODY com scroll interno */
 .modalBody {
   padding: 0 24px 24px 24px;
   overflow-y: auto;
@@ -303,14 +290,12 @@
 /* ✅ RESPONSIVIDADE MOBILE */
 @media (max-width: 640px) {
   .modalOverlay {
-    padding: 16px;
-    align-items: flex-start;
-    padding-top: 40px;
+    padding: 12px;
   }
 
   .modalContent {
-    max-height: calc(100vh - 80px);
-    border-radius: 12px;
+    max-height: 88vh;
+    max-width: 100%;
   }
 
   .modalHeader {
@@ -359,15 +344,14 @@
   }
 }
 
-/* ✅ TELAS MUITO PEQUENAS */
 @media (max-width: 480px) {
   .modalOverlay {
-    padding: 12px;
-    padding-top: 20px;
+    padding: 8px;
   }
 
   .modalContent {
-    max-height: calc(100vh - 40px);
+    max-height: 90vh;
+    max-width: 100%;
   }
 
   .summaryGrid {

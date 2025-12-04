@@ -210,5 +210,26 @@ service cloud.firestore {
       allow update, delete: if request.auth != null
         && request.auth.uid == resource.data.professionalId;
     }
+
+    // ✅ Regras para Notificações
+    match /notifications/{notificationId} {
+      // Permitir leitura apenas para o destinatário
+      allow read: if request.auth != null
+        && (request.auth.uid == resource.data.userId
+            || request.auth.uid == resource.data.studentId);
+
+      // Permitir criação para usuários autenticados
+      allow create: if request.auth != null;
+
+      // Permitir atualização apenas para o destinatário (marcar como lida)
+      allow update: if request.auth != null
+        && (request.auth.uid == resource.data.userId
+            || request.auth.uid == resource.data.studentId);
+
+      // Permitir deletar apenas para o destinatário
+      allow delete: if request.auth != null
+        && (request.auth.uid == resource.data.userId
+            || request.auth.uid == resource.data.studentId);
+    }
   }
 }

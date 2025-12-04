@@ -1,14 +1,23 @@
 // src/components/NotificationCenter/NotificationCenter.tsx
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import type { Notification } from "../../types/professional";
+import type { Notification as SocialNotification } from "../../types/social";
 import styles from "./NotificationCenter.module.css";
 
+// Tipo unificado de notificação
+type UnifiedNotification = (Notification | SocialNotification) & {
+  read?: boolean;
+  isRead?: boolean;
+};
+
 interface NotificationCenterProps {
-  notifications: Notification[];
+  notifications: UnifiedNotification[];
   unreadCount: number;
   onMarkAsRead: (notificationId: string) => void;
   onMarkAllAsRead: () => void;
   onDelete: (notificationId: string) => void;
+  onNotificationClick?: (notification: UnifiedNotification) => void;
 }
 
 export function NotificationCenter({
@@ -17,8 +26,34 @@ export function NotificationCenter({
   onMarkAsRead,
   onMarkAllAsRead,
   onDelete,
+  onNotificationClick,
 }: NotificationCenterProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // ✅ CRÍTICO: Calcular viewport e posicionar modal
+  useEffect(() => {
+    if (isOpen && overlayRef.current) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+
+      // ✅ Obter posição atual do scroll
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      const viewportHeight = window.innerHeight;
+
+      // ✅ Aplicar posicionamento absoluto na página
+      overlayRef.current.style.position = "absolute";
+      overlayRef.current.style.top = `${scrollY}px`;
+      overlayRef.current.style.left = "0";
+      overlayRef.current.style.width = "100%";
+      overlayRef.current.style.height = `${viewportHeight}px`;
+
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
 
   // ✅ Fechar modal ao clicar fora
   const handleBackdropClick = useCallback(() => {
@@ -29,6 +64,23 @@ export function NotificationCenter({
   const handleModalClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
   }, []);
+
+  // ✅ Fechar modal ao pressionar ESC
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen]);
 
   // ✅ Obter ícone baseado no tipo de notificação
   const getNotificationIcon = (type: string) => {
@@ -54,17 +106,17 @@ export function NotificationCenter({
   const getNotificationColor = (type: string) => {
     switch (type) {
       case "note_created":
-        return "#FF6B6B"; // Vermelho
+        return "#FF6B6B";
       case "goal_created":
-        return "#4ECDC4"; // Teal
+        return "#4ECDC4";
       case "evaluation_scheduled":
-        return "#45B7D1"; // Azul
+        return "#45B7D1";
       case "post_created":
-        return "#96CEB4"; // Verde
+        return "#96CEB4";
       case "comment_added":
-        return "#FFEAA7"; // Amarelo
+        return "#FFEAA7";
       case "post_liked":
-        return "#DDA0DD"; // Plum
+        return "#DDA0DD";
       default:
         return "#95E1D3";
     }
@@ -87,6 +139,129 @@ export function NotificationCenter({
     return date.toLocaleDateString("pt-BR");
   };
 
+  // ✅ Renderizar modal no body usando Portal
+  const modalContent = isOpen && (
+    <div ref={overlayRef} className={styles.overlay}>
+      {/* Backdrop */}
+      <div className={styles.backdrop} onClick={handleBackdropClick} />
+
+      {/* Modal */}
+      <div ref={modalRef} className={styles.modal} onClick={handleModalClick}>
+        {/* Header */}
+        <div className={styles.modalHeader}>
+          <h2 className={styles.modalTitle}>
+            🔔 Notificações {unreadCount > 0 && `(${unreadCount})`}
+          </h2>
+          <button
+            className={styles.closeButton}
+            onClick={() => setIsOpen(false)}
+            title="Fechar"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Ações rápidas */}
+        {notifications.length > 0 && unreadCount > 0 && (
+          <div className={styles.quickActions}>
+            <button
+              className={styles.markAllButton}
+              onClick={() => {
+                onMarkAllAsRead();
+              }}
+            >
+              ✓ Marcar tudo como lido
+            </button>
+          </div>
+        )}
+
+        {/* Lista de notificações */}
+        <div className={styles.notificationsList}>
+          {notifications.length === 0 ? (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyIcon}>🎉</div>
+              <p className={styles.emptyText}>
+                Você está em dia! Nenhuma notificação nova.
+              </p>
+            </div>
+          ) : (
+            notifications.map((notification) => {
+              const isUnread = "isRead" in notification ? !notification.isRead : !notification.read;
+              const isClickable = "postId" in notification || "groupId" in notification;
+
+              return (
+                <div
+                  key={notification.id}
+                  className={`${styles.notificationItem} ${
+                    isUnread ? styles.unread : ""
+                  } ${isClickable ? styles.clickable : ""}`}
+                  style={{
+                    borderLeftColor: getNotificationColor(notification.type),
+                  }}
+                  onClick={() => {
+                    if (isClickable && onNotificationClick) {
+                      onNotificationClick(notification);
+                      onMarkAsRead(notification.id);
+                      setIsOpen(false);
+                    }
+                  }}
+                >
+                  {/* Conteúdo */}
+                  <div className={styles.notificationContent}>
+                  <div className={styles.notificationHeader}>
+                    <span className={styles.notificationIcon}>
+                      {getNotificationIcon(notification.type)}
+                    </span>
+                    <div className={styles.notificationTextContent}>
+                      <h3 className={styles.notificationTitle}>
+                        {notification.title}
+                      </h3>
+                      <p className={styles.notificationMessage}>
+                        {notification.message}
+                      </p>
+                    </div>
+                  </div>
+                  <div className={styles.notificationFooter}>
+                    <span className={styles.notificationDate}>
+                      {formatDate(notification.createdAt)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Ações */}
+                <div className={styles.notificationActions}>
+                  {isUnread && (
+                    <button
+                      className={styles.actionButton}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onMarkAsRead(notification.id);
+                      }}
+                      title="Marcar como lida"
+                    >
+                      ✓
+                    </button>
+                  )}
+                  <button
+                    className={styles.deleteButton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete(notification.id);
+                    }}
+                    title="Deletar"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            );
+            })
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className={styles.notificationCenterContainer}>
       {/* ✅ Botão de sino com badge */}
@@ -103,110 +278,8 @@ export function NotificationCenter({
         )}
       </button>
 
-      {/* ✅ Modal de notificações */}
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <div className={styles.backdrop} onClick={handleBackdropClick} />
-
-          {/* Modal */}
-          <div className={styles.modal} onClick={handleModalClick}>
-            {/* Header */}
-            <div className={styles.modalHeader}>
-              <h2 className={styles.modalTitle}>
-                🔔 Notificações {unreadCount > 0 && `(${unreadCount})`}
-              </h2>
-              <button
-                className={styles.closeButton}
-                onClick={() => setIsOpen(false)}
-                title="Fechar"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Ações rápidas */}
-            {notifications.length > 0 && unreadCount > 0 && (
-              <div className={styles.quickActions}>
-                <button
-                  className={styles.markAllButton}
-                  onClick={() => {
-                    onMarkAllAsRead();
-                  }}
-                >
-                  ✓ Marcar tudo como lido
-                </button>
-              </div>
-            )}
-
-            {/* Lista de notificações */}
-            <div className={styles.notificationsList}>
-              {notifications.length === 0 ? (
-                <div className={styles.emptyState}>
-                  <div className={styles.emptyIcon}>🎉</div>
-                  <p className={styles.emptyText}>
-                    Você está em dia! Nenhuma notificação nova.
-                  </p>
-                </div>
-              ) : (
-                notifications.map((notification) => (
-                  <div
-                    key={notification.id}
-                    className={`${styles.notificationItem} ${
-                      !notification.read ? styles.unread : ""
-                    }`}
-                    style={{
-                      borderLeftColor: getNotificationColor(notification.type),
-                    }}
-                  >
-                    {/* Conteúdo */}
-                    <div className={styles.notificationContent}>
-                      <div className={styles.notificationHeader}>
-                        <span className={styles.notificationIcon}>
-                          {getNotificationIcon(notification.type)}
-                        </span>
-                        <div className={styles.notificationTextContent}>
-                          <h3 className={styles.notificationTitle}>
-                            {notification.title}
-                          </h3>
-                          <p className={styles.notificationMessage}>
-                            {notification.message}
-                          </p>
-                        </div>
-                      </div>
-                      <div className={styles.notificationFooter}>
-                        <span className={styles.notificationDate}>
-                          {formatDate(notification.createdAt)}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Ações */}
-                    <div className={styles.notificationActions}>
-                      {!notification.read && (
-                        <button
-                          className={styles.actionButton}
-                          onClick={() => onMarkAsRead(notification.id)}
-                          title="Marcar como lida"
-                        >
-                          ✓
-                        </button>
-                      )}
-                      <button
-                        className={styles.deleteButton}
-                        onClick={() => onDelete(notification.id)}
-                        title="Deletar"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </>
-      )}
+      {/* ✅ Renderizar modal no body usando Portal */}
+      {createPortal(modalContent, document.body)}
     </div>
   );
 }

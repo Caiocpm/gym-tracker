@@ -1,6 +1,8 @@
+/* src/components/ProgressCharts/ProgressCharts.css */
+
 .progress-charts {
   background: rgba(255, 255, 255, 0.95);
-  padding: 2rem;
+  padding: 2rem; /* Desktop default */
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
@@ -22,21 +24,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2rem; /* Desktop default */
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 2rem; /* Desktop default */
 }
 
 .charts-header h3 {
   color: #333;
-  font-size: 1.5rem;
+  font-size: 1.5rem; /* Desktop default */
   margin: 0;
 }
 
 .charts-controls {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+  display: flex; /* Desktop default */
+  gap: 2rem; /* Desktop default */
+  flex-wrap: wrap; /* Desktop default */
 }
 
 .control-group {
@@ -59,6 +61,7 @@
   background: white;
   cursor: pointer;
   transition: border-color 0.3s ease;
+  min-width: 150px; /* Garante que o select não fique muito pequeno */
 }
 
 .control-group select:focus {
@@ -69,8 +72,11 @@
 
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(400px, 1fr)
+  ); /* Desktop default */
+  gap: 2rem; /* Desktop default */
   margin-bottom: 2rem;
 }
 
@@ -82,6 +88,16 @@
   border: 1px solid #e1e5e9;
 }
 
+/* Altura dinâmica dos gráficos */
+.chart-container .recharts-responsive-container {
+  height: 300px !important; /* Desktop default */
+}
+
+/* Font-size para labels do XAxis (controlado por JS, mas CSS pode dar um fallback ou ajuste fino) */
+.recharts-wrapper .recharts-cartesian-axis-tick-value {
+  font-size: 12px; /* Desktop default */
+}
+
 .chart-container h4 {
   margin: 0 0 1rem 0;
   color: #333;
@@ -91,8 +107,11 @@
 
 .stats-summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(200px, 1fr)
+  ); /* Desktop default */
+  gap: 2rem; /* Desktop default */
   margin-top: 2rem;
 }
 
@@ -117,31 +136,71 @@
   display: block;
 }
 
+/* Estilos para o label do PieChart */
+.recharts-pie-sector-label {
+  font-size: 12px;
+  fill: #333; /* Cor do texto do label */
+  font-weight: 600;
+}
+
+/* 
+   RESPONSIVIDADE
+    */
+
+/* Tablet (max-width: 768px) */
 @media (max-width: 768px) {
   .progress-charts {
-    padding: 1rem;
+    padding: 1rem; /* Tablet padding */
   }
 
   .charts-header {
-    flex-direction: column;
+    margin-bottom: 1.5rem;
+    gap: 1.5rem; /* Tablet gap */
+    flex-direction: column; /* Empilha em tablet */
     align-items: stretch;
   }
 
+  .charts-header h3 {
+    font-size: 1.3rem; /* Tablet h3 font-size */
+    text-align: center;
+  }
+
   .charts-controls {
-    justify-content: center;
+    gap: 1.5rem; /* Tablet gap */
+    justify-content: center; /* Centraliza controles */
+  }
+
+  .control-group {
+    flex-grow: 1; /* Permite que os controles cresçam */
+  }
+
+  .control-group select {
+    min-width: unset; /* Remove min-width para flexibilidade */
+    width: 100%; /* Ocupa a largura disponível */
   }
 
   .charts-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: 1fr; /* Tablet: 1 coluna */
+    gap: 1.5rem; /* Tablet gap */
   }
 
   .chart-container {
     padding: 1rem;
   }
 
+  /* Altura dinâmica dos gráficos para Tablet */
+  .chart-container .recharts-responsive-container {
+    height: 280px !important; /* Tablet height */
+  }
+
+  /* Font-size para labels do XAxis para Tablet */
+  .recharts-wrapper .recharts-cartesian-axis-tick-value {
+    font-size: 10px; /* Tablet font-size */
+  }
+
   .stats-summary {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* Tablet: 2 colunas */
+    gap: 1.5rem; /* Tablet gap */
   }
 
   .stat-value {
@@ -149,43 +208,105 @@
   }
 }
 
+/* Mobile (max-width: 480px) */
 @media (max-width: 480px) {
+  .progress-charts {
+    padding: 0.75rem; /* Mobile padding */
+  }
+
+  .charts-header {
+    margin-bottom: 1rem;
+    gap: 1rem; /* Mobile gap */
+  }
+
+  .charts-header h3 {
+    font-size: 1.3rem; /* Mobile h3 font-size */
+  }
+
+  .charts-controls {
+    flex-direction: column; /* Mobile: empilha controles */
+    gap: 1rem; /* Mobile gap */
+    width: 100%;
+  }
+
+  .charts-grid {
+    gap: 1rem; /* Mobile gap */
+  }
+
+  /* Altura dinâmica dos gráficos para Mobile */
+  .chart-container .recharts-responsive-container {
+    height: 250px !important; /* Mobile height */
+  }
+
+  /* Font-size para labels do XAxis para Mobile */
+  .recharts-wrapper .recharts-cartesian-axis-tick-value {
+    font-size: 10px; /* Mobile font-size */
+  }
+
   .stats-summary {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Mobile: 1 coluna */
+    gap: 1rem; /* Mobile gap */
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-card h4 {
+    font-size: 0.8rem;
+  }
+
+  .stat-value {
+    font-size: 1.3rem;
   }
 }
-.pie-legend {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e1e5e9;
-}
 
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+/* Ultra (max-width: 360px) */
+@media (max-width: 360px) {
+  .progress-charts {
+    padding: 0.5rem; /* Ultra padding */
+  }
 
-.legend-color {
-  width: 12px;
-  height: 12px;
-  border-radius: 2px;
-}
+  .charts-header {
+    margin-bottom: 0.8rem;
+    gap: 0.8rem; /* Ultra gap */
+  }
 
-.legend-text {
-  font-size: 0.85rem;
-  color: #555;
-  font-weight: 500;
-}
+  .charts-header h3 {
+    font-size: 1.1rem; /* Ultra h3 font-size */
+  }
 
-@media (max-width: 768px) {
-  .pie-legend {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
+  .charts-controls {
+    gap: 0.8rem; /* Ultra gap */
+  }
+
+  .charts-grid {
+    gap: 0.8rem; /* Ultra gap */
+  }
+
+  /* Altura dinâmica dos gráficos para Ultra */
+  .chart-container .recharts-responsive-container {
+    height: 220px !important; /* Ultra height */
+  }
+
+  /* Font-size para labels do XAxis para Ultra */
+  .recharts-wrapper .recharts-cartesian-axis-tick-value {
+    font-size: 10px; /* Ultra font-size */
+  }
+
+  .stats-summary {
+    gap: 0.8rem; /* Ultra gap */
+  }
+
+  .stat-card {
+    padding: 0.8rem;
+  }
+
+  .stat-card h4 {
+    font-size: 0.7rem;
+  }
+
+  .stat-value {
+    font-size: 1.1rem;
   }
 }
