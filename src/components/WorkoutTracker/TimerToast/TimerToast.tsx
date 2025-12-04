@@ -21,8 +21,10 @@ export function TimerToast({
 }: TimerToastProps) {
   const [timeRemaining, setTimeRemaining] = useState(restTime);
   const [isRunning, setIsRunning] = useState(true);
+  const [transform, setTransform] = useState("translateY(0px)");
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const hasCompletedRef = useRef(false);
+  const toastRef = useRef<HTMLDivElement>(null);
 
   // ✅ EFEITO para gerenciar o timer
   useEffect(() => {
@@ -58,6 +60,17 @@ export function TimerToast({
       }
     };
   }, [isRunning, timeRemaining, onComplete]);
+
+  // ✅ EFEITO para acompanhar scroll com transform
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setTransform(`translateY(${scrollY}px)`);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // ✅ CLEANUP quando componente desmonta
   useEffect(() => {
@@ -98,7 +111,11 @@ export function TimerToast({
 
   return (
     <div
+      ref={toastRef}
       className={styles.compactToast}
+      style={{
+        transform: transform,
+      }}
       onClick={handleNavigateToExercise}
       title={`${exerciseName} - Série ${currentSet} de ${totalSets} - Clique para voltar`}
       data-warning={timeRemaining <= 10 ? "true" : "false"}

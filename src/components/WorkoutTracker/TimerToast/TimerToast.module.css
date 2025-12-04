@@ -10,14 +10,14 @@
   border-radius: 12px;
   padding: 8px 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  z-index: 100001; /* ✅ Acima de ExerciseCompletedModal (100000) */
+  z-index: 100001;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.05s linear; /* ← Smooth transform */
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   animation: slideInFromTop 0.3s ease-out;
+  will-change: transform; /* ← Otimização para performance */
 
-  /* ✅ Tamanho fixo pequeno */
   width: 240px !important;
   max-width: 240px !important;
   min-height: auto;

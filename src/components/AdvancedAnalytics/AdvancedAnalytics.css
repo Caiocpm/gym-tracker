@@ -1062,6 +1062,25 @@
     height: 200px !important;
   }
 
+  /* ✅ Melhorar espaçamento dos labels em mobile */
+  .recharts-xaxis-tick text {
+    font-size: 10px !important;
+  }
+
+  .recharts-yaxis-tick text {
+    font-size: 10px !important;
+  }
+
+  /* ✅ Ajustar labels do RadarChart */
+  .recharts-polar-angle-axis-tick text {
+    font-size: 10px !important;
+  }
+
+  /* ✅ Reduzir padding dos containers de gráficos */
+  .chart-container {
+    padding: 0.8rem !important;
+  }
+
   .strength-levels-header {
     gap: 0.5rem;
     margin-bottom: 1rem;
@@ -1247,6 +1266,40 @@
   /* Chart height adjustment */
   .chart-container .recharts-responsive-container {
     height: 180px !important;
+  }
+
+  /* ✅ Melhorar espaçamento dos labels em telas muito pequenas */
+  .recharts-xaxis-tick text {
+    font-size: 8px !important;
+  }
+
+  .recharts-yaxis-tick text {
+    font-size: 8px !important;
+  }
+
+  /* ✅ Ajustar labels do RadarChart em telas muito pequenas */
+  .recharts-polar-angle-axis-tick text {
+    font-size: 8px !important;
+    transform: translateX(-5px);
+  }
+
+  /* ✅ Reduzir padding dos containers em telas muito pequenas */
+  .chart-container {
+    padding: 0.6rem !important;
+    overflow: hidden;
+    margin-bottom: 0.8rem !important;
+  }
+
+  /* ✅ Ajustar altura específica para gráficos de barras e linha */
+  .chart-container .recharts-responsive-container {
+    min-height: 180px !important;
+  }
+
+  /* ✅ Altura aumentada para gráficos radar (usando seletor mais específico) */
+  .muscle-analysis .chart-container .recharts-responsive-container,
+  .muscle-balance-section .recharts-responsive-container {
+    min-height: 280px !important;
+    height: 280px !important;
   }
 
   .strength-levels-header {

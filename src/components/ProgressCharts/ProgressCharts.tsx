@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -32,6 +32,18 @@ export function ProgressCharts() {
     MuscleGroup | "Todos"
   >("Todos");
   const [timeRange, setTimeRange] = useState<number>(30);
+
+  // ✅ Estado reativo para largura da tela
+  const [screenWidth, setScreenWidth] = useState<number>(
+    typeof window !== "undefined" ? window.innerWidth : 1024
+  );
+
+  // ✅ Listener para atualizar largura da tela
+  useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // ✅ Função getMuscleGroupFromExerciseName com useCallback
   const getMuscleGroupFromExerciseName = useCallback(
@@ -359,10 +371,10 @@ export function ProgressCharts() {
                 data={volumeByExerciseData.slice(0, 6)}
                 cx="50%"
                 cy="50%"
-                outerRadius={80}
+                outerRadius={screenWidth <= 390 ? 60 : screenWidth <= 768 ? 70 : 80}
                 fill="#8884d8"
                 dataKey="volume"
-                label={renderCustomizedLabel} // ✅ Type-safe com guards
+                label={screenWidth <= 390 ? false : renderCustomizedLabel} // ✅ Desabilita labels em telas muito pequenas
               >
                 {volumeByExerciseData.slice(0, 6).map((_, index) => (
                   <Cell

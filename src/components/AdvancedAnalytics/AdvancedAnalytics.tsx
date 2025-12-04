@@ -1,6 +1,6 @@
 // src/components/AdvancedAnalytics/AdvancedAnalytics.tsx
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -32,7 +32,59 @@ import { CalendarTrigger } from "../NutritionTracker/components/Calendar/Calenda
 import { NutritionSummaryCards } from "../NutritionTracker/components/NutritionSummaryCards/NutritionSummaryCards.tsx"; // ✅ NOVO IMPORT (será criado no próximo passo)
 import type { MuscleGroup } from "../../types";
 
+// ✅ Função para truncar nomes de exercícios
+const truncateExerciseName = (name: string, maxLength: number = 15): string => {
+  if (name.length <= maxLength) return name;
+  return name.substring(0, maxLength - 3) + "...";
+};
+
 export function AdvancedAnalytics() {
+  // ✅ Estado reativo para largura da tela
+  const [screenWidth, setScreenWidth] = useState<number>(
+    typeof window !== "undefined" ? window.innerWidth : 1024
+  );
+
+  // ✅ Listener para atualizar largura da tela
+  useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // ✅ Custom Label para XAxis com truncamento responsivo
+  const CustomXAxisTick = (props: any) => {
+    const { x, y, payload } = props;
+    if (!x || !y || !payload) return null;
+
+    const isVerySmall = screenWidth <= 390;
+    const isSmall = screenWidth <= 768;
+
+    // Ajustar comprimento baseado no tamanho da tela
+    const maxLength = isVerySmall ? 8 : isSmall ? 10 : 15;
+    const truncatedName = truncateExerciseName(payload.value, maxLength);
+
+    // Ajustar tamanho da fonte
+    const fontSize = isVerySmall ? 8 : isSmall ? 9 : 11;
+
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text
+          x={0}
+          y={0}
+          dy={12}
+          textAnchor="end"
+          fill="#666"
+          transform="rotate(-45)"
+          fontSize={fontSize}
+          style={{ fontWeight: 500 }}
+        >
+          <title>{payload.value}</title>
+          {truncatedName}
+        </text>
+      </g>
+    );
+  };
+
   const {
     strengthMetrics,
     muscleGroupAnalysis,
@@ -361,9 +413,9 @@ export function AdvancedAnalytics() {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis
                         dataKey="exerciseName"
-                        angle={-45}
-                        textAnchor="end"
                         height={80}
+                        tick={<CustomXAxisTick />}
+                        interval={0}
                       />
                       <YAxis />
                       <Tooltip
@@ -446,9 +498,9 @@ export function AdvancedAnalytics() {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis
                         dataKey="exerciseName"
-                        angle={-45}
-                        textAnchor="end"
                         height={80}
+                        tick={<CustomXAxisTick />}
+                        interval={0}
                       />
                       <YAxis />
                       <Tooltip
@@ -506,9 +558,9 @@ export function AdvancedAnalytics() {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis
                           dataKey="exercise"
-                          angle={-45}
-                          textAnchor="end"
                           height={80}
+                          tick={<CustomXAxisTick />}
+                          interval={0}
                         />
                         <YAxis />
                         <Tooltip
@@ -606,9 +658,9 @@ export function AdvancedAnalytics() {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis
                             dataKey="exerciseName"
-                            angle={-45}
-                            textAnchor="end"
                             height={80}
+                            tick={<CustomXAxisTick />}
+                            interval={0}
                           />
                           <YAxis domain={[0, 10]} />
                           <Tooltip
@@ -669,9 +721,9 @@ export function AdvancedAnalytics() {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis
                             dataKey="exerciseName"
-                            angle={-45}
-                            textAnchor="end"
                             height={80}
+                            tick={<CustomXAxisTick />}
+                            interval={0}
                           />
                           <YAxis domain={[0, 100]} />
                           <Tooltip
@@ -782,10 +834,19 @@ export function AdvancedAnalytics() {
 
             <div className="chart-container">
               <h4>⚖️ Balanceamento Muscular</h4>
-              <ResponsiveContainer width="100%" height={400}>
+              <ResponsiveContainer
+                width="100%"
+                height={screenWidth <= 390 ? 280 : screenWidth <= 768 ? 320 : 400}
+              >
                 <RadarChart data={muscleGroupAnalysis}>
                   <PolarGrid />
-                  <PolarAngleAxis dataKey="group" />
+                  <PolarAngleAxis
+                    dataKey="group"
+                    tick={{
+                      fontSize: screenWidth <= 390 ? 9 : screenWidth <= 768 ? 10 : 12,
+                      fill: "#666"
+                    }}
+                  />
                   <PolarRadiusAxis angle={90} domain={[0, "dataMax"]} />
                   <Radar
                     name="Balance (%)"
@@ -799,6 +860,7 @@ export function AdvancedAnalytics() {
                       `${Number(value).toFixed(1)}%`,
                       "Balance",
                     ]}
+                    wrapperStyle={{ zIndex: 1000 }}
                   />
                 </RadarChart>
               </ResponsiveContainer>
@@ -847,9 +909,9 @@ export function AdvancedAnalytics() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
                     dataKey="exerciseName"
-                    angle={-45}
-                    textAnchor="end"
                     height={80}
+                    tick={<CustomXAxisTick />}
+                    interval={0}
                   />
                   <YAxis />
                   <Tooltip

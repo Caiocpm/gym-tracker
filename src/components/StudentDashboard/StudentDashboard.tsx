@@ -9,8 +9,15 @@ import type {
   StudentNote,
   StudentGoal,
   EvaluationSchedule,
-  Notification,
 } from "../../types/professional";
+import type { Notification } from "../../types/professional";
+import type { Notification as SocialNotification } from "../../types/social";
+
+// Tipo unificado que combina ambas as notificações
+type UnifiedNotification = (Notification | SocialNotification) & {
+  read?: boolean;
+  isRead?: boolean;
+};
 import styles from "./StudentDashboard.module.css";
 
 export function StudentDashboard() {
@@ -169,7 +176,7 @@ interface OverviewTabProps {
     completedGoals: number;
     upcomingEvaluations: number;
   };
-  notifications: Notification[];
+  notifications: UnifiedNotification[];
 }
 
 function OverviewTab({ stats, notifications }: OverviewTabProps) {

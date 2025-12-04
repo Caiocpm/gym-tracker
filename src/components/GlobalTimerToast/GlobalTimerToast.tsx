@@ -1,4 +1,5 @@
 // src/components/GlobalTimerToast/GlobalTimerToast.tsx
+import { createPortal } from "react-dom";
 import { useTimerToast } from "../../hooks/useTimerToast";
 import { TimerToast } from "../WorkoutTracker/TimerToast/TimerToast";
 
@@ -20,7 +21,8 @@ export function GlobalTimerToast() {
     return null;
   }
 
-  return (
+  // ✅ Renderizar usando Portal para garantir position: fixed funcione corretamente
+  return createPortal(
     <TimerToast
       exerciseName={activeToast.exerciseName}
       currentSet={activeToast.currentSet}
@@ -35,6 +37,7 @@ export function GlobalTimerToast() {
         console.log("🔄 Navegando para exercício - toast permanece ativo");
         activeToast.onReturnToExecution();
       }}
-    />
+    />,
+    document.body
   );
 }

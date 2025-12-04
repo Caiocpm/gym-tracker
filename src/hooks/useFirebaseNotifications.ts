@@ -12,7 +12,6 @@ type UnifiedNotification = (Notification | SocialNotification) & {
 
 export function useFirebaseNotifications(userId: string | null) {
   const [notifications, setNotifications] = useState<UnifiedNotification[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const professionalUnsubscribeRef = useRef<(() => void) | null>(null);
   const socialUnsubscribeRef = useRef<(() => void) | null>(null);
@@ -150,7 +149,6 @@ export function useFirebaseNotifications(userId: string | null) {
 
   return {
     notifications,
-    error,
     unreadCount,
     markAsRead,
     markAllAsRead,
