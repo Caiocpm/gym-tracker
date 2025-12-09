@@ -1,18 +1,6 @@
 import { useState } from "react";
 import type { StudentNote } from "../types/professional";
-import { db } from "../config/firebase";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
-
-const NOTES_COLLECTION = "student_notes";
+import { professionalApi } from "../services/professionalApi";
 
 export function useStudentNotes() {
   const [notes, setNotes] = useState<StudentNote[]>([]);
@@ -23,22 +11,7 @@ export function useStudentNotes() {
   const loadStudentNotes = async (studentLinkId?: string) => {
     try {
       setLoading(true);
-      const notesRef = collection(db, NOTES_COLLECTION);
-      let q;
-
-      // ✅ Se não houver studentLinkId, carrega TODAS as notas
-      if (studentLinkId) {
-        q = query(notesRef, where("studentLinkId", "==", studentLinkId));
-      } else {
-        q = query(notesRef);
-      }
-
-      const snapshot = await getDocs(q);
-      const notesData = snapshot.docs.map((doc) => ({
-        ...(doc.data() as Omit<StudentNote, "id">),
-        id: doc.id,
-      }));
-
+      const notesData = await professionalApi.notes.list({ studentLinkId });
       setNotes(notesData);
       setError(null);
     } catch (err) {
@@ -60,25 +33,20 @@ export function useStudentNotes() {
   ): Promise<string> => {
     try {
       setLoading(true);
-      const notesRef = collection(db, NOTES_COLLECTION);
+      console.log("📝 Criando nota via API");
 
-      const newNote = {
+      const newNote = await professionalApi.notes.create({
         studentLinkId,
         professionalId,
         title: title || "",
         content,
         category,
         tags,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+      });
 
-      console.log("📝 Criando nota:", newNote);
-
-      const docRef = await addDoc(notesRef, newNote);
-      setNotes([...notes, { ...newNote, id: docRef.id }]);
+      setNotes([...notes, newNote]);
       setError(null);
-      return docRef.id;
+      return newNote.id;
     } catch (err) {
       console.error("❌ Erro ao criar nota:", err);
       setError("Erro ao criar nota");
@@ -92,17 +60,10 @@ export function useStudentNotes() {
   const updateNote = async (noteId: string, updates: Partial<StudentNote>) => {
     try {
       setLoading(true);
-      const noteRef = doc(db, NOTES_COLLECTION, noteId);
-
-      const updateData = {
-        ...updates,
-        updatedAt: new Date().toISOString(),
-      };
-
-      await updateDoc(noteRef, updateData);
+      const updatedNote = await professionalApi.notes.update(noteId, updates);
 
       setNotes(
-        notes.map((n) => (n.id === noteId ? { ...n, ...updateData } : n))
+        notes.map((n) => (n.id === noteId ? updatedNote : n))
       );
 
       setError(null);
@@ -119,12 +80,8 @@ export function useStudentNotes() {
   const deleteNote = async (noteId: string) => {
     try {
       setLoading(true);
-      const noteRef = doc(db, NOTES_COLLECTION, noteId);
-
-      await deleteDoc(noteRef);
-
+      await professionalApi.notes.delete(noteId);
       setNotes(notes.filter((n) => n.id !== noteId));
-
       setError(null);
     } catch (err) {
       console.error("❌ Erro ao deletar nota:", err);

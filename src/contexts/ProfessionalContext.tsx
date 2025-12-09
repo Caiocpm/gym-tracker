@@ -17,8 +17,7 @@ import type {
   ProfessionalRegistrationData,
   ActiveProfessionalSession,
 } from "../types/professional";
-import { doc, setDoc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
-import { db as firestore } from "../config/firebase";
+import { professionalApi } from "../services/professionalApi";
 
 // Estado inicial
 const initialState: ProfessionalState = {
@@ -200,7 +199,7 @@ export function ProfessionalProvider({ children }: ProfessionalProviderProps) {
       try {
         dispatch({ type: "SET_LOADING", payload: true });
 
-        // Buscar no IndexedDB
+        // Buscar no IndexedDB primeiro
         const localProfile = await indexedDB.professionalProfiles.get(currentUser.uid);
 
         if (localProfile) {
@@ -222,21 +221,18 @@ export function ProfessionalProvider({ children }: ProfessionalProviderProps) {
             await loadStudentLinks();
           }
         } else {
-          // Buscar no Firestore
-          const docRef = doc(firestore, "professionals", currentUser.uid);
-          const docSnap = await getDoc(docRef);
+          // Buscar na API
+          const apiProfile = await professionalApi.profile.getProfile(currentUser.uid);
 
-          if (docSnap.exists()) {
-            const firestoreProfile = docSnap.data() as ProfessionalProfile;
-
+          if (apiProfile) {
             // Salvar no IndexedDB
-            await indexedDB.professionalProfiles.put(firestoreProfile);
-            dispatch({ type: "SET_PROFESSIONAL_PROFILE", payload: firestoreProfile });
+            await indexedDB.professionalProfiles.put(apiProfile);
+            dispatch({ type: "SET_PROFESSIONAL_PROFILE", payload: apiProfile });
 
-            if (firestoreProfile.isActive) {
+            if (apiProfile.isActive) {
               const session: ActiveProfessionalSession = {
-                professionalId: firestoreProfile.id,
-                professionalName: firestoreProfile.displayName,
+                professionalId: apiProfile.id,
+                professionalName: apiProfile.displayName,
                 activeStudentId: null,
                 mode: "personal",
               };
@@ -269,24 +265,8 @@ export function ProfessionalProvider({ children }: ProfessionalProviderProps) {
       try {
         dispatch({ type: "SET_LOADING", payload: true });
 
-        const professionalProfile: ProfessionalProfile = {
-          id: currentUser.uid,
-          userId: currentUser.uid,
-          email: data.email,
-          displayName: data.displayName,
-          professionalType: data.professionalType,
-          specialties: data.specialties,
-          cref: data.cref,
-          crn: data.crn,
-          crefito: data.crefito,
-          phone: data.phone,
-          isActive: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-
-        // Salvar no Firestore
-        await setDoc(doc(firestore, "professionals", currentUser.uid), professionalProfile);
+        // Registrar via API
+        const professionalProfile = await professionalApi.profile.register(data);
 
         // Salvar no IndexedDB
         await indexedDB.professionalProfiles.put(professionalProfile);
@@ -310,14 +290,11 @@ export function ProfessionalProvider({ children }: ProfessionalProviderProps) {
       }
 
       try {
-        const updatedProfile = {
-          ...state.professionalProfile,
-          ...updates,
-          updatedAt: new Date().toISOString(),
-        };
-
-        // Atualizar no Firestore
-        await setDoc(doc(firestore, "professionals", currentUser.uid), updatedProfile);
+        // Atualizar via API
+        const updatedProfile = await professionalApi.profile.updateProfile(
+          currentUser.uid,
+          updates
+        );
 
         // Atualizar no IndexedDB
         await indexedDB.professionalProfiles.put(updatedProfile);
@@ -340,23 +317,13 @@ export function ProfessionalProvider({ children }: ProfessionalProviderProps) {
       }
 
       try {
-        const invitationCode = `INV-${Date.now()}-${Math.random().toString(36).substring(7)}`;
-        const invitation: StudentInvitation = {
-          id: `invitation-${Date.now()}`,
+        // Criar convite via API
+        const invitation = await professionalApi.invitations.create({
           professionalId: currentUser.uid,
-          professionalName: state.professionalProfile.displayName,
-          professionalEmail: state.professionalProfile.email,
           studentEmail,
-          invitationCode,
           accessLevel,
-          status: "pending",
           message,
-          sentAt: new Date().toISOString(),
-          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 dias
-        };
-
-        // Salvar no Firestore
-        await setDoc(doc(firestore, "studentInvitations", invitation.id), invitation);
+        });
 
         // Salvar no IndexedDB
         await indexedDB.studentInvitations.put(invitation);
@@ -379,50 +346,10 @@ export function ProfessionalProvider({ children }: ProfessionalProviderProps) {
       }
 
       try {
-        // Buscar convite no Firestore
-        const invitationsRef = collection(firestore, "studentInvitations");
-        const q = query(invitationsRef, where("invitationCode", "==", invitationCode));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-          throw new Error("Convite não encontrado");
-        }
-
-        const invitationDoc = querySnapshot.docs[0];
-        const invitation = invitationDoc.data() as StudentInvitation;
-
-        // Verificar se o convite é para este usuário
-        if (invitation.studentEmail !== currentUser.email) {
-          throw new Error("Este convite não é para você");
-        }
-
-        // Verificar se não expirou
-        if (new Date(invitation.expiresAt) < new Date()) {
-          throw new Error("Convite expirado");
-        }
-
-        // Criar link entre profissional e aluno
-        const link: StudentLink = {
-          id: `link-${Date.now()}`,
-          professionalId: invitation.professionalId,
-          studentUserId: currentUser.uid,
-          studentEmail: currentUser.email!,
-          studentName: currentUser.displayName || "Aluno",
-          accessLevel: invitation.accessLevel,
-          status: "active",
-          linkedAt: new Date().toISOString(),
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-
-        // Salvar no Firestore
-        await setDoc(doc(firestore, "studentLinks", link.id), link);
-
-        // Atualizar convite
-        await setDoc(
-          doc(firestore, "studentInvitations", invitation.id),
-          { status: "accepted", acceptedAt: new Date().toISOString() },
-          { merge: true }
+        // Aceitar convite via API
+        const link = await professionalApi.invitations.accept(
+          invitationCode,
+          currentUser.uid
         );
 
         // Salvar no IndexedDB
@@ -438,11 +365,7 @@ export function ProfessionalProvider({ children }: ProfessionalProviderProps) {
   // Rejeitar convite
   const rejectInvitation = useCallback(async (invitationId: string) => {
     try {
-      await setDoc(
-        doc(firestore, "studentInvitations", invitationId),
-        { status: "rejected" },
-        { merge: true }
-      );
+      await professionalApi.invitations.reject(invitationId);
 
       dispatch({
         type: "UPDATE_INVITATION",
@@ -457,11 +380,7 @@ export function ProfessionalProvider({ children }: ProfessionalProviderProps) {
   // Desvincular aluno
   const unlinkStudent = useCallback(async (linkId: string) => {
     try {
-      await setDoc(
-        doc(firestore, "studentLinks", linkId),
-        { status: "inactive", updatedAt: new Date().toISOString() },
-        { merge: true }
-      );
+      await professionalApi.students.unlink(linkId);
 
       dispatch({ type: "REMOVE_STUDENT_LINK", payload: linkId });
     } catch (error) {
@@ -509,24 +428,13 @@ export function ProfessionalProvider({ children }: ProfessionalProviderProps) {
         dispatch({ type: "SET_STUDENT_LINKS", payload: localLinks });
       }
 
-      // Depois, buscar no Firestore e sincronizar
-      const linksRef = collection(firestore, "studentLinks");
-      const q = query(
-        linksRef,
-        where("professionalId", "==", currentUser.uid),
-        where("status", "==", "active")
-      );
-      const querySnapshot = await getDocs(q);
+      // Depois, buscar via API e sincronizar
+      const apiLinks = await professionalApi.students.list(currentUser.uid);
 
-      const firestoreLinks: StudentLink[] = [];
-      querySnapshot.forEach((doc) => {
-        firestoreLinks.push(doc.data() as StudentLink);
-      });
-
-      if (firestoreLinks.length > 0) {
+      if (apiLinks.length > 0) {
         // Salvar no IndexedDB
-        await Promise.all(firestoreLinks.map((link) => indexedDB.studentLinks.put(link)));
-        dispatch({ type: "SET_STUDENT_LINKS", payload: firestoreLinks });
+        await Promise.all(apiLinks.map((link) => indexedDB.studentLinks.put(link)));
+        dispatch({ type: "SET_STUDENT_LINKS", payload: apiLinks });
       }
     } catch (error) {
       console.error("Erro ao carregar alunos:", error);
@@ -549,24 +457,13 @@ export function ProfessionalProvider({ children }: ProfessionalProviderProps) {
         dispatch({ type: "SET_PENDING_INVITATIONS", payload: localInvitations });
       }
 
-      // Depois, buscar no Firestore e sincronizar
-      const invitationsRef = collection(firestore, "studentInvitations");
-      const q = query(
-        invitationsRef,
-        where("professionalId", "==", currentUser.uid),
-        where("status", "==", "pending")
-      );
-      const querySnapshot = await getDocs(q);
+      // Depois, buscar via API e sincronizar
+      const apiInvitations = await professionalApi.invitations.listPending(currentUser.uid);
 
-      const firestoreInvitations: StudentInvitation[] = [];
-      querySnapshot.forEach((doc) => {
-        firestoreInvitations.push(doc.data() as StudentInvitation);
-      });
-
-      if (firestoreInvitations.length > 0) {
+      if (apiInvitations.length > 0) {
         // Salvar no IndexedDB
-        await Promise.all(firestoreInvitations.map((inv) => indexedDB.studentInvitations.put(inv)));
-        dispatch({ type: "SET_PENDING_INVITATIONS", payload: firestoreInvitations });
+        await Promise.all(apiInvitations.map((inv) => indexedDB.studentInvitations.put(inv)));
+        dispatch({ type: "SET_PENDING_INVITATIONS", payload: apiInvitations });
       }
     } catch (error) {
       console.error("Erro ao carregar convites:", error);

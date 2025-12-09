@@ -1,5 +1,5 @@
 // Groups Component - Main container for social features
-import { useState } from "react";
+import { useState, useEffect } from "react"; // ✅ ADICIONADO useEffect
 import { useGroups } from "../../hooks/useGroups";
 import { useAuth } from "../../contexts/AuthContext";
 import { ConfirmationModal } from "../UI/ConfirmationModal/ConfirmationModal";
@@ -27,6 +27,39 @@ export function Groups() {
   const [isPrivate, setIsPrivate] = useState(false);
   const [inviteCode, setInviteCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // ✅ NOVO: Processar navegação de notificação (selecionar grupo automaticamente)
+  useEffect(() => {
+    const navigationTarget = localStorage.getItem("groupNavigationTarget");
+    if (navigationTarget) {
+      try {
+        const target = JSON.parse(navigationTarget);
+        console.log("🚀 Groups: Processando navegação de notificação:", target);
+
+        // ✅ Se houver groupId, encontrar e selecionar o grupo
+        if (target.groupId && myGroups.length > 0) {
+          const groupToSelect = myGroups.find((g) => g.id === target.groupId);
+          if (groupToSelect) {
+            console.log("📂 Grupo encontrado e selecionado:", target.groupId);
+            setSelectedGroup(groupToSelect);
+
+            // ✅ Mudar para aba "my-groups" se necessário
+            setActiveTab("my-groups");
+          } else {
+            console.warn(
+              "⚠️ Grupo não encontrado nos meus grupos:",
+              target.groupId
+            );
+          }
+        }
+
+        // ✅ NÃO limpar localStorage aqui - GroupFeed ainda precisa dele para postId/commentId
+      } catch (error) {
+        console.error("❌ Erro ao processar navegação em Groups:", error);
+        localStorage.removeItem("groupNavigationTarget");
+      }
+    }
+  }, [myGroups]); // Executa quando myGroups carrega
 
   const handleCreateGroup = async (e: React.FormEvent) => {
     e.preventDefault();

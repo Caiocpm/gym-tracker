@@ -1,7 +1,7 @@
 // Authentication Context
-import { createContext, useContext, useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
-import type { User as FirebaseUser } from 'firebase/auth';
+import { createContext, useContext, useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import type { User as FirebaseUser } from "firebase/auth";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -11,10 +11,10 @@ import {
   signInWithPopup,
   updateProfile,
   sendPasswordResetEmail,
-} from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../config/firebase';
-import type { User } from '../types/social';
+} from "firebase/auth";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { auth, db } from "../config/firebase";
+import type { User } from "../types/social";
 
 interface AuthContextType {
   currentUser: FirebaseUser | null;
@@ -22,7 +22,11 @@ interface AuthContextType {
   loading: boolean;
 
   // Authentication methods
-  signup: (email: string, password: string, displayName: string) => Promise<void>;
+  signup: (
+    email: string,
+    password: string,
+    displayName: string
+  ) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   loginWithGoogle: () => Promise<void>;
@@ -37,7 +41,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }
@@ -52,8 +56,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
 
   // Create user profile in Firestore
-  async function createUserProfile(user: FirebaseUser, additionalData?: Partial<User>) {
-    const userRef = doc(db, 'users', user.uid);
+  async function createUserProfile(
+    user: FirebaseUser,
+    additionalData?: Partial<User>
+  ) {
+    const userRef = doc(db, "users", user.uid);
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists()) {
@@ -91,7 +98,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Load user profile from Firestore
   async function loadUserProfile(uid: string) {
-    const userRef = doc(db, 'users', uid);
+    const userRef = doc(db, "users", uid);
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
@@ -101,14 +108,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Sign up with email and password
   async function signup(email: string, password: string, displayName: string) {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     await updateProfile(userCredential.user, { displayName });
     await createUserProfile(userCredential.user, { displayName });
   }
 
   // Login with email and password
   async function login(email: string, password: string) {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     await createUserProfile(userCredential.user);
   }
 
@@ -132,9 +147,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Update user profile
   async function updateUserProfile(updates: Partial<User>) {
-    if (!currentUser) throw new Error('No user logged in');
+    if (!currentUser) throw new Error("No user logged in");
 
-    const userRef = doc(db, 'users', currentUser.uid);
+    const userRef = doc(db, "users", currentUser.uid);
     await setDoc(userRef, updates, { merge: true });
 
     // Update local state
@@ -180,5 +195,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     updateUserProfile,
   };
 
-  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 }

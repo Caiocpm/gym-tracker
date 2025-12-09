@@ -1,5 +1,4 @@
 // src/components/Groups/GroupFeed/GroupFeed.tsx
-
 import { useState, useEffect } from "react";
 import { useGroups } from "../../hooks/useGroups";
 import { useAuth } from "../../contexts/AuthContext";
@@ -36,7 +35,7 @@ export function GroupFeed({ group, onBack }: GroupFeedProps) {
   const [posts, setPosts] = useState<WorkoutPost[]>([]);
   const [challenges, setChallenges] = useState<GroupChallenge[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showComments, setShowComments] = useState<string | null>(null);
+  const [showComments, setShowComments] = useState<string | null>(null); // ✅ Usado para abrir comentários
   const [refreshKey, setRefreshKey] = useState(0);
   const [expandedExercises, setExpandedExercises] = useState<Set<string>>(
     new Set()
@@ -104,6 +103,54 @@ export function GroupFeed({ group, onBack }: GroupFeedProps) {
       isMounted = false;
     };
   }, [getGroupPosts, getGroupChallenges, group.id, refreshKey]);
+
+  // ✅ NOVO: Processar navegação de notificação (abrir post/comentário específico)
+  useEffect(() => {
+    const navigationTarget = localStorage.getItem("groupNavigationTarget");
+    if (navigationTarget) {
+      try {
+        const target = JSON.parse(navigationTarget);
+        console.log("📄 GroupFeed: Processando navegação:", target);
+
+        // ✅ Se houver postId, abrir comentários desse post
+        if (target.postId) {
+          console.log("💬 Abrindo comentários do post:", target.postId);
+          setShowComments(target.postId);
+
+          // ✅ Scroll suave até o post
+          setTimeout(() => {
+            const postElement = document.querySelector(
+              `[data-post-id="${target.postId}"]`
+            );
+            if (postElement) {
+              postElement.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+
+              // ✅ Destacar o post
+              postElement.classList.add(styles.highlightedPost);
+
+              // Remover destaque após 3s
+              setTimeout(() => {
+                postElement.classList.remove(styles.highlightedPost);
+              }, 3000);
+
+              console.log("✅ Rolado e destacado post:", target.postId);
+            } else {
+              console.warn("⚠️ Post não encontrado:", target.postId);
+            }
+          }, 500); // Tempo para renderizar
+
+          // ✅ Limpar localStorage após processar
+          localStorage.removeItem("groupNavigationTarget");
+        }
+      } catch (error) {
+        console.error("❌ Erro ao processar navegação em GroupFeed:", error);
+        localStorage.removeItem("groupNavigationTarget");
+      }
+    }
+  }, [group.id, posts]); // Executa quando posts carregam
 
   const handleLike = async (postId: string) => {
     console.log("❤️ Curtindo post:", postId);
@@ -375,7 +422,13 @@ export function GroupFeed({ group, onBack }: GroupFeedProps) {
             </div>
           ) : (
             posts.map((post) => (
-              <div key={post.id} className={styles.postCard}>
+              <div
+                key={post.id}
+                data-post-id={post.id} // ✅ NOVO: Atributo para scroll (seletor CSS)
+                className={`${styles.postCard} ${
+                  showComments === post.id ? styles.postWithCommentsOpen : ""
+                }`}
+              >
                 {/* Post Header */}
                 <div className={styles.postHeader}>
                   <div

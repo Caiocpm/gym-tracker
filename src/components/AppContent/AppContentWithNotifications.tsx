@@ -1,4 +1,6 @@
 // src/components/AppContent/AppContentWithNotifications.tsx
+// (Versão corrigida - removendo variável não usada)
+
 import { useAppNavigation } from "../../contexts/AppNavigationContext";
 import { useProfessional } from "../../hooks/useProfessional";
 import { useAuth } from "../../contexts/AuthContext";
@@ -16,7 +18,9 @@ import { NotificationCenter } from "../NotificationCenter/NotificationCenter";
 import { GlobalTimerToast } from "../GlobalTimerToast/GlobalTimerToast";
 import { DevTools } from "../DevTools/DevTools";
 import { navigationItems } from "./appContentTypes";
+import type { UnifiedNotification } from "../../types/UnifiedNotification";
 import styles from "./AppContent.module.css";
+import { useEffect } from "react"; // ✅ Removido useState (não usado)
 
 export function AppContentWithNotifications() {
   const { activeView, setActiveView } = useAppNavigation();
@@ -28,25 +32,158 @@ export function AppContentWithNotifications() {
     markAsRead,
     markAllAsRead,
     deleteNotification,
+    addTestNotifications,
+    clearAll,
+    resetTestMode,
+    isTestMode,
   } = useFirebaseNotifications(currentUser?.uid || null);
+
+  // ✅ Removido: const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+  // O pai não precisa rastrear o estado do modal - o filho gerencia sozinho
+
+  // ✅ Expor para testes no console
+  useEffect(() => {
+    window.notificationDebug = {
+      addTest: addTestNotifications,
+      clear: clearAll,
+      reset: resetTestMode,
+      current: notifications,
+      unread: unreadCount,
+      isTestMode: isTestMode,
+    };
+
+    console.log(
+      "%c🔔 Debug de Notificações Ativado!",
+      "color: #4ECDC4; font-size: 14px; font-weight: bold;"
+    );
+    console.log("Use: window.notificationDebug");
+  }, [
+    notifications,
+    unreadCount,
+    addTestNotifications,
+    clearAll,
+    resetTestMode,
+    isTestMode,
+  ]);
 
   const showProfessionalDashboard =
     isInProfessionalMode && !activeSession?.activeStudentId;
 
-  // ✅ Gerenciar navegação de notificações
-  const handleNotificationClick = (notification: any) => {
-    // Se tem postId ou groupId, navegar para a área de grupos
-    if ("postId" in notification || "groupId" in notification) {
+  // ✅ Gerenciar navegação de notificações com scroll para comentário
+  const handleNotificationClick = (notification: UnifiedNotification) => {
+    console.log("📌 Notificação clicada:", notification.type);
+
+    // ✅ 1. COMENTÁRIO - Navegar e rolar até comentário
+    if (
+      notification.type === "comment" ||
+      notification.type === "comment_added"
+    ) {
+      if (
+        "postId" in notification &&
+        notification.postId &&
+        "groupId" in notification &&
+        notification.groupId
+      ) {
+        setActiveView("groups");
+
+        const navigationData = {
+          groupId: notification.groupId,
+          postId: notification.postId,
+          commentId:
+            "commentId" in notification ? notification.commentId : undefined,
+          timestamp: Date.now(),
+          scrollToComment: true,
+        };
+
+        localStorage.setItem(
+          "groupNavigationTarget",
+          JSON.stringify(navigationData)
+        );
+
+        console.log("💬 Navegando para comentário:", navigationData);
+        markAsRead(notification.id);
+        return; // ✅ Removido setIsNotificationModalOpen - filho gerencia
+      }
+    }
+
+    // ✅ 2. LIKE - Navegar para o post
+    if (notification.type === "like" || notification.type === "post_liked") {
+      if (
+        "postId" in notification &&
+        notification.postId &&
+        "groupId" in notification &&
+        notification.groupId
+      ) {
+        setActiveView("groups");
+
+        const navigationData = {
+          groupId: notification.groupId,
+          postId: notification.postId,
+          timestamp: Date.now(),
+        };
+
+        localStorage.setItem(
+          "groupNavigationTarget",
+          JSON.stringify(navigationData)
+        );
+
+        console.log("❤️ Navegando para post curtido:", navigationData);
+        markAsRead(notification.id);
+        return; // ✅ Removido setIsNotificationModalOpen
+      }
+    }
+
+    // ✅ 3. NOVO POST EM GRUPO - Navegar para o grupo
+    if (notification.type === "new_post_in_group") {
+      if ("groupId" in notification && notification.groupId) {
+        setActiveView("groups");
+
+        const navigationData = {
+          groupId: notification.groupId,
+          postId: "postId" in notification ? notification.postId : undefined,
+          timestamp: Date.now(),
+        };
+
+        localStorage.setItem(
+          "groupNavigationTarget",
+          JSON.stringify(navigationData)
+        );
+
+        console.log("📸 Navegando para novo post:", navigationData);
+        markAsRead(notification.id);
+        return; // ✅ Removido setIsNotificationModalOpen
+      }
+    }
+
+    // ✅ 4. FALLBACK
+    if (
+      ("postId" in notification && notification.postId) ||
+      ("groupId" in notification && notification.groupId)
+    ) {
       setActiveView("groups");
 
-      // Armazenar dados para navegação no localStorage temporariamente
       const navigationData = {
-        groupId: notification.groupId,
-        postId: notification.postId,
+        groupId: "groupId" in notification ? notification.groupId : undefined,
+        postId: "postId" in notification ? notification.postId : undefined,
         timestamp: Date.now(),
       };
-      localStorage.setItem("groupNavigationTarget", JSON.stringify(navigationData));
+
+      localStorage.setItem(
+        "groupNavigationTarget",
+        JSON.stringify(navigationData)
+      );
+
+      console.log("🔗 Navegando para notificação:", navigationData);
+      markAsRead(notification.id);
+      return; // ✅ Removido setIsNotificationModalOpen
     }
+  };
+
+  // ✅ Função vazia para onClose (filho chama, mas pai não precisa fazer nada)
+  const handleModalClose = () => {
+    console.log("🔒 Modal de notificações fechado (pai informado)");
+    // Aqui você pode adicionar lógica se precisar (ex: analytics, etc.)
+    // Por enquanto, só log para debug
   };
 
   return (
@@ -60,12 +197,13 @@ export function AppContentWithNotifications() {
           <div className={styles.headerActions}>
             <ProfessionalAccess />
             <NotificationCenter
-              notifications={notifications}
+              notifications={notifications as UnifiedNotification[]}
               unreadCount={unreadCount}
               onMarkAsRead={markAsRead}
               onMarkAllAsRead={markAllAsRead}
               onDelete={deleteNotification}
               onNotificationClick={handleNotificationClick}
+              onClose={handleModalClose} // ✅ Callback simples para filho
             />
           </div>
         </div>

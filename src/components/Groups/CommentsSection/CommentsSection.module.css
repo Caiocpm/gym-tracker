@@ -208,3 +208,26 @@
     font-size: 0.85rem;
   }
 }
+.highlightedComment {
+  animation: highlightPulse 2s ease-in-out;
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 12px;
+  border-radius: 4px;
+  margin: 4px 0;
+}
+
+@keyframes highlightPulse {
+  0% {
+    background-color: #fff3cd;
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+  }
+  50% {
+    background-color: #ffe69c;
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.7);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}

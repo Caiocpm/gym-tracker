@@ -1,18 +1,6 @@
 import { useState } from "react";
 import type { StudentGoal } from "../types/professional";
-import { db } from "../config/firebase";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
-
-const GOALS_COLLECTION = "goals";
+import { professionalApi } from "../services/professionalApi";
 
 export function useStudentGoals() {
   const [goals, setGoals] = useState<StudentGoal[]>([]);
@@ -23,22 +11,7 @@ export function useStudentGoals() {
   const loadStudentGoals = async (studentLinkId?: string) => {
     try {
       setLoading(true);
-      const goalsRef = collection(db, GOALS_COLLECTION);
-      let q;
-
-      // ✅ Se não houver studentLinkId, carrega TODAS as metas
-      if (studentLinkId) {
-        q = query(goalsRef, where("studentLinkId", "==", studentLinkId));
-      } else {
-        q = query(goalsRef);
-      }
-
-      const snapshot = await getDocs(q);
-      const goalsData = snapshot.docs.map((doc) => ({
-        ...(doc.data() as Omit<StudentGoal, "id">),
-        id: doc.id,
-      }));
-
+      const goalsData = await professionalApi.goals.list({ studentLinkId });
       setGoals(goalsData);
       setError(null);
     } catch (err) {
@@ -64,7 +37,6 @@ export function useStudentGoals() {
   ): Promise<string> => {
     try {
       setLoading(true);
-      const goalsRef = collection(db, GOALS_COLLECTION);
 
       const parsedCurrentValue =
         typeof currentValue === "number"
@@ -74,9 +46,10 @@ export function useStudentGoals() {
         typeof targetValue === "number"
           ? targetValue
           : parseFloat(String(targetValue));
-      const startVal = parsedCurrentValue;
 
-      const newGoal = {
+      console.log("📝 Criando meta via API");
+
+      const newGoal = await professionalApi.goals.create({
         studentLinkId,
         professionalId,
         title,
@@ -84,24 +57,14 @@ export function useStudentGoals() {
         category,
         currentValue: parsedCurrentValue,
         targetValue: parsedTargetValue,
-        startValue: startVal,
-        startDate: (startDate || new Date()).toISOString(),
         unit,
         targetDate: targetDate.toISOString(),
-        progress:
-          ((parsedCurrentValue - startVal) / (parsedTargetValue - startVal)) *
-          100,
-        status: "active" as const,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+        startDate: (startDate || new Date()).toISOString(),
+      });
 
-      console.log("📝 Criando meta:", newGoal);
-
-      const docRef = await addDoc(goalsRef, newGoal);
-      setGoals([...goals, { ...newGoal, id: docRef.id }]);
+      setGoals([...goals, newGoal]);
       setError(null);
-      return docRef.id;
+      return newGoal.id;
     } catch (err) {
       console.error("❌ Erro ao criar meta:", err);
       setError("Erro ao criar meta");
@@ -115,17 +78,10 @@ export function useStudentGoals() {
   const updateGoal = async (goalId: string, updates: Partial<StudentGoal>) => {
     try {
       setLoading(true);
-      const goalRef = doc(db, GOALS_COLLECTION, goalId);
-
-      const updateData = {
-        ...updates,
-        updatedAt: new Date().toISOString(),
-      };
-
-      await updateDoc(goalRef, updateData);
+      const updatedGoal = await professionalApi.goals.update(goalId, updates);
 
       setGoals(
-        goals.map((g) => (g.id === goalId ? { ...g, ...updateData } : g))
+        goals.map((g) => (g.id === goalId ? updatedGoal : g))
       );
 
       setError(null);
@@ -142,12 +98,8 @@ export function useStudentGoals() {
   const deleteGoal = async (goalId: string) => {
     try {
       setLoading(true);
-      const goalRef = doc(db, GOALS_COLLECTION, goalId);
-
-      await deleteDoc(goalRef);
-
+      await professionalApi.goals.delete(goalId);
       setGoals(goals.filter((g) => g.id !== goalId));
-
       setError(null);
     } catch (err) {
       console.error("Erro ao deletar meta:", err);

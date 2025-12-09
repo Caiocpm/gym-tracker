@@ -20,6 +20,9 @@ export function CommentsSection({
   const [loading, setLoading] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [highlightedCommentId, setHighlightedCommentId] = useState<
+    string | null
+  >(null); // ✅ NOVO
 
   // ✅ CORRIGIDO: useCallback para memoizar loadComments
   const loadComments = useCallback(async () => {
@@ -36,6 +39,42 @@ export function CommentsSection({
       setLoading(false);
     }
   }, [postId, getPostComments]);
+
+  // ✅ NOVO: Verificar se deve destacar comentário (vindo de notificação)
+  useEffect(() => {
+    if (isOpen) {
+      const navigationTarget = localStorage.getItem("groupNavigationTarget");
+      if (navigationTarget) {
+        const target = JSON.parse(navigationTarget);
+        if (target.scrollToComment && target.commentId) {
+          console.log(
+            "🔍 Encontrado commentId para destacar:",
+            target.commentId
+          );
+          setHighlightedCommentId(target.commentId);
+
+          // Scroll automático após renderização
+          setTimeout(() => {
+            const commentElement = document.getElementById(
+              `comment-${target.commentId}`
+            );
+            if (commentElement) {
+              commentElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+              console.log("✅ Rolado até comentário:", target.commentId);
+            }
+          }, 300);
+
+          // Limpar destacamento após 3 segundos
+          setTimeout(() => {
+            setHighlightedCommentId(null);
+          }, 3000);
+        }
+      }
+    }
+  }, [isOpen]);
 
   // ✅ CORRIGIDO: Carregar comentários quando abrir
   useEffect(() => {
@@ -101,9 +140,16 @@ export function CommentsSection({
         ) : comments && comments.length > 0 ? (
           comments.map((comment) => {
             console.log("🎯 Renderizando comentário:", comment);
+            const isHighlighted = highlightedCommentId === comment.id; // ✅ NOVO
 
             return (
-              <div key={comment.id} className={styles.commentItem}>
+              <div
+                key={comment.id}
+                id={`comment-${comment.id}`} // ✅ NOVO: ID para scroll
+                className={`${styles.commentItem} ${
+                  isHighlighted ? styles.highlightedComment : "" // ✅ NOVO
+                }`}
+              >
                 <div className={styles.avatarContainer}>
                   {comment.userAvatar ? (
                     <img

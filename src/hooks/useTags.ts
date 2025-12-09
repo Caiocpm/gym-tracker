@@ -1,16 +1,6 @@
 // src/hooks/useTags.ts
 import { useState, useCallback } from "react";
-import {
-  collection,
-  doc,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  getDocs,
-  arrayUnion,
-  arrayRemove,
-} from "firebase/firestore";
-import { db } from "../config/firebase";
+import { professionalApi } from "../services/professionalApi";
 import { useAuth } from "../contexts/AuthContext";
 import type { Tag } from "../types/professional";
 
@@ -26,14 +16,7 @@ export function useTags() {
 
     try {
       setLoading(true);
-      const tagsRef = collection(db, `professionals/${currentUser.uid}/tags`);
-      const snapshot = await getDocs(tagsRef);
-      const loadedTags: Tag[] = [];
-
-      snapshot.forEach((doc) => {
-        loadedTags.push({ id: doc.id, ...doc.data() } as Tag);
-      });
-
+      const loadedTags = await professionalApi.tags.list(currentUser.uid);
       setTags(loadedTags);
     } catch (err) {
       console.error("Erro ao carregar tags:", err);
@@ -56,23 +39,12 @@ export function useTags() {
       }
 
       try {
-        const now = new Date().toISOString();
-        const tagData = {
+        const newTag = await professionalApi.tags.create({
+          professionalId: currentUser.uid,
           name,
           color,
-          description: description || "",
-          professionalId: currentUser.uid,
-          createdAt: now,
-          updatedAt: now,
-        };
-
-        const tagRef = collection(db, `professionals/${currentUser.uid}/tags`);
-        const docRef = await addDoc(tagRef, tagData);
-
-        const newTag: Tag = {
-          id: docRef.id,
-          ...tagData,
-        };
+          description,
+        });
 
         setTags((prev) => [...prev, newTag]);
         return newTag;
@@ -94,9 +66,7 @@ export function useTags() {
       }
 
       try {
-        await deleteDoc(
-          doc(db, `professionals/${currentUser.uid}/tags`, tagId)
-        );
+        await professionalApi.tags.delete(tagId);
         setTags((prev) => prev.filter((tag) => tag.id !== tagId));
         return true;
       } catch (err) {
@@ -114,16 +84,7 @@ export function useTags() {
       if (!currentUser) return false;
 
       try {
-        const linkRef = doc(
-          db,
-          `professionals/${currentUser.uid}/studentLinks`,
-          studentLinkId
-        );
-
-        await updateDoc(linkRef, {
-          tags: arrayUnion(tagId),
-        });
-
+        await professionalApi.tags.addToStudent(studentLinkId, tagId);
         return true;
       } catch (err) {
         console.error("Erro ao adicionar tag ao aluno:", err);
@@ -139,16 +100,7 @@ export function useTags() {
       if (!currentUser) return false;
 
       try {
-        const linkRef = doc(
-          db,
-          `professionals/${currentUser.uid}/studentLinks`,
-          studentLinkId
-        );
-
-        await updateDoc(linkRef, {
-          tags: arrayRemove(tagId),
-        });
-
+        await professionalApi.tags.removeFromStudent(studentLinkId, tagId);
         return true;
       } catch (err) {
         console.error("Erro ao remover tag do aluno:", err);

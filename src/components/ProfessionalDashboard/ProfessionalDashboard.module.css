@@ -571,17 +571,16 @@
 }
 
 /* --- Seção de Anotações --- */
-.notesSection {
+/* --- Seção de Conversas --- */
+.conversationsSection {
   margin-bottom: 2rem;
 }
 
-.notesList {
+.conversationsList {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 1rem;
 }
-
-/* Nota: O estilo individual do NoteCard deve estar em NoteCard.module.css */
 
 /* --- Seção de Metas --- */
 .goalsSection {
@@ -978,7 +977,7 @@
 
   .statsGrid,
   .tagsList,
-  .notesList,
+  .conversationsList,
   .goalsList,
   .evaluationsList,
   .studentsList,
@@ -1060,7 +1059,7 @@
   }
 
   .tagsList,
-  .notesList,
+  .conversationsList,
   .goalsList,
   .evaluationsList,
   .studentsList,

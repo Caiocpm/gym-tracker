@@ -2,11 +2,13 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useFirebaseNotifications } from "../../hooks/useFirebaseNotifications";
-import { useStudentNotes } from "../../hooks/useStudentNotes";
+import { useConversations } from "../../hooks/useConversations";
 import { useStudentGoals } from "../../hooks/useStudentGoals";
 import { useEvaluationSchedule } from "../../hooks/useEvaluationSchedule";
+import { ChatConversation } from "../ChatConversation/ChatConversation";
+import { ConversationCard } from "../ConversationCard/ConversationCard";
 import type {
-  StudentNote,
+  Conversation,
   StudentGoal,
   EvaluationSchedule,
 } from "../../types/professional";
@@ -23,12 +25,18 @@ import styles from "./StudentDashboard.module.css";
 export function StudentDashboard() {
   const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState<
-    "overview" | "notes" | "goals" | "evaluations" | "groups"
+    "overview" | "conversations" | "goals" | "evaluations" | "groups"
   >("overview");
+  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
 
   // ✅ Hooks para dados
   const { notifications } = useFirebaseNotifications(currentUser?.uid || null);
-  const { notes, loadStudentNotes } = useStudentNotes();
+  const {
+    conversations,
+    loadConversations,
+    addMessage,
+    markAsRead,
+  } = useConversations();
   const { goals, loadStudentGoals } = useStudentGoals();
   const { evaluations, loadEvaluations } = useEvaluationSchedule();
 
@@ -37,24 +45,45 @@ export function StudentDashboard() {
     if (!currentUser?.uid) return;
 
     console.log("📥 [StudentDashboard] Carregando dados...");
-    loadStudentNotes(currentUser.uid);
+    loadConversations();
     loadStudentGoals(currentUser.uid);
     loadEvaluations(currentUser.uid);
 
     // ✅ Auto-reload a cada 15 segundos
     const interval = setInterval(() => {
       console.log("🔄 [StudentDashboard] Recarregando dados...");
-      loadStudentNotes(currentUser.uid);
+      loadConversations();
       loadStudentGoals(currentUser.uid);
       loadEvaluations(currentUser.uid);
     }, 15000);
 
     return () => clearInterval(interval);
-  }, [currentUser?.uid, loadStudentNotes, loadStudentGoals, loadEvaluations]);
+  }, [currentUser?.uid, loadConversations, loadStudentGoals, loadEvaluations]);
+
+  // ✅ Handlers para conversas
+  const handleSendMessage = async (conversationId: string, content: string) => {
+    if (!currentUser) return;
+    try {
+      const studentName = currentUser.displayName || currentUser.email || "Aluno";
+      await addMessage(conversationId, currentUser.uid, "student", studentName, content);
+    } catch (err) {
+      console.error("❌ Erro ao enviar mensagem:", err);
+    }
+  };
+
+  const handleMarkConversationAsRead = async (conversationId: string) => {
+    if (!currentUser) return;
+    await markAsRead(conversationId, currentUser.uid, "student");
+  };
 
   // ✅ Calcular estatísticas
+  const unreadConversations = conversations.filter(
+    (conv) => conv.unreadCount.student > 0
+  ).length;
+
   const stats = {
-    totalNotes: notes.length,
+    totalConversations: conversations.length,
+    unreadConversations,
     totalGoals: goals.length,
     completedGoals: goals.filter((g) => {
       const progress =
@@ -100,13 +129,13 @@ export function StudentDashboard() {
 
           <button
             className={`${styles.tab} ${
-              activeTab === "notes" ? styles.active : ""
+              activeTab === "conversations" ? styles.active : ""
             }`}
-            onClick={() => setActiveTab("notes")}
+            onClick={() => setActiveTab("conversations")}
           >
-            <span>📝</span>
-            <span>Anotações</span>
-            {renderTabBadge(stats.totalNotes > 0)}
+            <span>💬</span>
+            <span>Conversas</span>
+            {renderTabBadge(stats.unreadConversations > 0)}
           </button>
 
           <button
@@ -150,8 +179,17 @@ export function StudentDashboard() {
           <OverviewTab stats={stats} notifications={notifications} />
         )}
 
-        {/* Anotações */}
-        {activeTab === "notes" && <NotesTab notes={notes} />}
+        {/* Conversas */}
+        {activeTab === "conversations" && (
+          <ConversationsTab
+            conversations={conversations}
+            selectedConversation={selectedConversation}
+            onSelectConversation={setSelectedConversation}
+            onSendMessage={handleSendMessage}
+            onMarkAsRead={handleMarkConversationAsRead}
+            currentUser={currentUser}
+          />
+        )}
 
         {/* Metas */}
         {activeTab === "goals" && <GoalsTab goals={goals} />}
@@ -171,7 +209,8 @@ export function StudentDashboard() {
 // ✅ Aba: Visão Geral
 interface OverviewTabProps {
   stats: {
-    totalNotes: number;
+    totalConversations: number;
+    unreadConversations: number;
     totalGoals: number;
     completedGoals: number;
     upcomingEvaluations: number;
@@ -187,10 +226,14 @@ function OverviewTab({ stats, notifications }: OverviewTabProps) {
       {/* Cards de estatísticas */}
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>📝</div>
+          <div className={styles.statIcon}>💬</div>
           <div className={styles.statContent}>
-            <div className={styles.statValue}>{stats.totalNotes}</div>
-            <div className={styles.statLabel}>Anotações</div>
+            <div className={styles.statValue}>
+              {stats.unreadConversations > 0
+                ? `${stats.unreadConversations} não lidas`
+                : stats.totalConversations}
+            </div>
+            <div className={styles.statLabel}>Conversas</div>
           </div>
         </div>
 
@@ -250,50 +293,64 @@ function OverviewTab({ stats, notifications }: OverviewTabProps) {
   );
 }
 
-// ✅ Aba: Anotações
-interface NotesTabProps {
-  notes: StudentNote[];
+// ✅ Aba: Conversas
+interface ConversationsTabProps {
+  conversations: Conversation[];
+  selectedConversation: Conversation | null;
+  onSelectConversation: (conversation: Conversation | null) => void;
+  onSendMessage: (conversationId: string, content: string) => Promise<void>;
+  onMarkAsRead: (conversationId: string) => Promise<void>;
+  currentUser: any;
 }
 
-function NotesTab({ notes }: NotesTabProps) {
+function ConversationsTab({
+  conversations,
+  selectedConversation,
+  onSelectConversation,
+  onSendMessage,
+  onMarkAsRead,
+  currentUser,
+}: ConversationsTabProps) {
+  if (selectedConversation) {
+    return (
+      <ChatConversation
+        conversation={selectedConversation}
+        student={{ studentName: "Você" } as any}
+        currentUserId={currentUser?.uid || ""}
+        currentUserType="student"
+        currentUserName={currentUser?.displayName || currentUser?.email || "Aluno"}
+        onSendMessage={onSendMessage}
+        onMarkAsRead={onMarkAsRead}
+        onArchive={async () => {}}
+        onUnarchive={async () => {}}
+        onDelete={async () => {}}
+        onClose={() => onSelectConversation(null)}
+      />
+    );
+  }
+
   return (
     <div className={styles.section}>
-      <h2>Minhas Anotações</h2>
+      <h2>Minhas Conversas</h2>
 
-      {notes.length === 0 ? (
+      {conversations.length === 0 ? (
         <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>📝</div>
-          <p>Nenhuma anotação ainda</p>
+          <div className={styles.emptyIcon}>💬</div>
+          <p>Nenhuma conversa ainda</p>
           <p className={styles.emptySubtext}>
-            Seu profissional criará anotações sobre seu progresso
+            Seu profissional iniciará conversas para acompanhar seu progresso
           </p>
         </div>
       ) : (
-        <div className={styles.notesList}>
-          {notes.map((note) => (
-            <div key={note.id} className={styles.noteCard}>
-              <div className={styles.noteHeader}>
-                {note.title && (
-                  <h3 className={styles.noteTitle}>{note.title}</h3>
-                )}
-                <span className={styles.noteCategory}>{note.category}</span>
-              </div>
-              <p className={styles.noteContent}>{note.content}</p>
-              <div className={styles.noteMeta}>
-                <span className={styles.noteDate}>
-                  {new Date(note.createdAt).toLocaleDateString("pt-BR")}
-                </span>
-                {note.tags && note.tags.length > 0 && (
-                  <div className={styles.noteTags}>
-                    {note.tags.map((tag, idx) => (
-                      <span key={idx} className={styles.tag}>
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
+        <div className={styles.conversationsList}>
+          {conversations.map((conversation) => (
+            <ConversationCard
+              key={conversation.id}
+              conversation={conversation}
+              studentName="Com seu profissional"
+              onClick={() => onSelectConversation(conversation)}
+              currentUserType="student"
+            />
           ))}
         </div>
       )}

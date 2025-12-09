@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useProfessional } from "../../hooks/useProfessional";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTags } from "../../hooks/useTags";
-import { useStudentNotes } from "../../hooks/useStudentNotes";
+import { useConversations } from "../../hooks/useConversations";
 import { useStudentGoals } from "../../hooks/useStudentGoals";
 import { useEvaluationSchedule } from "../../hooks/useEvaluationSchedule";
 import { useProfessionalStats } from "../../hooks/useProfessionalStats";
@@ -24,9 +24,11 @@ import type {
 import styles from "./ProfessionalDashboard.module.css";
 
 // Importar os novos componentes
-import { NoteCard } from "../NoteCard/NoteCard";
+import { ConversationCard } from "../ConversationCard/ConversationCard";
+import { ChatConversation } from "../ChatConversation/ChatConversation";
 import { GoalCard } from "../GoalCard/GoalCard";
 import { EvaluationCard } from "../EvaluationCard/EvaluationCard";
+import type { Conversation } from "../../types/professional";
 
 export function ProfessionalDashboard() {
   const {
@@ -42,8 +44,16 @@ export function ProfessionalDashboard() {
 
   // ✅ Hooks dos 5 sistemas
   const { tags, loadTags, createTag, addTagToStudent, removeTagFromStudent } = useTags();
-  const { notes, loadStudentNotes, createNote, updateNote, deleteNote } =
-    useStudentNotes();
+  const {
+    conversations,
+    loadConversations,
+    createConversation,
+    addMessage,
+    markAsRead,
+    archiveConversation,
+    unarchiveConversation,
+    deleteConversation,
+  } = useConversations();
   const { goals, loadStudentGoals, createGoal, updateGoal, deleteGoal } =
     useStudentGoals();
   const {
@@ -76,7 +86,7 @@ export function ProfessionalDashboard() {
 
   // Estado para abas
   const [activeTab, setActiveTab] = useState<
-    "students" | "tags" | "notes" | "goals" | "evaluations" | "stats"
+    "students" | "tags" | "conversations" | "goals" | "evaluations" | "stats"
   >("students");
 
   // ✅ Estados para formulários dos 5 sistemas
@@ -85,15 +95,16 @@ export function ProfessionalDashboard() {
   const [newTagColor, setNewTagColor] = useState("#45B7D1");
   const [newTagDescription, setNewTagDescription] = useState("");
 
-  const [showNewNoteForm, setShowNewNoteForm] = useState(false);
-  const [selectedStudentForNote, setSelectedStudentForNote] = useState<
+  const [showNewConversationForm, setShowNewConversationForm] = useState(false);
+  const [selectedStudentForConversation, setSelectedStudentForConversation] = useState<
     string | null
   >(null);
-  const [noteTitle, setNoteTitle] = useState("");
-  const [noteContent, setNoteContent] = useState("");
-  const [noteCategory, setNoteCategory] = useState<
-    "progress" | "health" | "behavior" | "evaluation" | "other"
-  >("progress");
+  const [conversationTitle, setConversationTitle] = useState("");
+  const [conversationInitialMessage, setConversationInitialMessage] = useState("");
+  const [conversationCategory, setConversationCategory] = useState<
+    "general" | "training" | "nutrition" | "evaluation" | "other"
+  >("general");
+  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
 
   const [showNewGoalForm, setShowNewGoalForm] = useState(false);
   const [selectedStudentForGoal, setSelectedStudentForGoal] = useState<
@@ -152,7 +163,7 @@ export function ProfessionalDashboard() {
     loadTags();
     loadEvaluations();
     loadStats();
-    loadStudentNotes();
+    loadConversations();
     loadStudentGoals();
 
     // ✅ Auto-reload a cada 60 segundos
@@ -163,14 +174,14 @@ export function ProfessionalDashboard() {
       loadTags();
       loadEvaluations();
       loadStats();
-      loadStudentNotes();
+      loadConversations();
       loadStudentGoals();
     }, 60000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [loadTags, loadEvaluations, loadStats, loadStudentNotes, loadStudentGoals]);
+  }, [loadTags, loadEvaluations, loadStats, loadConversations, loadStudentGoals]);
 
   // ✅ Carregar métricas dos alunos
   useEffect(() => {
@@ -239,11 +250,11 @@ export function ProfessionalDashboard() {
   };
 
 
-  // ✅ Criar nota
-  const handleCreateNote = async (e: React.FormEvent) => {
+  // ✅ Criar conversa
+  const handleCreateConversation = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedStudentForNote || !noteContent) {
-      setError("Selecione um aluno e adicione conteúdo");
+    if (!selectedStudentForConversation || !conversationTitle || !conversationInitialMessage) {
+      setError("Preencha todos os campos obrigatórios");
       return;
     }
 
@@ -257,87 +268,93 @@ export function ProfessionalDashboard() {
         throw new Error("Usuário não identificado");
       }
 
-      await createNote(
-        selectedStudentForNote,
-        professionalId,
-        noteTitle,
-        noteContent,
-        noteCategory,
-        []
+      const studentLink = studentLinks.find(
+        (link) => link.studentUserId === selectedStudentForConversation
       );
 
-      await loadStudentNotes();
+      if (!studentLink) {
+        throw new Error("Aluno não encontrado");
+      }
 
-      setSuccess("✅ Nota criada com sucesso!");
-      setNoteTitle("");
-      setNoteContent("");
-      setNoteCategory("progress");
-      setSelectedStudentForNote(null);
-      setShowNewNoteForm(false);
+      await createConversation(
+        studentLink.id,
+        professionalId,
+        selectedStudentForConversation,
+        conversationTitle,
+        conversationCategory,
+        conversationInitialMessage
+      );
+
+      await loadConversations();
+
+      setSuccess("✅ Conversa criada com sucesso!");
+      setConversationTitle("");
+      setConversationInitialMessage("");
+      setConversationCategory("general");
+      setSelectedStudentForConversation(null);
+      setShowNewConversationForm(false);
     } catch (err) {
-      console.error("❌ Erro ao criar nota:", err);
-      const message = err instanceof Error ? err.message : "Erro ao criar nota";
+      console.error("❌ Erro ao criar conversa:", err);
+      const message = err instanceof Error ? err.message : "Erro ao criar conversa";
       setError(message);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Handlers para editar/deletar Notas
-  const handleEditNote = useCallback(
-    async (note: StudentNote) => {
-      const newTitle = prompt("Título da nota:", note.title || "");
-      if (newTitle === null) return; // Cancelou
+  // Handlers para conversas
+  const handleSendMessage = async (conversationId: string, content: string) => {
+    if (!currentUser) return;
 
-      const newContent = prompt("Conteúdo da nota:", note.content);
-      if (newContent === null) return; // Cancelou
+    try {
+      const professionalName = currentUser.displayName || currentUser.email || "Profissional";
+      await addMessage(conversationId, currentUser.uid, "professional", professionalName, content);
+    } catch (err) {
+      console.error("❌ Erro ao enviar mensagem:", err);
+      setError("Erro ao enviar mensagem");
+    }
+  };
 
-      try {
-        setIsSubmitting(true);
-        setError("");
-        setSuccess("");
+  const handleMarkConversationAsRead = async (conversationId: string) => {
+    if (!currentUser) return;
+    await markAsRead(conversationId, currentUser.uid, "professional");
+  };
 
-        await updateNote(note.id, {
-          title: newTitle,
-          content: newContent,
-        });
+  const handleArchiveConversation = async (conversationId: string) => {
+    try {
+      await archiveConversation(conversationId);
+      setSuccess("✅ Conversa arquivada com sucesso!");
+      setSelectedConversation(null);
+    } catch (err) {
+      console.error("❌ Erro ao arquivar conversa:", err);
+      setError("Erro ao arquivar conversa");
+    }
+  };
 
-        await loadStudentNotes();
-        setSuccess(`✅ Nota atualizada com sucesso!`);
-      } catch (err) {
-        console.error("❌ Erro ao editar nota:", err);
-        const message = err instanceof Error ? err.message : "Erro ao editar nota";
-        setError(message);
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    [updateNote, loadStudentNotes, setError, setSuccess, setIsSubmitting]
-  );
+  const handleUnarchiveConversation = async (conversationId: string) => {
+    try {
+      await unarchiveConversation(conversationId);
+      setSuccess("✅ Conversa desarquivada com sucesso!");
+    } catch (err) {
+      console.error("❌ Erro ao desarquivar conversa:", err);
+      setError("Erro ao desarquivar conversa");
+    }
+  };
 
-  const handleDeleteNote = useCallback(
-    async (noteId: string, noteTitle: string) => {
-      if (!confirm(`Tem certeza que deseja deletar a nota '${noteTitle}'?`)) {
-        return;
-      }
-      try {
-        setIsSubmitting(true);
-        setError("");
-        setSuccess("");
-        await deleteNote(noteId);
-        await loadStudentNotes();
-        setSuccess(`✅ Nota '${noteTitle}' deletada com sucesso!`);
-      } catch (err) {
-        console.error("❌ Erro ao deletar nota:", err);
-        const message =
-          err instanceof Error ? err.message : "Erro ao deletar nota";
-        setError(message);
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    [deleteNote, loadStudentNotes, setError, setSuccess, setIsSubmitting]
-  );
+  const handleDeleteConversation = async (conversationId: string, conversationTitle: string) => {
+    if (!confirm(`Tem certeza que deseja deletar a conversa '${conversationTitle}'?`)) {
+      return;
+    }
+
+    try {
+      await deleteConversation(conversationId);
+      setSuccess(`✅ Conversa '${conversationTitle}' deletada com sucesso!`);
+      setSelectedConversation(null);
+    } catch (err) {
+      console.error("❌ Erro ao deletar conversa:", err);
+      setError("Erro ao deletar conversa");
+    }
+  };
 
   // ✅ Criar meta
   const handleCreateGoal = async (e: React.FormEvent) => {
@@ -785,11 +802,11 @@ export function ProfessionalDashboard() {
           </button>
           <button
             className={`${styles.tab} ${
-              activeTab === "notes" ? styles.active : ""
+              activeTab === "conversations" ? styles.active : ""
             }`}
-            onClick={() => setActiveTab("notes")}
+            onClick={() => setActiveTab("conversations")}
           >
-            📝 Anotações
+            💬 Conversas
           </button>
           <button
             className={`${styles.tab} ${
@@ -1065,121 +1082,142 @@ export function ProfessionalDashboard() {
         </div>
       )}
 
-      {/* ✅ Seção de Anotações */}
-      {activeTab === "notes" && (
-        <div className={styles.notesSection}>
-          <div className={styles.sectionHeader}>
-            <h2>Anotações dos Alunos ({notes.length})</h2>
-            <button
-              className={styles.addButton}
-              onClick={() => setShowNewNoteForm(!showNewNoteForm)}
-            >
-              {showNewNoteForm ? "Cancelar" : "+ Nova Anotação"}
-            </button>
-          </div>
-
-          {showNewNoteForm && (
-            <form onSubmit={handleCreateNote} className={styles.form}>
-              <div className={styles.formGroup}>
-                <label htmlFor="studentNote">Aluno *</label>
-                <select
-                  id="studentNote"
-                  value={selectedStudentForNote || ""}
-                  onChange={(e) => setSelectedStudentForNote(e.target.value)}
-                  required
-                  disabled={isSubmitting}
-                >
-                  <option value="">Selecione um aluno</option>
-                  {activeStudents.map((link) => (
-                    <option key={link.id} value={link.studentUserId}>
-                      {link.studentName || link.studentEmail}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="noteTitle">Título (opcional)</label>
-                <input
-                  id="noteTitle"
-                  type="text"
-                  value={noteTitle}
-                  onChange={(e) => setNoteTitle(e.target.value)}
-                  placeholder="Título da anotação..."
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="noteContent">Conteúdo *</label>
-                <textarea
-                  id="noteContent"
-                  value={noteContent}
-                  onChange={(e) => setNoteContent(e.target.value)}
-                  placeholder="Digite sua anotação aqui..."
-                  rows={4}
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="noteCategory">Categoria *</label>
-                <select
-                  id="noteCategory"
-                  value={noteCategory}
-                  onChange={(e) =>
-                    setNoteCategory(
-                      e.target.value as
-                        | "progress"
-                        | "health"
-                        | "behavior"
-                        | "evaluation"
-                        | "other"
-                    )
-                  }
-                  disabled={isSubmitting}
-                >
-                  <option value="progress">Progresso</option>
-                  <option value="health">Saúde</option>
-                  <option value="behavior">Comportamento</option>
-                  <option value="evaluation">Avaliação</option>
-                  <option value="other">Outro</option>
-                </select>
-              </div>
-
-              <button
-                type="submit"
-                className={styles.submitButton}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Criando..." : "Criar Anotação"}
-              </button>
-            </form>
-          )}
-
-          {notes.length === 0 ? (
-            <div className={styles.emptyState}>
-              <p>Nenhuma anotação criada ainda</p>
-            </div>
+      {/* ✅ Seção de Conversas */}
+      {activeTab === "conversations" && (
+        <div className={styles.conversationsSection}>
+          {selectedConversation ? (
+            <ChatConversation
+              conversation={selectedConversation}
+              student={studentLinks.find(
+                (link) => link.id === selectedConversation.studentLinkId
+              )!}
+              currentUserId={currentUser?.uid || ""}
+              currentUserType="professional"
+              currentUserName={currentUser?.displayName || currentUser?.email || "Profissional"}
+              onSendMessage={handleSendMessage}
+              onMarkAsRead={handleMarkConversationAsRead}
+              onArchive={handleArchiveConversation}
+              onUnarchive={handleUnarchiveConversation}
+              onDelete={handleDeleteConversation}
+              onClose={() => setSelectedConversation(null)}
+            />
           ) : (
-            <div className={styles.notesList}>
-              {notes.map((note) => {
-                const student = getStudentById(note.studentLinkId);
-                if (!student) return null;
-                return (
-                  <NoteCard
-                    key={note.id}
-                    note={note}
-                    student={student}
-                    onEdit={handleEditNote}
-                    onDelete={(noteId) =>
-                      handleDeleteNote(noteId, note.title || "Nota")
-                    }
-                  />
-                );
-              })}
-            </div>
+            <>
+              <div className={styles.sectionHeader}>
+                <h2>Conversas ({conversations.length})</h2>
+                <button
+                  className={styles.addButton}
+                  onClick={() => setShowNewConversationForm(!showNewConversationForm)}
+                >
+                  {showNewConversationForm ? "Cancelar" : "+ Nova Conversa"}
+                </button>
+              </div>
+
+              {showNewConversationForm && (
+                <form onSubmit={handleCreateConversation} className={styles.form}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="studentConversation">Aluno *</label>
+                    <select
+                      id="studentConversation"
+                      value={selectedStudentForConversation || ""}
+                      onChange={(e) => setSelectedStudentForConversation(e.target.value)}
+                      required
+                      disabled={isSubmitting}
+                    >
+                      <option value="">Selecione um aluno</option>
+                      {activeStudents.map((link) => (
+                        <option key={link.id} value={link.studentUserId}>
+                          {link.studentName || link.studentEmail}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="conversationTitle">Título *</label>
+                    <input
+                      id="conversationTitle"
+                      type="text"
+                      value={conversationTitle}
+                      onChange={(e) => setConversationTitle(e.target.value)}
+                      placeholder="Assunto da conversa..."
+                      required
+                      disabled={isSubmitting}
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="conversationCategory">Categoria *</label>
+                    <select
+                      id="conversationCategory"
+                      value={conversationCategory}
+                      onChange={(e) =>
+                        setConversationCategory(
+                          e.target.value as
+                            | "general"
+                            | "training"
+                            | "nutrition"
+                            | "evaluation"
+                            | "other"
+                        )
+                      }
+                      disabled={isSubmitting}
+                    >
+                      <option value="general">Geral</option>
+                      <option value="training">Treino</option>
+                      <option value="nutrition">Nutrição</option>
+                      <option value="evaluation">Avaliação</option>
+                      <option value="other">Outro</option>
+                    </select>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="conversationInitialMessage">Mensagem Inicial *</label>
+                    <textarea
+                      id="conversationInitialMessage"
+                      value={conversationInitialMessage}
+                      onChange={(e) => setConversationInitialMessage(e.target.value)}
+                      placeholder="Digite a primeira mensagem..."
+                      rows={4}
+                      required
+                      disabled={isSubmitting}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className={styles.submitButton}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Criando..." : "Iniciar Conversa"}
+                  </button>
+                </form>
+              )}
+
+              {conversations.length === 0 ? (
+                <div className={styles.emptyState}>
+                  <p>Nenhuma conversa iniciada ainda</p>
+                </div>
+              ) : (
+                <div className={styles.conversationsList}>
+                  {conversations.map((conversation) => {
+                    const student = studentLinks.find(
+                      (link) => link.id === conversation.studentLinkId
+                    );
+                    if (!student) return null;
+                    return (
+                      <ConversationCard
+                        key={conversation.id}
+                        conversation={conversation}
+                        studentName={student.studentName || student.studentEmail || "Aluno"}
+                        onClick={() => setSelectedConversation(conversation)}
+                        currentUserType="professional"
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

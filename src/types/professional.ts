@@ -303,14 +303,14 @@ export const DEFAULT_TAGS = [
 ];
 
 // ============================================
-// 2️⃣ SISTEMA DE ANOTAÇÕES DETALHADAS
+// 2️⃣ SISTEMA DE ANOTAÇÕES E CONVERSAS
 // ============================================
 
 // Categorias de anotações
 export type NoteCategory = // ✅ Adicionado 'export'
   "progress" | "health" | "behavior" | "evaluation" | "other";
 
-// Interface para Anotação do Profissional
+// Interface para Anotação do Profissional (DEPRECATED - usar Conversation)
 export interface StudentNote {
   // ✅ Adicionado 'export'
   id: string;
@@ -323,6 +323,40 @@ export interface StudentNote {
   tags?: string[]; // Tags personalizadas
   createdAt: string;
   updatedAt: string;
+}
+
+// ✅ NOVO: Sistema de Conversas (Chat)
+export interface Conversation {
+  id: string;
+  studentLinkId: string;
+  professionalId: string;
+  studentUserId: string;
+  title: string;
+  category: NoteCategory;
+  messages: ConversationMessage[];
+  isArchived: boolean;
+  lastMessageAt: string;
+  unreadCount: {
+    professional: number; // Mensagens não lidas pelo profissional
+    student: number; // Mensagens não lidas pelo aluno
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ✅ NOVO: Mensagem dentro de uma conversa
+export interface ConversationMessage {
+  id: string;
+  conversationId: string;
+  senderId: string; // ID do usuário que enviou (profissional ou aluno)
+  senderType: "professional" | "student"; // Tipo de quem enviou
+  senderName: string; // Nome de quem enviou
+  content: string;
+  attachments?: string[]; // URLs de arquivos anexados
+  isRead: boolean; // Se a mensagem foi lida pelo destinatário
+  readAt?: string; // Quando foi lida
+  createdAt: string;
+  updatedAt?: string;
 }
 
 // ============================================

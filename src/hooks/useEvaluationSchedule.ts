@@ -1,18 +1,6 @@
 import { useState } from "react";
 import type { EvaluationSchedule } from "../types/professional";
-import { db } from "../config/firebase";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
-
-const EVALUATIONS_COLLECTION = "evaluations";
+import { professionalApi } from "../services/professionalApi";
 
 export function useEvaluationSchedule() {
   const [evaluations, setEvaluations] = useState<EvaluationSchedule[]>([]);
@@ -23,22 +11,7 @@ export function useEvaluationSchedule() {
   const loadEvaluations = async (studentLinkId?: string) => {
     try {
       setLoading(true);
-      const evaluationsRef = collection(db, EVALUATIONS_COLLECTION);
-      let q;
-
-      // ✅ Se não houver studentLinkId, carrega TODAS as avaliações
-      if (studentLinkId) {
-        q = query(evaluationsRef, where("studentLinkId", "==", studentLinkId));
-      } else {
-        q = query(evaluationsRef);
-      }
-
-      const snapshot = await getDocs(q);
-      const evaluationsData = snapshot.docs.map((doc) => ({
-        ...(doc.data() as Omit<EvaluationSchedule, "id">),
-        id: doc.id,
-      }));
-
+      const evaluationsData = await professionalApi.evaluations.list({ studentLinkId });
       setEvaluations(evaluationsData);
       setError(null);
     } catch (err) {
@@ -61,7 +34,6 @@ export function useEvaluationSchedule() {
   ): Promise<string> => {
     try {
       setLoading(true);
-      const evaluationsRef = collection(db, EVALUATIONS_COLLECTION);
 
       // ✅ Extrai data e hora do Date
       const scheduledDate = scheduledDateTime.toISOString().split("T")[0];
@@ -71,7 +43,9 @@ export function useEvaluationSchedule() {
       const durationNum =
         typeof duration === "string" ? parseInt(duration, 10) : duration;
 
-      const newEvaluation = {
+      console.log("📝 Criando avaliação via API");
+
+      const newEvaluation = await professionalApi.evaluations.create({
         studentLinkId,
         professionalId,
         title,
@@ -80,17 +54,11 @@ export function useEvaluationSchedule() {
         scheduledTime,
         duration: durationNum,
         location: location || "",
-        status: "scheduled" as const,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+      });
 
-      console.log("📝 Criando avaliação:", newEvaluation);
-
-      const docRef = await addDoc(evaluationsRef, newEvaluation);
-      setEvaluations([...evaluations, { ...newEvaluation, id: docRef.id }]);
+      setEvaluations([...evaluations, newEvaluation]);
       setError(null);
-      return docRef.id;
+      return newEvaluation.id;
     } catch (err) {
       console.error("❌ Erro ao agendar avaliação:", err);
       setError("Erro ao agendar avaliação");
@@ -107,22 +75,20 @@ export function useEvaluationSchedule() {
   ) => {
     try {
       setLoading(true);
-      const evaluationRef = doc(db, EVALUATIONS_COLLECTION, evaluationId);
 
-      const updateData = {
-        ...updates,
-        updatedAt: new Date().toISOString(),
-      };
-
-      if (updateData.duration && typeof updateData.duration === "string") {
-        updateData.duration = parseInt(updateData.duration, 10);
+      // Converter duration para number se necessário
+      if (updates.duration && typeof updates.duration === "string") {
+        updates.duration = parseInt(updates.duration, 10);
       }
 
-      await updateDoc(evaluationRef, updateData);
+      const updatedEvaluation = await professionalApi.evaluations.update(
+        evaluationId,
+        updates
+      );
 
       setEvaluations(
         evaluations.map((e) =>
-          e.id === evaluationId ? { ...e, ...updateData } : e
+          e.id === evaluationId ? updatedEvaluation : e
         )
       );
 
@@ -140,12 +106,8 @@ export function useEvaluationSchedule() {
   const deleteEvaluation = async (evaluationId: string) => {
     try {
       setLoading(true);
-      const evaluationRef = doc(db, EVALUATIONS_COLLECTION, evaluationId);
-
-      await deleteDoc(evaluationRef);
-
+      await professionalApi.evaluations.delete(evaluationId);
       setEvaluations(evaluations.filter((e) => e.id !== evaluationId));
-
       setError(null);
     } catch (err) {
       console.error("Erro ao deletar avaliação:", err);
