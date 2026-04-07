@@ -12,17 +12,21 @@ const app = express();
 // Segurança
 app.use(helmet());
 
-// CORS — aceita lista de origens separadas por vírgula
+// CORS — aceita lista de origens + qualquer localhost em dev
 const allowedOrigins = env.ALLOWED_ORIGINS.split(',').map((o) => o.trim());
 app.use(
   cors({
     origin: (origin, callback) => {
       // Permite requests sem origin (ex: Postman, mobile)
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error(`CORS bloqueado para origem: ${origin}`));
+      if (!origin) return callback(null, true);
+      // Em desenvolvimento aceita qualquer localhost independente da porta
+      if (env.NODE_ENV === 'development' && /^https?:\/\/localhost(:\d+)?$/.test(origin)) {
+        return callback(null, true);
       }
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      callback(new Error(`CORS bloqueado para origem: ${origin}`));
     },
     credentials: true,
   })
