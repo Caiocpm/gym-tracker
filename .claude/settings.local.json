@@ -106,7 +106,8 @@
       "Bash(find /c/Users/User/Desktop/Dev/gym-tracker/server -name *.prisma -o -name schema.prisma)",
       "Bash(npx ts-node:*)",
       "Bash(~/.puro/bin/puro flutter:*)",
-      "Bash(/c/Users/User/.puro/envs/stable/flutter/bin/flutter analyze:*)"
+      "Bash(/c/Users/User/.puro/envs/stable/flutter/bin/flutter analyze:*)",
+      "Bash(/c/Users/User/.puro/envs/stable/flutter/bin/flutter.bat config:*)"
     ],
     "deny": [],
     "ask": []
