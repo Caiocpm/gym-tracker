@@ -1,0 +1,678 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Auth / Users ─────────────────────────────────────────────────────────────
+
+model User {
+  id             String   @id @default(uuid())
+  email          String   @unique
+  passwordHash   String?
+  displayName    String
+  photoURL       String?
+  emailVerified  Boolean  @default(false)
+  googleId       String?  @unique
+  followersCount Int      @default(0)
+  followingCount Int      @default(0)
+  workoutsCount  Int      @default(0)
+  groupsCount    Int      @default(0)
+  isPrivate      Boolean  @default(false)
+  allowMessages  Boolean  @default(true)
+  tokenVersion   Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  lastLoginAt    DateTime @default(now())
+
+  workoutDays         WorkoutDay[]
+  workoutSessions     WorkoutSession[]
+  loggedExercises     LoggedExercise[]
+  foodEntries         FoodEntry[]
+  waterEntries        WaterEntry[]
+  nutritionGoals      NutritionGoals?
+  customFoods         PredefinedFood[]
+  dietPlanItems       DietPlanItem[]
+  weightEntries       WeightEntry[]
+  professionalProfile ProfessionalProfile?
+  notifications       Notification[]
+  contactRequests     ContactRequest[]
+  groupMemberships    GroupMember[]
+  posts               Post[]
+  badges              UserBadge[]
+  sharedWods          SharedWod[]
+  following                Follow[]                    @relation("Follower")
+  followers                Follow[]                    @relation("Following")
+  receivedCollaborations   ProfessionalCollaboration[] @relation("ReceivedCollaborations")
+  sentCollaborations       ProfessionalCollaboration[] @relation("SentCollaborations")
+  presets                  Preset[]
+  professionalRatings      ProfessionalRating[]
+}
+
+// ─── Workouts ─────────────────────────────────────────────────────────────────
+
+model WorkoutDay {
+  id                     String   @id @default(uuid())
+  userId                 String
+  name                   String
+  dayType                String   @default("musculacao")
+  dayOfWeek              Int?
+  notes                  String?
+  exercises              Json     @default("[]")
+  createdByProfessionalId String?  // set when created by a professional for the student
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessions WorkoutSession[]
+}
+
+model WorkoutSession {
+  id                        String     @id @default(uuid())
+  userId                    String
+  workoutDayId              String?
+  workoutName               String?
+  date                      String
+  startTime                 String?
+  endTime                   String?
+  duration                  Float?
+  notes                     String?
+  exercises                 Json       @default("[]")
+  isStrengthTrainingSession Boolean    @default(true)
+  trainingMode              String?
+  sessionAvgBpm             Int?
+  sessionKcal               Int?
+  createdAt                 DateTime   @default(now())
+  updatedAt                 DateTime   @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workoutDay WorkoutDay? @relation(fields: [workoutDayId], references: [id], onDelete: SetNull)
+}
+
+model LoggedExercise {
+  id                   String   @id @default(uuid())
+  userId               String
+  workoutSessionId     String?
+  exerciseDefinitionId String?
+  exerciseName         String
+  weight               Float?
+  sets                 Int?
+  reps                 Int?
+  volume               Float?
+  date                 String
+  dayId                String?
+  notes                String?
+  rpe                  Float?
+  isStrengthTraining   Boolean  @default(true)
+  isPersonalRecord     Boolean  @default(false)
+  completedSets        Json     @default("[]")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ExerciseDefinition {
+  id                    String   @id @default(uuid())
+  name                  String
+  primaryMuscleGroup    String?
+  secondaryMuscleGroups Json     @default("[]")
+  equipment             String?
+  instructions          String?
+  tips                  String?
+  mechanics             String?
+  force                 String?
+  level                 String?
+  category              String?
+  exerciseType          String   @default("forca")   // "forca" | "cardio"
+  cardioSubtype         String?                      // "corrida" | "ciclismo" | "natacao" | null (genérico)
+  createdBy             String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+// ─── Nutrition ────────────────────────────────────────────────────────────────
+
+model FoodEntry {
+  id             String   @id @default(uuid())
+  userId         String
+  name           String
+  calories       Float
+  protein        Float
+  carbs          Float
+  fat            Float
+  quantity       Float    @default(1)
+  meal           String?
+  date           String
+  time           String?
+  micronutrients Json?
+  status         String   @default("planned")
+  plannedAt      String?
+  consumedAt     String?
+  dietPlanItemId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dietPlanItem DietPlanItem? @relation(fields: [dietPlanItemId], references: [id], onDelete: SetNull)
+}
+
+model WaterEntry {
+  id         String   @id @default(uuid())
+  userId     String
+  amount     Float
+  date       String
+  time       String?
+  status     String   @default("planned")
+  plannedAt  String?
+  consumedAt String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model NutritionGoals {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  calories  Float    @default(2000)
+  protein   Float    @default(150)
+  carbs     Float    @default(250)
+  fat       Float    @default(65)
+  water     Float    @default(2500)
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PredefinedFood {
+  id             String   @id @default(uuid())
+  name           String
+  category       String?
+  calories       Float
+  protein        Float
+  carbs          Float
+  fat            Float
+  servingSize    Float?
+  servingUnit    String?
+  micronutrients Json?
+  createdBy      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  creator User? @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+}
+
+model DietPlanItem {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  calories  Float
+  protein   Float
+  carbs     Float
+  fat       Float
+  quantity  Float    @default(1)
+  unit      String   @default("g")
+  meal      String?  // breakfast | lunch | dinner | snack
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  foodEntries FoodEntry[]
+}
+
+model WeightEntry {
+  id        String   @id @default(uuid())
+  userId    String
+  weight    Float
+  date      String   // YYYY-MM-DD (domingo da semana)
+  note      String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── Professional ─────────────────────────────────────────────────────────────
+
+model ProfessionalProfile {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  email            String
+  displayName      String
+  professionalTypes String[] @default([])
+  plan             String   @default("fitness")  // fitness | nutrition | full
+  specialties      Json     @default("[]")
+  bio              String?
+  phone            String?
+  cref             String?
+  crn              String?
+  crefito          String?
+  clinicName       String?
+  isActive         Boolean  @default(true)
+  // ── Marketplace fields ──────────────────────────────────────────────────────
+  photoURL         String?
+  city             String?
+  state            String?
+  latitude         Float?
+  longitude        Float?
+  isPublic         Boolean  @default(false)   // opt into marketplace listing
+  availableForHire Boolean  @default(true)
+  priceRange       String?                    // e.g. "R$ 200–400/mês"
+  yearsExperience  Int?
+  instagramHandle  String?
+  websiteUrl       String?
+  // ── Brand (PRO plan) ────────────────────────────────────────────────────────
+  brandColor          String?   // hex — seeds Material 3 theme: nav, buttons, inputs, chips
+  brandHighlightColor String?   // hex — card bars, FABs, session banners
+  brandSurfaceColor   String?   // hex — page / scaffold background
+  brandOnSurfaceColor String?   // hex — primary text and titles
+  brandLogoUrl        String?
+  brandName           String?   // overrides displayName in student app
+  brandAppBarColor    String?   // hex — AppBar background
+  brandNavBarColor    String?   // hex — BottomNavigationBar background
+  brandCardColor      String?   // hex — Card background
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags            ProfessionalTag[]
+  studentLinks    StudentLink[]
+  notes           StudentNote[]
+  goals           StudentGoal[]
+  evaluations     Evaluation[]
+  contactRequests ContactRequest[]
+  updates         ProfessionalUpdate[]
+  ratings         ProfessionalRating[]
+}
+
+model ProfessionalRating {
+  id             String   @id @default(uuid())
+  professionalId String   // references ProfessionalProfile.userId
+  studentUserId  String
+  score          Int      // 1–5
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  professional ProfessionalProfile @relation(fields: [professionalId], references: [userId], onDelete: Cascade)
+  student      User                @relation(fields: [studentUserId], references: [id], onDelete: Cascade)
+
+  @@unique([professionalId, studentUserId])
+}
+
+model ProfessionalUpdate {
+  id             String              @id @default(uuid())
+  professionalId String
+  professional   ProfessionalProfile @relation(fields: [professionalId], references: [userId], onDelete: Cascade)
+  emoji          String              @default("📣")
+  title          String
+  items          Json                // String[]
+  publishedAt    DateTime            @default(now())
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+}
+
+model ContactRequest {
+  id             String   @id @default(uuid())
+  professionalId String
+  clientUserId   String
+  clientEmail    String
+  message        String?
+  requestedTypes String[] @default([])
+  status         String   @default("pending")  // pending | accepted | rejected
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  professional ProfessionalProfile @relation(fields: [professionalId], references: [userId], onDelete: Cascade)
+  client       User                @relation(fields: [clientUserId], references: [id], onDelete: Cascade)
+}
+
+model ProfessionalTag {
+  id             String   @id @default(uuid())
+  professionalId String
+  name           String
+  color          String
+  description    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  professional ProfessionalProfile @relation(fields: [professionalId], references: [userId], onDelete: Cascade)
+}
+
+model StudentLink {
+  id              String    @id @default(uuid())
+  professionalId  String
+  studentUserId   String
+  studentEmail    String
+  accessLevel     String    @default("read")
+  status          String    @default("active")
+  invitationCode  String?
+  tags            Json      @default("[]")
+  contractedTypes String[]  @default([])
+  linkedAt        DateTime  @default(now())
+  planRenewedAt   DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  professional   ProfessionalProfile         @relation(fields: [professionalId], references: [userId], onDelete: Cascade)
+  collaborations ProfessionalCollaboration[]
+}
+
+model ProfessionalCollaboration {
+  id             String   @id @default(uuid())
+  studentLinkId  String
+  collaboratorId String   // User.id of the invited professional
+  invitedById    String   // User.id of the primary professional
+  scopes         String[] // ["workouts"] | ["nutrition"] | ["workouts","nutrition"]
+  status         String   @default("pending") // pending | active | rejected
+  message        String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  studentLink  StudentLink @relation(fields: [studentLinkId], references: [id], onDelete: Cascade)
+  collaborator User        @relation("ReceivedCollaborations", fields: [collaboratorId], references: [id], onDelete: Cascade)
+  invitedBy    User        @relation("SentCollaborations",     fields: [invitedById],    references: [id], onDelete: Cascade)
+
+  @@unique([studentLinkId, collaboratorId])
+}
+
+model Invitation {
+  id                String    @id @default(uuid())
+  professionalId    String
+  professionalName  String
+  professionalEmail String
+  studentEmail      String?
+  invitationCode    String    @unique
+  accessLevel       String    @default("read")
+  message           String?
+  status            String    @default("pending")
+  sentAt            DateTime  @default(now())
+  expiresAt         DateTime
+  acceptedAt        DateTime?
+  createdAt         DateTime  @default(now())
+}
+
+model StudentNote {
+  id             String   @id @default(uuid())
+  professionalId String
+  studentLinkId  String
+  title          String
+  content        String
+  category       String   @default("general")
+  tags           Json     @default("[]")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  professional ProfessionalProfile @relation(fields: [professionalId], references: [userId], onDelete: Cascade)
+}
+
+model StudentGoal {
+  id             String   @id @default(uuid())
+  professionalId String
+  studentLinkId  String
+  title          String
+  description    String?
+  category       String   @default("other")
+  currentValue   Float
+  targetValue    Float
+  unit           String
+  startValue     Float?
+  startDate      String?
+  targetDate     String
+  status         String   @default("active")
+  progress       Float    @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  professional ProfessionalProfile @relation(fields: [professionalId], references: [userId], onDelete: Cascade)
+}
+
+model Evaluation {
+  id             String   @id @default(uuid())
+  professionalId String
+  studentLinkId  String
+  title          String
+  type           String   @default("general")
+  scheduledDate  String
+  scheduledTime  String
+  duration       Float
+  location       String?
+  notes          String?
+  status         String   @default("scheduled")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  professional ProfessionalProfile @relation(fields: [professionalId], references: [userId], onDelete: Cascade)
+}
+
+model Conversation {
+  id             String   @id @default(uuid())
+  professionalId String
+  studentLinkId  String
+  studentUserId  String
+  title          String
+  category       String   @default("general")
+  isArchived     Boolean  @default(false)
+  lastMessageAt  DateTime @default(now())
+  unreadPro      Int      @default(0)
+  unreadStudent  Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  messages Message[]
+}
+
+model Message {
+  id             String    @id @default(uuid())
+  conversationId String
+  senderId       String
+  senderType     String
+  senderName     String
+  content        String
+  isRead         Boolean   @default(false)
+  readAt         DateTime?
+  createdAt      DateTime  @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}
+
+// ─── Social ───────────────────────────────────────────────────────────────────
+
+model SharedWod {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  format      String            // amrap | forTime | emom | tabata
+  timeCap     Int?              // minutos (AMRAP, EMOM, Tabata)
+  rounds      Int?              // rounds planejados (ForTime, EMOM)
+  description String?           // notas livres do WOD
+  movements   Json     @default("[]") // [{name, targetReps, targetWeight}]
+  createdBy   String
+  groupId     String?
+  createdAt   DateTime @default(now())
+
+  creator User   @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  group   Group? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+}
+
+model Group {
+  id                  String   @id @default(uuid())
+  name                String
+  description         String?
+  coverPhoto          String?
+  createdBy           String
+  isPrivate           Boolean  @default(false)
+  inviteCode          String?  @unique
+  membersCount        Int      @default(0)
+  postsCount          Int      @default(0)
+  weeklyActiveMembers Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  members    GroupMember[]
+  posts      Post[]
+  challenges GroupChallenge[]
+  wods       SharedWod[]
+}
+
+model GroupMember {
+  id           String   @id @default(uuid())
+  groupId      String
+  userId       String
+  role         String   @default("member")
+  joinedAt     DateTime @default(now())
+  lastActiveAt DateTime @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+}
+
+model Post {
+  id            String   @id @default(uuid())
+  userId        String
+  groupId       String?
+  content       String?
+  imageBase64   String?
+  imagesBase64  Json     @default("[]")
+  exercises     Json     @default("[]")
+  records       Json     @default("[]")
+  likesCount    Int      @default(0)
+  commentsCount Int      @default(0)
+  isPublic      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group    Group?        @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  likes    PostLike[]
+  comments PostComment[]
+}
+
+model Follow {
+  id          String   @id @default(uuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("Follower",  fields: [followerId],  references: [id], onDelete: Cascade)
+  following User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+}
+
+model PostLike {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+}
+
+model PostComment {
+  id           String   @id @default(uuid())
+  postId       String
+  userId       String
+  text         String
+  likesCount   Int      @default(0)
+  repliesCount Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model GroupChallenge {
+  id                 String   @id @default(uuid())
+  groupId            String
+  createdBy          String
+  createdByName      String
+  title              String
+  description        String?
+  type               String
+  targetValue        Float
+  targetUnit         String
+  startDate          String
+  endDate            String
+  isCompetitive      Boolean  @default(false)
+  collectiveProgress Float    @default(0)
+  reward             String?
+  exerciseId         String?
+  exerciseName       String?
+  status             String   @default("active")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  group        Group                  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  participants ChallengeParticipant[]
+}
+
+model ChallengeParticipant {
+  id          String   @id @default(uuid())
+  challengeId String
+  userId      String
+  progress    Float    @default(0)
+  joinedAt    DateTime @default(now())
+
+  challenge GroupChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@unique([challengeId, userId])
+}
+
+model UserBadge {
+  id             String   @id @default(uuid())
+  userId         String
+  badgeId        String
+  badgeName      String
+  badgeIcon      String?
+  badgeCategory  String?
+  badgeRarity    String?
+  challengeId    String?
+  challengeTitle String?
+  earnedAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id             String   @id @default(uuid())
+  userId         String
+  type           String
+  title          String
+  message        String
+  actionUrl      String?
+  isRead         Boolean  @default(false)
+  fromUserId     String?
+  fromUserName   String?
+  postId         String?
+  groupId        String?
+  commentId      String?
+  studentId      String?
+  professionalId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+// ─── Presets ───────────────────────────────────────────────────────────────────
+
+model Preset {
+  id             String   @id @default(uuid())
+  professionalId String
+  type           String   // "workout" | "nutrition"
+  name           String
+  description    String?
+  content        Json
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  professional User @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+}
