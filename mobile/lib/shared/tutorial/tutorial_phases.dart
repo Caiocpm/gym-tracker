@@ -17,7 +17,8 @@ abstract class TutorialPhases {
       id: 'bottom_nav',
       title: 'Navegação Principal',
       description:
-          'Use as 5 abas para acessar Home, Treinos, Nutrição, Social e Equipe.',
+          'Use as 5 abas para navegar entre Home, Treinos, Nutrição, Social '
+          'e a última aba que varia conforme seu perfil.',
       targetKey: TutorialKeys.bottomNav,
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
       radius: 0,
@@ -27,7 +28,8 @@ abstract class TutorialPhases {
       id: 'profile_button',
       title: 'Seu Perfil',
       description:
-          'Acesse estatísticas, conquistas, medidas corporais e configurações.',
+          'Acesse seu dashboard, dados pessoais, medidas corporais, '
+          'histórico de evolução e conquistas.',
       targetKey: TutorialKeys.profileButton,
       tooltipPosition: TooltipPosition.below,
     ),
@@ -107,15 +109,14 @@ abstract class TutorialPhases {
       id: 'social_header',
       title: 'Comunidade 🤝',
       description:
-          'Conecte-se com outros praticantes, crie grupos, participe de '
-          'desafios e compartilhe seu progresso.',
+          'Conecte-se com outros praticantes, crie grupos e compartilhe seu progresso.',
       targetKey: TutorialKeys.socialHeader,
       padding: const EdgeInsets.all(6),
       tooltipPosition: TooltipPosition.below,
     ),
     TutorialStep(
       id: 'social_tabs',
-      title: 'Feed · Grupos · Descobrir',
+      title: 'Feed · Meus Grupos · Descobrir',
       description:
           'Navegue entre o feed de atividades, seus grupos e descubra novas '
           'comunidades para participar.',
@@ -132,8 +133,8 @@ abstract class TutorialPhases {
       id: 'analytics_tabbar',
       title: 'Análises 📊',
       description:
-          'Visualize seu progresso, volume de treino, recordes pessoais, '
-          'sequências e evolução de nutrição.',
+          'Visualize seu progresso em abas dedicadas: Geral, Nutrição, '
+          'Musculação e Cardio — conforme as modalidades ativas.',
       targetKey: TutorialKeys.analyticsTabBar,
       padding: const EdgeInsets.all(4),
       radius: 8,
@@ -147,8 +148,8 @@ abstract class TutorialPhases {
       id: 'profile_appbar',
       title: 'Seu Perfil 🏆',
       description:
-          'Veja estatísticas gerais, conquistas desbloqueadas, medidas '
-          'corporais e seu histórico de evolução.',
+          'Cinco abas completas: Dashboard com estatísticas, Dados Pessoais, '
+          'Medidas corporais, Histórico de evolução e Conquistas.',
       targetKey: TutorialKeys.profileAppBar,
       padding: const EdgeInsets.all(4),
       tooltipPosition: TooltipPosition.below,
