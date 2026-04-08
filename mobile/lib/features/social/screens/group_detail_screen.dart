@@ -787,11 +787,15 @@ class _ChallengesTab extends ConsumerWidget {
               ),
             )
           else
-            ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: challenges.length,
-              itemBuilder: (_, i) =>
-                  _ChallengeCard(challenge: challenges[i], groupId: groupId),
+            RefreshIndicator(
+              onRefresh: () async =>
+                  ref.invalidate(challengesProvider(groupId)),
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: challenges.length,
+                itemBuilder: (_, i) =>
+                    _ChallengeCard(challenge: challenges[i], groupId: groupId),
+              ),
             ),
           Positioned(
             right: 16,
@@ -837,6 +841,10 @@ class _ChallengeCardState extends ConsumerState<_ChallengeCard> {
     final cs = Theme.of(context).colorScheme;
     final c = widget.challenge;
     final daysLeft = c.endDate.difference(DateTime.now()).inDays;
+    final me = ref.watch(currentUserProvider);
+    final myParticipant = c.participants
+        .where((p) => p.userId == (me?.uid ?? ''))
+        .firstOrNull;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -909,6 +917,71 @@ class _ChallengeCardState extends ConsumerState<_ChallengeCard> {
                 ],
               ),
             ],
+            // ── Meu progresso (quando participando) ──────────────────────────
+            if (c.isJoined && myParticipant != null) ...[
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Meu progresso',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium
+                                    ?.copyWith(
+                                        color: cs.onSurface
+                                            .withValues(alpha: 0.6))),
+                            Text(
+                              myParticipant.isCompleted
+                                  ? '✅ Concluído!'
+                                  : '${myParticipant.currentValue.toInt()} / ${c.targetValue.toInt()} ${c.unit}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: myParticipant.isCompleted
+                                    ? Colors.green
+                                    : cs.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: c.targetValue > 0
+                                ? (myParticipant.currentValue /
+                                        c.targetValue)
+                                    .clamp(0.0, 1.0)
+                                : 0,
+                            minHeight: 8,
+                            backgroundColor:
+                                cs.surfaceContainerHighest,
+                            valueColor: AlwaysStoppedAnimation(
+                                myParticipant.isCompleted
+                                    ? Colors.green
+                                    : cs.primary),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (c.isActive && !myParticipant.isCompleted) ...[
+                    const SizedBox(width: 12),
+                    IconButton.filledTonal(
+                      onPressed: () => _showUpdateProgressSheet(context),
+                      icon: const Icon(Icons.edit_outlined, size: 18),
+                      tooltip: 'Atualizar progresso',
+                    ),
+                  ],
+                ],
+              ),
+            ],
             if (c.isActive && !c.isJoined) ...[
               const SizedBox(height: 12),
               SizedBox(
@@ -956,6 +1029,113 @@ class _ChallengeCardState extends ConsumerState<_ChallengeCard> {
       }
     } finally {
       if (mounted) setState(() => _joining = false);
+    }
+  }
+
+  void _showUpdateProgressSheet(BuildContext context) {
+    final c = widget.challenge;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => _UpdateProgressSheet(
+        challenge: c,
+        onUpdated: () => ref.invalidate(challengesProvider(widget.groupId)),
+      ),
+    );
+  }
+}
+
+class _UpdateProgressSheet extends ConsumerStatefulWidget {
+  const _UpdateProgressSheet(
+      {required this.challenge, required this.onUpdated});
+  final GroupChallenge challenge;
+  final VoidCallback onUpdated;
+
+  @override
+  ConsumerState<_UpdateProgressSheet> createState() =>
+      _UpdateProgressSheetState();
+}
+
+class _UpdateProgressSheetState extends ConsumerState<_UpdateProgressSheet> {
+  late final TextEditingController _ctrl;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final me = ref.read(currentUserProvider);
+    final myParticipant = widget.challenge.participants
+        .where((p) => p.userId == (me?.uid ?? ''))
+        .firstOrNull;
+    _ctrl = TextEditingController(
+        text: myParticipant?.currentValue.toInt().toString() ?? '0');
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = widget.challenge;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+          16, 16, 16, MediaQuery.of(context).viewInsets.bottom + 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Atualizar Progresso',
+              style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 4),
+          Text('${c.title} · meta: ${c.targetValue.toInt()} ${c.unit}',
+              style: Theme.of(context).textTheme.bodySmall),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _ctrl,
+            keyboardType: TextInputType.number,
+            autofocus: true,
+            decoration: InputDecoration(
+              labelText: 'Progresso atual (${c.unit})',
+              suffixText: c.unit,
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              onPressed: _loading ? null : _save,
+              child: _loading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Text('Salvar'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _save() async {
+    final value = double.tryParse(_ctrl.text);
+    if (value == null) return;
+    setState(() => _loading = true);
+    try {
+      await SocialService.instance
+          .updateChallengeProgress(widget.challenge.id, value);
+      widget.onUpdated();
+      if (mounted) Navigator.pop(context);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Erro: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
     }
   }
 }

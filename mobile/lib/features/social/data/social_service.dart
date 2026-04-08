@@ -167,6 +167,10 @@ class SocialService {
     await _dio.post('/social/challenges/$challengeId/join');
   }
 
+  Future<void> updateChallengeProgress(String challengeId, double progress) async {
+    await _dio.patch('/social/challenges/$challengeId/progress', data: {'progress': progress});
+  }
+
   // ─── Follow ──────────────────────────────────────────────────────────────────
 
   Future<void> followUser(String userId) async {
