@@ -933,6 +933,28 @@ class _ChallengeCardState extends ConsumerState<_ChallengeCard> {
                 ],
               ),
             ],
+            // ── Aviso de participantes mínimos ────────────────────────────────
+            if (c.participants.length < 3) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: cs.errorContainer.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(children: [
+                  Icon(Icons.group_outlined, size: 13,
+                      color: cs.onErrorContainer),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Mínimo 3 participantes para validar badges '
+                    '(${c.participants.length}/3)',
+                    style: TextStyle(
+                        fontSize: 11, color: cs.onErrorContainer),
+                  ),
+                ]),
+              ),
+            ],
             if (c.isAutoProgress) ...[
               const SizedBox(height: 6),
               Row(

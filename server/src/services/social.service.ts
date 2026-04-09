@@ -301,9 +301,14 @@ export const socialService = {
           where: { id: challenge.id },
           data: { collectiveProgress: total },
         });
-        // Award badge on 100%
+        // Award badge on 100% — only if challenge has at least 3 participants
         if (isCompleted && !participant.completedAt) {
-          await this._awardChallengeBadge(userId, challenge, 1.0);
+          const totalParticipants = await prisma.challengeParticipant.count({
+            where: { challengeId: challenge.id },
+          });
+          if (totalParticipants >= 3) {
+            await this._awardChallengeBadge(userId, challenge, 1.0);
+          }
         }
       }
     }
@@ -499,9 +504,14 @@ export const socialService = {
       data: { collectiveProgress: total },
     });
 
-    // Award badge immediately on 100%
+    // Award badge immediately on 100% — only if challenge has at least 3 participants
     if (isCompleted && !participant.completedAt && challenge) {
-      await this._awardChallengeBadge(userId, challenge, 1.0);
+      const totalParticipants = await prisma.challengeParticipant.count({
+        where: { challengeId },
+      });
+      if (totalParticipants >= 3) {
+        await this._awardChallengeBadge(userId, challenge, 1.0);
+      }
     }
   },
 
@@ -553,11 +563,15 @@ export const socialService = {
       include: { participants: true },
     });
 
+    const MIN_PARTICIPANTS = 3;
+
     for (const challenge of expired) {
-      for (const p of challenge.participants) {
-        if (challenge.targetValue > 0) {
-          const pct = p.progress / challenge.targetValue;
-          await this._awardChallengeBadge(p.userId, challenge, pct);
+      if (challenge.participants.length >= MIN_PARTICIPANTS) {
+        for (const p of challenge.participants) {
+          if (challenge.targetValue > 0) {
+            const pct = p.progress / challenge.targetValue;
+            await this._awardChallengeBadge(p.userId, challenge, pct);
+          }
         }
       }
       await prisma.groupChallenge.update({
