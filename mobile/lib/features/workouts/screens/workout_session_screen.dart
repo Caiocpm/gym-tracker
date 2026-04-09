@@ -4179,6 +4179,7 @@ class _ShareWorkoutSheetState extends State<ShareWorkoutSheet> {
           : null;
       return {
         'name': e.exerciseName,
+        if (e.muscleGroup != null && e.muscleGroup!.isNotEmpty) 'muscleGroup': e.muscleGroup,
         'sets': completedSets.map((s) => {'reps': s.reps, 'weight': s.weight}).toList(),
         if (totalVolume > 0) 'totalVolume': totalVolume,
         if (avgRpe != null) 'avgRpe': double.parse(avgRpe.toStringAsFixed(1)),

@@ -917,6 +917,28 @@ class _ChallengeCardState extends ConsumerState<_ChallengeCard> {
                 ],
               ),
             ],
+            if (c.isAutoProgress) ...[
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Icon(Icons.auto_awesome, size: 12,
+                      color: cs.primary.withValues(alpha: 0.7)),
+                  const SizedBox(width: 4),
+                  Text(
+                    switch (c.type) {
+                      'muscle_group_volume' =>
+                        'Auto · ${c.exerciseName ?? 'grupo muscular'}',
+                      'cardio_distance' =>
+                        'Auto · ${_cardioLabel(c.exerciseName)}',
+                      _ => 'Auto · requer postagem de treino',
+                    },
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: cs.primary.withValues(alpha: 0.7)),
+                  ),
+                ],
+              ),
+            ],
             // ── Meu progresso (quando participando) ──────────────────────────
             if (c.isJoined && myParticipant != null) ...[
               const SizedBox(height: 12),
@@ -971,7 +993,7 @@ class _ChallengeCardState extends ConsumerState<_ChallengeCard> {
                       ],
                     ),
                   ),
-                  if (c.isActive && !myParticipant.isCompleted) ...[
+                  if (c.isActive && !myParticipant.isCompleted && !c.isAutoProgress) ...[
                     const SizedBox(width: 12),
                     IconButton.filledTonal(
                       onPressed: () => _showUpdateProgressSheet(context),
@@ -1031,6 +1053,18 @@ class _ChallengeCardState extends ConsumerState<_ChallengeCard> {
       if (mounted) setState(() => _joining = false);
     }
   }
+
+  String _cardioLabel(String? subtype) => switch (subtype) {
+    'corrida' => 'corrida',
+    'caminhada' => 'caminhada',
+    'ciclismo' => 'ciclismo',
+    'natacao' => 'natação',
+    'bicicleta_ergometrica' => 'bike ergométrica',
+    'remo' => 'remo',
+    'escada' => 'escada',
+    'funcional' => 'funcional',
+    _ => 'qualquer cardio',
+  };
 
   void _showUpdateProgressSheet(BuildContext context) {
     final c = widget.challenge;
@@ -1226,10 +1260,57 @@ class _CreateChallengeSheetState
   final _rewardCtrl = TextEditingController();
   String _type = 'volume';
   String _unit = 'kg';
+  String? _exerciseName; // muscle group or cardio subtype
   bool _isCompetitive = false;
   bool _loading = false;
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now().add(const Duration(days: 30));
+
+  static const _muscleGroups = [
+    'Peito', 'Costas', 'Pernas', 'Ombros', 'Bíceps',
+    'Tríceps', 'Abdômen', 'Glúteos',
+  ];
+
+  static const _cardioSubtypes = [
+    ('corrida', 'Corrida'),
+    ('caminhada', 'Caminhada'),
+    ('ciclismo', 'Ciclismo'),
+    ('natacao', 'Natação'),
+    ('bicicleta_ergometrica', 'Bike Ergométrica'),
+    ('remo', 'Remo'),
+    ('escada', 'Escada'),
+    ('funcional', 'Funcional'),
+    ('', 'Qualquer cardio'),
+  ];
+
+  void _onTypeChanged(String v) {
+    setState(() {
+      _type = v;
+      _exerciseName = null;
+      _unit = switch (v) {
+        'volume' => 'kg',
+        'workouts' => 'treinos',
+        'streak' => 'dias',
+        'muscle_group_volume' => 'kg',
+        'cardio_distance' => 'km',
+        'workout_proof' => 'treinos',
+        _ => 'kg',
+      };
+      _targetCtrl.text = switch (v) {
+        'cardio_distance' => '50',
+        'muscle_group_volume' => '1000',
+        'workout_proof' => '10',
+        'workouts' => '10',
+        'streak' => '7',
+        _ => '100',
+      };
+    });
+  }
+
+  bool get _isAutoType =>
+      _type == 'muscle_group_volume' ||
+      _type == 'cardio_distance' ||
+      _type == 'workout_proof';
 
   @override
   void dispose() {
@@ -1242,6 +1323,7 @@ class _CreateChallengeSheetState
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: EdgeInsets.fromLTRB(
           16, 16, 16, MediaQuery.of(context).viewInsets.bottom + 16),
@@ -1264,55 +1346,99 @@ class _CreateChallengeSheetState
               const SizedBox(height: 10),
               TextFormField(
                 controller: _descCtrl,
-                decoration:
-                    const InputDecoration(labelText: 'Descrição (opcional)'),
+                decoration: const InputDecoration(
+                    labelText: 'Descrição (opcional)'),
                 maxLines: 2,
               ),
               const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      value: _type,
-                      decoration: const InputDecoration(labelText: 'Tipo'),
-                      items: const [
-                        DropdownMenuItem(
-                            value: 'volume', child: Text('Volume (kg)')),
-                        DropdownMenuItem(
-                            value: 'workouts', child: Text('Treinos')),
-                        DropdownMenuItem(
-                            value: 'streak', child: Text('Sequência')),
-                      ],
-                      onChanged: (v) {
-                        setState(() {
-                          _type = v!;
-                          _unit = switch (v) {
-                            'volume' => 'kg',
-                            'workouts' => 'treinos',
-                            _ => 'dias',
-                          };
-                        });
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _targetCtrl,
-                      decoration: InputDecoration(
-                          labelText: 'Meta ($_unit)'),
-                      keyboardType: TextInputType.number,
-                      validator: (v) =>
-                          (v?.trim().isEmpty ?? true) ? 'Informe a meta' : null,
-                    ),
-                  ),
+              // ── Tipo ───────────────────────────────────────────────────────
+              DropdownButtonFormField<String>(
+                value: _type,
+                decoration: const InputDecoration(labelText: 'Tipo'),
+                items: const [
+                  DropdownMenuItem(value: 'volume', child: Text('Volume total (kg)')),
+                  DropdownMenuItem(value: 'workouts', child: Text('Número de treinos')),
+                  DropdownMenuItem(value: 'streak', child: Text('Sequência de dias')),
+                  DropdownMenuItem(
+                      value: 'muscle_group_volume',
+                      child: Text('Volume por grupo muscular')),
+                  DropdownMenuItem(
+                      value: 'cardio_distance',
+                      child: Text('Distância de cardio')),
+                  DropdownMenuItem(
+                      value: 'workout_proof',
+                      child: Text('Treinos com postagem')),
                 ],
+                onChanged: (v) => _onTypeChanged(v!),
+              ),
+              if (_isAutoType) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: cs.primaryContainer.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.auto_awesome, size: 14, color: cs.primary),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          switch (_type) {
+                            'muscle_group_volume' =>
+                              'Progresso atualizado automaticamente ao compartilhar treino no grupo',
+                            'cardio_distance' =>
+                              'Progresso atualizado automaticamente ao compartilhar treino de cardio',
+                            _ =>
+                              'Progresso atualizado automaticamente ao postar um treino no grupo',
+                          },
+                          style: TextStyle(fontSize: 11, color: cs.primary),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              const SizedBox(height: 10),
+              // ── Filtro: grupo muscular ou subtipo cardio ────────────────────
+              if (_type == 'muscle_group_volume') ...[
+                DropdownButtonFormField<String>(
+                  value: _exerciseName,
+                  decoration: const InputDecoration(labelText: 'Grupo muscular'),
+                  items: _muscleGroups
+                      .map((g) => DropdownMenuItem(value: g.toLowerCase(), child: Text(g)))
+                      .toList(),
+                  validator: (v) =>
+                      (v == null || v.isEmpty) ? 'Selecione um grupo muscular' : null,
+                  onChanged: (v) => setState(() => _exerciseName = v),
+                ),
+                const SizedBox(height: 10),
+              ],
+              if (_type == 'cardio_distance') ...[
+                DropdownButtonFormField<String>(
+                  value: _exerciseName ?? '',
+                  decoration: const InputDecoration(labelText: 'Modalidade'),
+                  items: _cardioSubtypes
+                      .map((t) => DropdownMenuItem(value: t.$1, child: Text(t.$2)))
+                      .toList(),
+                  onChanged: (v) => setState(() => _exerciseName = v),
+                ),
+                const SizedBox(height: 10),
+              ],
+              // ── Meta ───────────────────────────────────────────────────────
+              TextFormField(
+                controller: _targetCtrl,
+                decoration: InputDecoration(labelText: 'Meta ($_unit)'),
+                keyboardType: TextInputType.number,
+                validator: (v) =>
+                    (v?.trim().isEmpty ?? true) ? 'Informe a meta' : null,
               ),
               const SizedBox(height: 10),
               TextFormField(
                 controller: _rewardCtrl,
-                decoration:
-                    const InputDecoration(labelText: 'Recompensa (opcional)'),
+                decoration: const InputDecoration(
+                    labelText: 'Recompensa (opcional)'),
               ),
               const SizedBox(height: 10),
               SwitchListTile(
@@ -1364,6 +1490,7 @@ class _CreateChallengeSheetState
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     try {
+      final me = ref.read(currentUserProvider);
       await SocialService.instance.createChallenge(
         widget.groupId,
         title: _titleCtrl.text.trim(),
@@ -1378,6 +1505,8 @@ class _CreateChallengeSheetState
             : _rewardCtrl.text.trim(),
         startDate: _startDate,
         endDate: _endDate,
+        exerciseName: _exerciseName,
+        createdByName: me?.displayName ?? '',
       );
       widget.onCreated();
       if (mounted) Navigator.pop(context);

@@ -40,9 +40,10 @@ model User {
   professionalProfile ProfessionalProfile?
   notifications       Notification[]
   contactRequests     ContactRequest[]
-  groupMemberships    GroupMember[]
-  posts               Post[]
-  badges              UserBadge[]
+  groupMemberships       GroupMember[]
+  posts                  Post[]
+  badges                 UserBadge[]
+  challengeParticipants  ChallengeParticipant[]
   sharedWods          SharedWod[]
   following                Follow[]                    @relation("Follower")
   followers                Follow[]                    @relation("Following")
@@ -614,13 +615,15 @@ model GroupChallenge {
 }
 
 model ChallengeParticipant {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   challengeId String
   userId      String
-  progress    Float    @default(0)
-  joinedAt    DateTime @default(now())
+  progress    Float     @default(0)
+  completedAt DateTime?
+  joinedAt    DateTime  @default(now())
 
   challenge GroupChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([challengeId, userId])
 }

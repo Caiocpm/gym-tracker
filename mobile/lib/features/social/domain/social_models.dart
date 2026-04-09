@@ -418,6 +418,8 @@ class GroupChallenge {
   final DateTime endDate;
   final List<ChallengeParticipant> participants;
   final bool isJoined;
+  // filter: muscle group name for muscle_group_volume, cardio subtype for cardio_distance
+  final String? exerciseName;
 
   const GroupChallenge({
     required this.id,
@@ -433,6 +435,7 @@ class GroupChallenge {
     required this.endDate,
     this.participants = const [],
     this.isJoined = false,
+    this.exerciseName,
   });
 
   factory GroupChallenge.fromJson(Map<String, dynamic> json) {
@@ -444,7 +447,8 @@ class GroupChallenge {
       description: json['description'] as String?,
       type: json['type'] as String? ?? 'volume',
       targetValue: (json['targetValue'] as num?)?.toDouble() ?? 0,
-      unit: json['unit'] as String? ?? '',
+      // backend returns 'unit' (mapped from targetUnit) or 'targetUnit' directly
+      unit: json['unit'] as String? ?? json['targetUnit'] as String? ?? '',
       isCompetitive: json['isCompetitive'] as bool? ?? false,
       reward: json['reward'] as String?,
       startDate:
@@ -456,10 +460,17 @@ class GroupChallenge {
           .map(ChallengeParticipant.fromJson)
           .toList(),
       isJoined: json['isJoined'] as bool? ?? false,
+      exerciseName: json['exerciseName'] as String?,
     );
   }
 
   bool get isActive => DateTime.now().isBefore(endDate);
+
+  // Auto-progress types don't allow manual updates
+  bool get isAutoProgress =>
+      type == 'muscle_group_volume' ||
+      type == 'cardio_distance' ||
+      type == 'workout_proof';
 }
 
 class ChallengeParticipant {
@@ -480,7 +491,9 @@ class ChallengeParticipant {
     return ChallengeParticipant(
       userId: json['userId'] as String? ?? '',
       displayName: user?['displayName'] as String?,
-      currentValue: (json['currentValue'] as num?)?.toDouble() ?? 0,
+      // backend stores as 'progress'; support legacy 'currentValue' too
+      currentValue: (json['progress'] as num?)?.toDouble() ??
+          (json['currentValue'] as num?)?.toDouble() ?? 0,
       isCompleted: json['completedAt'] != null,
     );
   }

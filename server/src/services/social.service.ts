@@ -180,7 +180,85 @@ export const socialService = {
         data: { postsCount: { increment: 1 } },
       }),
     ]);
+
+    // Auto-update challenge progress for workout posts
+    const exercises = (data.exercises ?? []) as Array<Record<string, unknown>>;
+    const isWorkoutPost = exercises.length > 0;
+    if (isWorkoutPost) {
+      await this._updateChallengesFromPost(groupId, userId, exercises);
+    }
+
     return post;
+  },
+
+  async _updateChallengesFromPost(
+    groupId: string,
+    userId: string,
+    exercises: Array<Record<string, unknown>>
+  ) {
+    const now = new Date().toISOString();
+    const challenges = await prisma.groupChallenge.findMany({
+      where: {
+        groupId,
+        status: 'active',
+        type: { in: ['muscle_group_volume', 'cardio_distance', 'workout_proof'] },
+        startDate: { lte: now },
+        endDate: { gte: now },
+        participants: { some: { userId } },
+      },
+      include: { participants: { where: { userId } } },
+    });
+
+    for (const challenge of challenges) {
+      const participant = challenge.participants[0];
+      if (!participant) continue;
+
+      let contribution = 0;
+
+      if (challenge.type === 'muscle_group_volume') {
+        // Sum totalVolume of strength exercises matching the target muscle group
+        const targetMuscle = (challenge.exerciseName ?? '').toLowerCase();
+        for (const ex of exercises) {
+          if (ex['exerciseType'] !== 'cardio') {
+            const muscleGroup = ((ex['muscleGroup'] as string) ?? '').toLowerCase();
+            if (muscleGroup && muscleGroup.includes(targetMuscle)) {
+              contribution += (ex['totalVolume'] as number) ?? 0;
+            }
+          }
+        }
+      } else if (challenge.type === 'cardio_distance') {
+        // Sum totalDistance (km) of cardio exercises matching subtype filter
+        const targetSubtype = challenge.exerciseName ?? '';
+        for (const ex of exercises) {
+          if (ex['exerciseType'] === 'cardio') {
+            const subtype = (ex['cardioSubtype'] as string) ?? '';
+            if (!targetSubtype || subtype === targetSubtype) {
+              contribution += (ex['totalDistance'] as number) ?? 0;
+            }
+          }
+        }
+      } else if (challenge.type === 'workout_proof') {
+        contribution = 1;
+      }
+
+      if (contribution > 0) {
+        const newProgress = participant.progress + contribution;
+        const isCompleted = newProgress >= challenge.targetValue;
+        await prisma.challengeParticipant.update({
+          where: { challengeId_userId: { challengeId: challenge.id, userId } },
+          data: {
+            progress: newProgress,
+            ...(isCompleted && !participant.completedAt ? { completedAt: new Date() } : {}),
+          },
+        });
+        const all = await prisma.challengeParticipant.findMany({ where: { challengeId: challenge.id } });
+        const total = all.reduce((s, p) => s + p.progress, 0);
+        await prisma.groupChallenge.update({
+          where: { id: challenge.id },
+          data: { collectiveProgress: total },
+        });
+      }
+    }
   },
 
   async deletePost(postId: string, userId: string) {
@@ -287,14 +365,23 @@ export const socialService = {
 
   async listChallenges(groupId: string, userId: string) {
     await this._requireGroupMember(groupId, userId);
-    return prisma.groupChallenge.findMany({
+    const challenges = await prisma.groupChallenge.findMany({
       where: { groupId },
       include: {
-        participants: { where: { userId }, select: { progress: true } },
+        participants: {
+          include: { user: { select: { id: true, displayName: true } } },
+          orderBy: { progress: 'desc' },
+        },
         _count: { select: { participants: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
+    return challenges.map(c => ({
+      ...c,
+      unit: c.targetUnit,
+      isJoined: c.participants.some(p => p.userId === userId),
+      participantsCount: c._count.participants,
+    }));
   },
 
   async createChallenge(
@@ -316,9 +403,10 @@ export const socialService = {
     }
   ) {
     await this._requireGroupMember(groupId, userId);
-    return prisma.groupChallenge.create({
+    const challenge = await prisma.groupChallenge.create({
       data: { ...data, groupId, createdBy: userId },
     });
+    return { ...challenge, unit: challenge.targetUnit, isJoined: false, participantsCount: 0, participants: [] };
   },
 
   async joinChallenge(challengeId: string, userId: string) {
@@ -330,14 +418,21 @@ export const socialService = {
   },
 
   async updateChallengeProgress(challengeId: string, userId: string, progress: number) {
-    const participant = await prisma.challengeParticipant.findUnique({
-      where: { challengeId_userId: { challengeId, userId } },
-    });
+    const [participant, challenge] = await Promise.all([
+      prisma.challengeParticipant.findUnique({
+        where: { challengeId_userId: { challengeId, userId } },
+      }),
+      prisma.groupChallenge.findUnique({ where: { id: challengeId } }),
+    ]);
     if (!participant) throw new AppError(404, 'Você não participa deste desafio');
 
+    const isCompleted = challenge ? progress >= challenge.targetValue : false;
     await prisma.challengeParticipant.update({
       where: { challengeId_userId: { challengeId, userId } },
-      data: { progress },
+      data: {
+        progress,
+        ...(isCompleted && !participant.completedAt ? { completedAt: new Date() } : {}),
+      },
     });
 
     // Recalculate collective progress

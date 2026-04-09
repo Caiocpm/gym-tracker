@@ -148,17 +148,21 @@ class SocialService {
     String? reward,
     required DateTime startDate,
     required DateTime endDate,
+    String? exerciseName, // muscle group for muscle_group_volume, subtype for cardio_distance
+    String createdByName = '',
   }) async {
     final res = await _dio.post('/social/groups/$groupId/challenges', data: {
       'title': title,
       if (description != null) 'description': description,
       'type': type,
       'targetValue': targetValue,
-      'unit': unit,
+      'targetUnit': unit,
       'isCompetitive': isCompetitive,
       if (reward != null) 'reward': reward,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate.toIso8601String(),
+      if (exerciseName != null && exerciseName.isNotEmpty) 'exerciseName': exerciseName,
+      'createdByName': createdByName,
     });
     return GroupChallenge.fromJson(res.data['data'] as Map<String, dynamic>);
   }
