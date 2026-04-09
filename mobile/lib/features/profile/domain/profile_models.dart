@@ -32,17 +32,29 @@ class UserBadge {
       );
 
   Color get rarityColor => switch (badgeRarity) {
+        // Challenge tiers
+        'diamond' => const Color(0xFF00BFFF),
+        'gold'    => const Color(0xFFFFD700),
+        'silver'  => const Color(0xFFB0BEC5),
+        'bronze'  => const Color(0xFFCD7F32),
+        // Legacy tiers
         'legendary' => const Color(0xFFFFD700),
-        'epic' => const Color(0xFF9B59B6),
-        'rare' => const Color(0xFF3498DB),
-        _ => const Color(0xFF95A5A6),
+        'epic'      => const Color(0xFF9B59B6),
+        'rare'      => const Color(0xFF3498DB),
+        _           => const Color(0xFF95A5A6),
       };
 
   String get rarityLabel => switch (badgeRarity) {
+        // Challenge tiers
+        'diamond' => 'Diamante',
+        'gold'    => 'Ouro',
+        'silver'  => 'Prata',
+        'bronze'  => 'Bronze',
+        // Legacy tiers
         'legendary' => 'Lendário',
-        'epic' => 'Épico',
-        'rare' => 'Raro',
-        _ => 'Comum',
+        'epic'      => 'Épico',
+        'rare'      => 'Raro',
+        _           => 'Comum',
       };
 }
 

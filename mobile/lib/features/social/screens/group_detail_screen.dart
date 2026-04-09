@@ -864,25 +864,41 @@ class _ChallengeCardState extends ConsumerState<_ChallengeCard> {
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: c.isActive
-                        ? cs.primaryContainer
-                        : cs.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    c.isActive ? 'Ativo' : 'Encerrado',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: c.isActive
-                          ? cs.onPrimaryContainer
-                          : cs.onSurface.withValues(alpha: 0.5),
+                Row(children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: cs.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      '${c.difficultyIcon} ${c.difficultyLabel}',
+                      style: TextStyle(
+                          fontSize: 11,
+                          color: cs.onSurface.withValues(alpha: 0.7)),
                     ),
                   ),
-                ),
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: c.isActive
+                          ? cs.primaryContainer
+                          : cs.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      c.isActive ? 'Ativo' : 'Encerrado',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: c.isActive
+                            ? cs.onPrimaryContainer
+                            : cs.onSurface.withValues(alpha: 0.5),
+                      ),
+                    ),
+                  ),
+                ]),
               ],
             ),
             if (c.description != null) ...[
@@ -1256,55 +1272,68 @@ class _CreateChallengeSheetState
   final _formKey = GlobalKey<FormState>();
   final _titleCtrl = TextEditingController();
   final _descCtrl = TextEditingController();
-  final _targetCtrl = TextEditingController(text: '100');
   final _rewardCtrl = TextEditingController();
+
   String _type = 'volume';
   String _unit = 'kg';
-  String? _exerciseName; // muscle group or cardio subtype
+  String? _exerciseName;
+  String _difficulty = 'iniciante';
   bool _isCompetitive = false;
   bool _loading = false;
+  bool _loadingPresets = false;
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now().add(const Duration(days: 30));
+  Map<String, double> _presets = {};
 
   static const _muscleGroups = [
-    'Peito', 'Costas', 'Pernas', 'Ombros', 'Bíceps',
-    'Tríceps', 'Abdômen', 'Glúteos',
+    ('peito', 'Peito'), ('costas', 'Costas'), ('pernas', 'Pernas'),
+    ('ombros', 'Ombros'), ('biceps', 'Bíceps'), ('triceps', 'Tríceps'),
+    ('abdomen', 'Abdômen'), ('gluteos', 'Glúteos'),
   ];
 
   static const _cardioSubtypes = [
-    ('corrida', 'Corrida'),
-    ('caminhada', 'Caminhada'),
-    ('ciclismo', 'Ciclismo'),
-    ('natacao', 'Natação'),
-    ('bicicleta_ergometrica', 'Bike Ergométrica'),
-    ('remo', 'Remo'),
-    ('escada', 'Escada'),
-    ('funcional', 'Funcional'),
-    ('', 'Qualquer cardio'),
+    ('', 'Qualquer cardio'), ('corrida', 'Corrida'), ('caminhada', 'Caminhada'),
+    ('ciclismo', 'Ciclismo'), ('natacao', 'Natação'),
+    ('bicicleta_ergometrica', 'Bike Ergométrica'), ('remo', 'Remo'),
+    ('escada', 'Escada'), ('funcional', 'Funcional'),
   ];
+
+  static const _difficulties = [
+    ('iniciante',    '🥉', 'Iniciante',    'Para quem está começando'),
+    ('intermediario','🥈', 'Intermediário', 'Para treinos regulares'),
+    ('avancado',     '🥇', 'Avançado',      'Para atletas dedicados'),
+    ('elite',        '💎', 'Elite',         'Desafio extremo'),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPresets();
+  }
+
+  Future<void> _fetchPresets() async {
+    setState(() => _loadingPresets = true);
+    try {
+      final p = await SocialService.instance
+          .getChallengePresets(_type, _startDate, _endDate);
+      if (mounted) setState(() => _presets = p);
+    } catch (_) {}
+    if (mounted) setState(() => _loadingPresets = false);
+  }
 
   void _onTypeChanged(String v) {
     setState(() {
       _type = v;
       _exerciseName = null;
       _unit = switch (v) {
-        'volume' => 'kg',
-        'workouts' => 'treinos',
-        'streak' => 'dias',
-        'muscle_group_volume' => 'kg',
-        'cardio_distance' => 'km',
-        'workout_proof' => 'treinos',
-        _ => 'kg',
-      };
-      _targetCtrl.text = switch (v) {
-        'cardio_distance' => '50',
-        'muscle_group_volume' => '1000',
-        'workout_proof' => '10',
-        'workouts' => '10',
-        'streak' => '7',
-        _ => '100',
+        'cardio_distance'     => 'km',
+        'workouts'            => 'treinos',
+        'streak'              => 'dias',
+        'workout_proof'       => 'treinos',
+        _                     => 'kg',
       };
     });
+    _fetchPresets();
   }
 
   bool get _isAutoType =>
@@ -1312,11 +1341,20 @@ class _CreateChallengeSheetState
       _type == 'cardio_distance' ||
       _type == 'workout_proof';
 
+  String _formatPreview(double? value) {
+    if (value == null || value <= 0) return '—';
+    if (_unit == 'kg') {
+      final t = value / 1000;
+      return t >= 1 ? '${t.toStringAsFixed(0)} t' : '${value.toInt()} kg';
+    }
+    if (_unit == 'km') return '${value.toStringAsFixed(0)} km';
+    return value.toInt().toString();
+  }
+
   @override
   void dispose() {
     _titleCtrl.dispose();
     _descCtrl.dispose();
-    _targetCtrl.dispose();
     _rewardCtrl.dispose();
     super.dispose();
   }
@@ -1337,6 +1375,8 @@ class _CreateChallengeSheetState
               Text('Criar Desafio',
                   style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 16),
+
+              // ── Título e descrição ─────────────────────────────────────────
               TextFormField(
                 controller: _titleCtrl,
                 decoration: const InputDecoration(labelText: 'Título'),
@@ -1351,71 +1391,57 @@ class _CreateChallengeSheetState
                 maxLines: 2,
               ),
               const SizedBox(height: 10),
+
               // ── Tipo ───────────────────────────────────────────────────────
               DropdownButtonFormField<String>(
                 value: _type,
                 decoration: const InputDecoration(labelText: 'Tipo'),
                 items: const [
-                  DropdownMenuItem(value: 'volume', child: Text('Volume total (kg)')),
-                  DropdownMenuItem(value: 'workouts', child: Text('Número de treinos')),
-                  DropdownMenuItem(value: 'streak', child: Text('Sequência de dias')),
-                  DropdownMenuItem(
-                      value: 'muscle_group_volume',
-                      child: Text('Volume por grupo muscular')),
-                  DropdownMenuItem(
-                      value: 'cardio_distance',
-                      child: Text('Distância de cardio')),
-                  DropdownMenuItem(
-                      value: 'workout_proof',
-                      child: Text('Treinos com postagem')),
+                  DropdownMenuItem(value: 'volume',             child: Text('Volume total')),
+                  DropdownMenuItem(value: 'workouts',           child: Text('Número de treinos')),
+                  DropdownMenuItem(value: 'streak',             child: Text('Sequência de dias')),
+                  DropdownMenuItem(value: 'muscle_group_volume',child: Text('Volume por grupo muscular')),
+                  DropdownMenuItem(value: 'cardio_distance',    child: Text('Distância de cardio')),
+                  DropdownMenuItem(value: 'workout_proof',      child: Text('Treinos com postagem')),
                 ],
                 onChanged: (v) => _onTypeChanged(v!),
               ),
+
               if (_isAutoType) ...[
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: cs.primaryContainer.withValues(alpha: 0.5),
+                    color: cs.primaryContainer.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.auto_awesome, size: 14, color: cs.primary),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          switch (_type) {
-                            'muscle_group_volume' =>
-                              'Progresso atualizado automaticamente ao compartilhar treino no grupo',
-                            'cardio_distance' =>
-                              'Progresso atualizado automaticamente ao compartilhar treino de cardio',
-                            _ =>
-                              'Progresso atualizado automaticamente ao postar um treino no grupo',
-                          },
-                          style: TextStyle(fontSize: 11, color: cs.primary),
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: Row(children: [
+                    Icon(Icons.auto_awesome, size: 13, color: cs.primary),
+                    const SizedBox(width: 6),
+                    Expanded(child: Text(
+                      'Progresso atualizado automaticamente ao postar treinos no grupo',
+                      style: TextStyle(fontSize: 11, color: cs.primary),
+                    )),
+                  ]),
                 ),
               ],
-              const SizedBox(height: 10),
-              // ── Filtro: grupo muscular ou subtipo cardio ────────────────────
+
+              // ── Filtros ────────────────────────────────────────────────────
               if (_type == 'muscle_group_volume') ...[
+                const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
                   value: _exerciseName,
                   decoration: const InputDecoration(labelText: 'Grupo muscular'),
                   items: _muscleGroups
-                      .map((g) => DropdownMenuItem(value: g.toLowerCase(), child: Text(g)))
+                      .map((g) => DropdownMenuItem(value: g.$1, child: Text(g.$2)))
                       .toList(),
                   validator: (v) =>
                       (v == null || v.isEmpty) ? 'Selecione um grupo muscular' : null,
                   onChanged: (v) => setState(() => _exerciseName = v),
                 ),
-                const SizedBox(height: 10),
               ],
               if (_type == 'cardio_distance') ...[
+                const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
                   value: _exerciseName ?? '',
                   decoration: const InputDecoration(labelText: 'Modalidade'),
@@ -1424,57 +1450,117 @@ class _CreateChallengeSheetState
                       .toList(),
                   onChanged: (v) => setState(() => _exerciseName = v),
                 ),
-                const SizedBox(height: 10),
               ],
-              // ── Meta ───────────────────────────────────────────────────────
-              TextFormField(
-                controller: _targetCtrl,
-                decoration: InputDecoration(labelText: 'Meta ($_unit)'),
-                keyboardType: TextInputType.number,
-                validator: (v) =>
-                    (v?.trim().isEmpty ?? true) ? 'Informe a meta' : null,
+
+              // ── Datas ──────────────────────────────────────────────────────
+              const SizedBox(height: 10),
+              Row(children: [
+                Expanded(child: _DateField(
+                  label: 'Início', date: _startDate,
+                  onPicked: (d) { setState(() => _startDate = d); _fetchPresets(); },
+                )),
+                const SizedBox(width: 10),
+                Expanded(child: _DateField(
+                  label: 'Fim', date: _endDate,
+                  onPicked: (d) { setState(() => _endDate = d); _fetchPresets(); },
+                )),
+              ]),
+
+              // ── Dificuldade ────────────────────────────────────────────────
+              const SizedBox(height: 16),
+              Text('Dificuldade',
+                  style: Theme.of(context).textTheme.labelLarge),
+              const SizedBox(height: 4),
+              Text(
+                'A badge é entregue proporcionalmente ao esforço de cada participante',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: cs.onSurface.withValues(alpha: 0.5)),
               ),
               const SizedBox(height: 10),
+              if (_loadingPresets)
+                const Center(child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ))
+              else
+                ...(_difficulties.map((d) {
+                  final isSelected = _difficulty == d.$1;
+                  final preview = _formatPreview(_presets[d.$1]);
+                  return GestureDetector(
+                    onTap: () => setState(() => _difficulty = d.$1),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 150),
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: isSelected ? cs.primary : cs.outlineVariant,
+                          width: isSelected ? 2 : 1,
+                        ),
+                        color: isSelected
+                            ? cs.primaryContainer.withValues(alpha: 0.3)
+                            : cs.surface,
+                      ),
+                      child: Row(children: [
+                        Text(d.$2, style: const TextStyle(fontSize: 22)),
+                        const SizedBox(width: 12),
+                        Expanded(child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(d.$3,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall
+                                    ?.copyWith(
+                                      fontWeight: isSelected
+                                          ? FontWeight.bold
+                                          : null,
+                                    )),
+                            Text(d.$4,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                        color: cs.onSurface
+                                            .withValues(alpha: 0.5))),
+                          ],
+                        )),
+                        Text(
+                          'Meta: $preview',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: isSelected ? cs.primary : cs.onSurface.withValues(alpha: 0.6),
+                          ),
+                        ),
+                      ]),
+                    ),
+                  );
+                })),
+
+              // ── Extras ─────────────────────────────────────────────────────
               TextFormField(
                 controller: _rewardCtrl,
                 decoration: const InputDecoration(
-                    labelText: 'Recompensa (opcional)'),
+                    labelText: 'Recompensa adicional (opcional)'),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 6),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text('Ranking competitivo'),
                 value: _isCompetitive,
                 onChanged: (v) => setState(() => _isCompetitive = v),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: _DateField(
-                      label: 'Início',
-                      date: _startDate,
-                      onPicked: (d) => setState(() => _startDate = d),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _DateField(
-                      label: 'Fim',
-                      date: _endDate,
-                      onPicked: (d) => setState(() => _endDate = d),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
+
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: _loading ? null : _create,
                   child: _loading
                       ? const SizedBox(
-                          width: 20,
-                          height: 20,
+                          width: 20, height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2))
                       : const Text('Criar Desafio'),
                 ),
@@ -1497,12 +1583,10 @@ class _CreateChallengeSheetState
         description:
             _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
         type: _type,
-        targetValue: double.tryParse(_targetCtrl.text) ?? 0,
+        difficulty: _difficulty,
         unit: _unit,
         isCompetitive: _isCompetitive,
-        reward: _rewardCtrl.text.trim().isEmpty
-            ? null
-            : _rewardCtrl.text.trim(),
+        reward: _rewardCtrl.text.trim().isEmpty ? null : _rewardCtrl.text.trim(),
         startDate: _startDate,
         endDate: _endDate,
         exerciseName: _exerciseName,

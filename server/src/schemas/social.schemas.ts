@@ -30,7 +30,7 @@ export const createChallengeSchema = z.object({
   title: z.string().min(1).max(200),
   description: z.string().max(1000).optional(),
   type: z.string(),
-  targetValue: z.number().positive(),
+  difficulty: z.enum(['iniciante', 'intermediario', 'avancado', 'elite']),
   targetUnit: z.string(),
   startDate: z.string(),
   endDate: z.string(),

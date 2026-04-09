@@ -3,6 +3,50 @@ import prisma from '../config/database';
 import { AppError } from '../types/api.types';
 import { sseService } from './sse.service';
 
+// ─── Challenge Difficulty Presets ────────────────────────────────────────────
+// All values are normalized for 30 days. Actual targetValue = preset * (days/30).
+type Difficulty = 'iniciante' | 'intermediario' | 'avancado' | 'elite';
+
+const CHALLENGE_PRESETS: Record<string, Record<Difficulty, number>> = {
+  muscle_group_volume: { iniciante: 20_000,  intermediario: 60_000,  avancado: 120_000, elite: 300_000 },
+  volume:              { iniciante: 150_000, intermediario: 400_000, avancado: 800_000, elite: 2_000_000 },
+  workouts:            { iniciante: 8,       intermediario: 18,      avancado: 30,      elite: 50 },
+  streak:              { iniciante: 6,       intermediario: 14,      avancado: 21,      elite: 28 },
+  cardio_distance:     { iniciante: 20,      intermediario: 80,      avancado: 300,     elite: 600 },
+  workout_proof:       { iniciante: 8,       intermediario: 15,      avancado: 25,      elite: 40 },
+};
+
+const BADGE_TIERS = [
+  { rarity: 'bronze',   icon: '🥉', label: 'Bronze'   },
+  { rarity: 'silver',   icon: '🥈', label: 'Prata'    },
+  { rarity: 'gold',     icon: '🥇', label: 'Ouro'     },
+  { rarity: 'diamond',  icon: '💎', label: 'Diamante' },
+] as const;
+
+const DIFFICULTY_TIER_INDEX: Record<Difficulty, number> = {
+  iniciante: 0, intermediario: 1, avancado: 2, elite: 3,
+};
+
+function computeTargetValue(type: string, difficulty: Difficulty, startDate: string, endDate: string): number {
+  const presets = CHALLENGE_PRESETS[type];
+  if (!presets) return 100;
+  const days = Math.max(1, Math.round(
+    (new Date(endDate).getTime() - new Date(startDate).getTime()) / 86_400_000
+  ));
+  return Math.round(presets[difficulty] * (days / 30));
+}
+
+function determineBadge(difficulty: Difficulty, pct: number): typeof BADGE_TIERS[number] | null {
+  if (pct < 0.25) return null;
+  const maxTier = DIFFICULTY_TIER_INDEX[difficulty];
+  let tierIdx: number;
+  if (pct >= 1.0)      tierIdx = maxTier;
+  else if (pct >= 0.75) tierIdx = Math.max(0, maxTier - 1);
+  else if (pct >= 0.50) tierIdx = Math.max(0, maxTier - 2);
+  else                   tierIdx = 0; // 25–49% → always bronze
+  return BADGE_TIERS[tierIdx];
+}
+
 export const socialService = {
   // ─── Groups ─────────────────────────────────────────────────────────────────
 
@@ -257,6 +301,10 @@ export const socialService = {
           where: { id: challenge.id },
           data: { collectiveProgress: total },
         });
+        // Award badge on 100%
+        if (isCompleted && !participant.completedAt) {
+          await this._awardChallengeBadge(userId, challenge, 1.0);
+        }
       }
     }
   },
@@ -363,8 +411,14 @@ export const socialService = {
 
   // ─── Challenges ─────────────────────────────────────────────────────────────
 
+  _computePreset(type: string, difficulty: string, startDate: string, endDate: string): number {
+    return computeTargetValue(type, (difficulty as Difficulty) ?? 'iniciante', startDate ?? '', endDate ?? '');
+  },
+
   async listChallenges(groupId: string, userId: string) {
     await this._requireGroupMember(groupId, userId);
+    // Lazily finalize any expired challenges and distribute badges
+    await this._finalizeExpiredChallenges(groupId);
     const challenges = await prisma.groupChallenge.findMany({
       where: { groupId },
       include: {
@@ -391,7 +445,7 @@ export const socialService = {
       title: string;
       description?: string;
       type: string;
-      targetValue: number;
+      difficulty: string;
       targetUnit: string;
       startDate: string;
       endDate: string;
@@ -403,8 +457,10 @@ export const socialService = {
     }
   ) {
     await this._requireGroupMember(groupId, userId);
+    const difficulty = (data.difficulty as Difficulty) ?? 'iniciante';
+    const targetValue = computeTargetValue(data.type, difficulty, data.startDate, data.endDate);
     const challenge = await prisma.groupChallenge.create({
-      data: { ...data, groupId, createdBy: userId },
+      data: { ...data, difficulty, targetValue, groupId, createdBy: userId },
     });
     return { ...challenge, unit: challenge.targetUnit, isJoined: false, participantsCount: 0, participants: [] };
   },
@@ -442,6 +498,73 @@ export const socialService = {
       where: { id: challengeId },
       data: { collectiveProgress: total },
     });
+
+    // Award badge immediately on 100%
+    if (isCompleted && !participant.completedAt && challenge) {
+      await this._awardChallengeBadge(userId, challenge, 1.0);
+    }
+  },
+
+  // ─── Challenge Badge Helpers ─────────────────────────────────────────────────
+
+  async _awardChallengeBadge(
+    userId: string,
+    challenge: { id: string; title: string; difficulty: string; targetValue: number },
+    pct: number
+  ) {
+    const difficulty = challenge.difficulty as Difficulty;
+    const tier = determineBadge(difficulty, pct);
+    if (!tier) return;
+
+    // Avoid duplicate badge for same challenge
+    const existing = await prisma.userBadge.findFirst({
+      where: { userId, challengeId: challenge.id },
+    });
+    if (existing) {
+      // Upgrade if earned tier is better
+      const existingTierIdx = BADGE_TIERS.findIndex(t => t.rarity === existing.badgeRarity);
+      const newTierIdx = BADGE_TIERS.findIndex(t => t.rarity === tier.rarity);
+      if (newTierIdx <= existingTierIdx) return;
+      await prisma.userBadge.update({
+        where: { id: existing.id },
+        data: { badgeRarity: tier.rarity, badgeIcon: tier.icon, badgeName: `${tier.icon} ${challenge.title}`, earnedAt: new Date() },
+      });
+      return;
+    }
+
+    await prisma.userBadge.create({
+      data: {
+        userId,
+        badgeId: `challenge_${challenge.id}`,
+        badgeName: `${tier.icon} ${challenge.title}`,
+        badgeIcon: tier.icon,
+        badgeCategory: 'challenge',
+        badgeRarity: tier.rarity,
+        challengeId: challenge.id,
+        challengeTitle: challenge.title,
+      },
+    });
+  },
+
+  async _finalizeExpiredChallenges(groupId: string) {
+    const now = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const expired = await prisma.groupChallenge.findMany({
+      where: { groupId, status: 'active', endDate: { lt: now } },
+      include: { participants: true },
+    });
+
+    for (const challenge of expired) {
+      for (const p of challenge.participants) {
+        if (challenge.targetValue > 0) {
+          const pct = p.progress / challenge.targetValue;
+          await this._awardChallengeBadge(p.userId, challenge, pct);
+        }
+      }
+      await prisma.groupChallenge.update({
+        where: { id: challenge.id },
+        data: { status: 'finished' },
+      });
+    }
   },
 
   // ─── Badges ─────────────────────────────────────────────────────────────────

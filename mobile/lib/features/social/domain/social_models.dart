@@ -420,6 +420,7 @@ class GroupChallenge {
   final bool isJoined;
   // filter: muscle group name for muscle_group_volume, cardio subtype for cardio_distance
   final String? exerciseName;
+  final String difficulty; // iniciante | intermediario | avancado | elite
 
   const GroupChallenge({
     required this.id,
@@ -436,6 +437,7 @@ class GroupChallenge {
     this.participants = const [],
     this.isJoined = false,
     this.exerciseName,
+    this.difficulty = 'iniciante',
   });
 
   factory GroupChallenge.fromJson(Map<String, dynamic> json) {
@@ -461,10 +463,25 @@ class GroupChallenge {
           .toList(),
       isJoined: json['isJoined'] as bool? ?? false,
       exerciseName: json['exerciseName'] as String?,
+      difficulty: json['difficulty'] as String? ?? 'iniciante',
     );
   }
 
   bool get isActive => DateTime.now().isBefore(endDate);
+
+  String get difficultyLabel => switch (difficulty) {
+    'intermediario' => 'Intermediário',
+    'avancado'      => 'Avançado',
+    'elite'         => 'Elite',
+    _               => 'Iniciante',
+  };
+
+  String get difficultyIcon => switch (difficulty) {
+    'intermediario' => '🥈',
+    'avancado'      => '🥇',
+    'elite'         => '💎',
+    _               => '🥉',
+  };
 
   // Auto-progress types don't allow manual updates
   bool get isAutoProgress =>

@@ -39,6 +39,7 @@ router.delete('/comments/:commentId', socialController.deleteComment);
 router.get('/groups/:groupId/wods', wodsController.listByGroup);
 
 // ─── Challenges ───────────────────────────────────────────────────────────────
+router.get('/challenges/presets', socialController.getChallengePresets);
 router.get('/groups/:groupId/challenges', socialController.listChallenges);
 router.post('/groups/:groupId/challenges', validate(createChallengeSchema), socialController.createChallenge);
 router.post('/challenges/:challengeId/join', socialController.joinChallenge);

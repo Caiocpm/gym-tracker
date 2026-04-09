@@ -142,20 +142,20 @@ class SocialService {
     required String title,
     String? description,
     required String type,
-    required double targetValue,
+    required String difficulty,
     required String unit,
     required bool isCompetitive,
     String? reward,
     required DateTime startDate,
     required DateTime endDate,
-    String? exerciseName, // muscle group for muscle_group_volume, subtype for cardio_distance
+    String? exerciseName,
     String createdByName = '',
   }) async {
     final res = await _dio.post('/social/groups/$groupId/challenges', data: {
       'title': title,
       if (description != null) 'description': description,
       'type': type,
-      'targetValue': targetValue,
+      'difficulty': difficulty,
       'targetUnit': unit,
       'isCompetitive': isCompetitive,
       if (reward != null) 'reward': reward,
@@ -165,6 +165,21 @@ class SocialService {
       'createdByName': createdByName,
     });
     return GroupChallenge.fromJson(res.data['data'] as Map<String, dynamic>);
+  }
+
+  /// Returns computed targetValue for each difficulty given type+dates.
+  Future<Map<String, double>> getChallengePresets(
+      String type, DateTime startDate, DateTime endDate) async {
+    final res = await _dio.get('/social/challenges/presets', queryParameters: {
+      'type': type,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate.toIso8601String(),
+    });
+    final list = res.data['data'] as List? ?? [];
+    return {
+      for (final item in list.whereType<Map<String, dynamic>>())
+        item['difficulty'] as String: (item['targetValue'] as num).toDouble(),
+    };
   }
 
   Future<void> joinChallenge(String challengeId) async {

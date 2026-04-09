@@ -122,6 +122,17 @@ export const socialController = {
 
   // ─── Challenges ─────────────────────────────────────────────────────────────
 
+  async getChallengePresets(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { type, startDate, endDate } = req.query as Record<string, string>;
+      const presets = ['iniciante', 'intermediario', 'avancado', 'elite'].map(d => ({
+        difficulty: d,
+        targetValue: socialService._computePreset(type, d, startDate, endDate),
+      }));
+      res.json({ data: presets });
+    } catch (err) { next(err); }
+  },
+
   async listChallenges(req: Request, res: Response, next: NextFunction) {
     try {
       const challenges = await socialService.listChallenges(req.params.groupId, req.user!.uid);
