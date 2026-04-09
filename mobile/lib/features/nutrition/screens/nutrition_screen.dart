@@ -1817,14 +1817,51 @@ class _FoodTile extends StatelessWidget {
   final void Function(TacoFood) onSelect;
   final void Function(TacoFood) onToggleFavorite;
 
+  // Split "Ovo, de galinha, inteiro, cru" into:
+  //   primary = "Ovo"
+  //   details = "de galinha, inteiro, cru"
+  static ({String primary, String? details}) _splitName(String name) {
+    final parts = name.split(',');
+    if (parts.length <= 1) return (primary: name.trim(), details: null);
+    final primary = parts.first.trim();
+    final details = parts.sublist(1).map((s) => s.trim()).join(', ');
+    return (primary: primary, details: details.isEmpty ? null : details);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final split = _splitName(food.name);
     return ListTile(
       dense: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
       leading: Text(_foodEmoji(food.category, food.name),
           style: const TextStyle(fontSize: 22)),
-      title: Text(food.name, style: Theme.of(context).textTheme.bodyLarge),
+      title: split.details != null
+          ? RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: split.primary,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  TextSpan(
+                    text: '  ${split.details}',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: cs.onSurface.withValues(alpha: 0.55),
+                        ),
+                  ),
+                ],
+              ),
+            )
+          : Text(split.primary,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.w600)),
       subtitle: Text(
         '${food.calories.toInt()} kcal · P: ${food.protein.toInt()}g · C: ${food.carbs.toInt()}g · G: ${food.fat.toInt()}g',
         style: Theme.of(context).textTheme.bodySmall,

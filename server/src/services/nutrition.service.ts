@@ -179,21 +179,40 @@ export const nutritionService = {
         .join(' AND ');
 
       const SELECT = `SELECT id, name, category, calories, protein, carbs, fat, "servingSize", "servingUnit", micronutrients, "createdBy" FROM "PredefinedFood"`;
-      const ORDER = `ORDER BY name ASC LIMIT 100`;
 
       type RawFood = { id: string; name: string; category: string | null; calories: unknown; protein: unknown; carbs: unknown; fat: unknown; servingSize: unknown; servingUnit: string | null; micronutrients: unknown; createdBy: string | null };
 
+      // Extra params for relevance ranking (fully parameterised — no interpolation):
+      //   startParam  = "word%"  → name begins with the first search word
+      //   exactParam  = "word"   → first comma-segment of name equals the search word
+      // Ranking: 1 = starts with term, 2 = first segment exact match, 3 = anywhere
       let rows: RawFood[];
       if (userId) {
-        const uidParam = `$${words.length + 1}`;
+        const uidIdx      = words.length + 1;           // $N+1
+        const startIdx    = words.length + 2;           // $N+2
+        const exactIdx    = words.length + 3;           // $N+3
+        const ORDER = `ORDER BY
+          CASE
+            WHEN unaccent(lower(name)) LIKE unaccent(lower($${startIdx})) THEN 1
+            WHEN unaccent(lower(split_part(name, ',', 1))) = unaccent(lower($${exactIdx})) THEN 2
+            ELSE 3
+          END ASC, name ASC LIMIT 100`;
         rows = await prisma.$queryRawUnsafe<RawFood[]>(
-          `${SELECT} WHERE ("createdBy" IS NULL OR "createdBy" = ${uidParam}) AND ${wordClauses} ${ORDER}`,
-          ...terms, userId,
+          `${SELECT} WHERE ("createdBy" IS NULL OR "createdBy" = $${uidIdx}) AND ${wordClauses} ${ORDER}`,
+          ...terms, userId, `${words[0]}%`, words[0],
         );
       } else {
+        const startIdx    = words.length + 1;           // $N+1
+        const exactIdx    = words.length + 2;           // $N+2
+        const ORDER = `ORDER BY
+          CASE
+            WHEN unaccent(lower(name)) LIKE unaccent(lower($${startIdx})) THEN 1
+            WHEN unaccent(lower(split_part(name, ',', 1))) = unaccent(lower($${exactIdx})) THEN 2
+            ELSE 3
+          END ASC, name ASC LIMIT 100`;
         rows = await prisma.$queryRawUnsafe<RawFood[]>(
           `${SELECT} WHERE "createdBy" IS NULL AND ${wordClauses} ${ORDER}`,
-          ...terms,
+          ...terms, `${words[0]}%`, words[0],
         );
       }
 
