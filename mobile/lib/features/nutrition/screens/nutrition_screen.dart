@@ -7,16 +7,17 @@ import 'package:intl/intl.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/theme/brand_colors.dart';
 import '../../../shared/widgets/gradient_card.dart';
+import '../../../shared/widgets/gradient_progress_bar.dart';
 import '../providers/nutrition_provider.dart';
 import '../domain/nutrition_models.dart';
 import '../data/nutrition_service.dart';
 import '../data/voice_parse_service.dart';
 import '../data/photo_analyze_service.dart';
 import '../../auth/providers/auth_provider.dart';
-import '../providers/weight_provider.dart';
 import '../../../shared/tutorial/tutorial_keys.dart';
 import '../../../shared/tutorial/tutorial_phases.dart';
 import '../../../shared/tutorial/tutorial_trigger.dart';
@@ -135,6 +136,7 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen>
             ),
             _NutritionHeader(tab: _tab),
             TabBar(
+              key: TutorialKeys.nutritionTabBar,
               controller: _tab,
               tabs: const [
                 Tab(text: 'Visão Geral'),
@@ -271,8 +273,6 @@ class _OverviewTab extends StatelessWidget {
         _MacrosRow(summary: summary, goals: goals),
         const SizedBox(height: 12),
         _WaterCard(summary: summary, goals: goals),
-        const SizedBox(height: 12),
-        const _WeightCard(),
       ],
     );
   }
@@ -317,6 +317,7 @@ class _GoalsTabState extends ConsumerState<_GoalsTab> {
   late final TextEditingController _protCtrl;
   late final TextEditingController _carbCtrl;
   late final TextEditingController _fatCtrl;
+  late final TextEditingController _fiberCtrl;
   late final TextEditingController _waterCtrl;
   bool _saving = false;
 
@@ -331,13 +332,15 @@ class _GoalsTabState extends ConsumerState<_GoalsTab> {
         TextEditingController(text: widget.current.carbs.toInt().toString());
     _fatCtrl =
         TextEditingController(text: widget.current.fat.toInt().toString());
+    _fiberCtrl =
+        TextEditingController(text: widget.current.fiber.toInt().toString());
     _waterCtrl =
         TextEditingController(text: widget.current.water.toString());
   }
 
   @override
   void dispose() {
-    for (final c in [_calCtrl, _protCtrl, _carbCtrl, _fatCtrl, _waterCtrl]) {
+    for (final c in [_calCtrl, _protCtrl, _carbCtrl, _fatCtrl, _fiberCtrl, _waterCtrl]) {
       c.dispose();
     }
     super.dispose();
@@ -352,6 +355,7 @@ class _GoalsTabState extends ConsumerState<_GoalsTab> {
         protein: double.tryParse(_protCtrl.text) ?? 150,
         carbs: double.tryParse(_carbCtrl.text) ?? 250,
         fat: double.tryParse(_fatCtrl.text) ?? 65,
+        fiber: double.tryParse(_fiberCtrl.text) ?? 25,
         water: int.tryParse(_waterCtrl.text) ?? 2500,
       );
       await NutritionService.instance.updateGoals(userId, goals);
@@ -433,13 +437,26 @@ class _GoalsTabState extends ConsumerState<_GoalsTab> {
                             const InputDecoration(labelText: 'Carbs (g)'),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
                     Expanded(
                       child: TextField(
                         controller: _fatCtrl,
                         keyboardType: TextInputType.number,
                         decoration:
                             const InputDecoration(labelText: 'Gordura (g)'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextField(
+                        controller: _fiberCtrl,
+                        keyboardType: TextInputType.number,
+                        decoration:
+                            const InputDecoration(labelText: 'Fibra (g)'),
                       ),
                     ),
                   ],
@@ -514,18 +531,7 @@ class _CaloriesCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 12,
-              backgroundColor:
-                  context.brandPrimary.withValues(alpha: 0.12),
-              valueColor: AlwaysStoppedAnimation(
-                progress >= 1.0 ? Colors.orange : context.brandPrimary,
-              ),
-            ),
-          ),
+          GradientProgressBar(value: progress, height: 12),
           const SizedBox(height: 8),
           Text(
             remaining > 0
@@ -548,31 +554,47 @@ class _MacrosRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-            child: _MacroCard(
-                label: 'Proteína',
-                current: summary.protein,
-                goal: goals.protein,
-                color: const Color(0xFF3B82F6),
-                emoji: '🥩')),
-        const SizedBox(width: 8),
-        Expanded(
-            child: _MacroCard(
-                label: 'Carbs',
-                current: summary.carbs,
-                goal: goals.carbs,
-                color: const Color(0xFFF97316),
-                emoji: '🍞')),
-        const SizedBox(width: 8),
-        Expanded(
-            child: _MacroCard(
-                label: 'Gordura',
-                current: summary.fat,
-                goal: goals.fat,
-                color: const Color(0xFFEAB308),
-                emoji: '🥑')),
+        Row(
+          children: [
+            Expanded(
+                child: _MacroCard(
+                    label: 'Proteína',
+                    current: summary.protein,
+                    goal: goals.protein,
+                    color: const Color(0xFF3B82F6),
+                    emoji: '🥩')),
+            const SizedBox(width: 8),
+            Expanded(
+                child: _MacroCard(
+                    label: 'Carbs',
+                    current: summary.carbs,
+                    goal: goals.carbs,
+                    color: const Color(0xFFF97316),
+                    emoji: '🍞')),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+                child: _MacroCard(
+                    label: 'Gordura',
+                    current: summary.fat,
+                    goal: goals.fat,
+                    color: const Color(0xFFEAB308),
+                    emoji: '🥑')),
+            const SizedBox(width: 8),
+            Expanded(
+                child: _MacroCard(
+                    label: 'Fibra',
+                    current: summary.fiber,
+                    goal: goals.fiber,
+                    color: const Color(0xFF22C55E),
+                    emoji: '🥦')),
+          ],
+        ),
       ],
     );
   }
@@ -628,13 +650,12 @@ class _MacroCard extends StatelessWidget {
           Text('/ ${goal.toInt()}g',
               style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 6),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 4,
-              backgroundColor: color.withValues(alpha: 0.15),
-              valueColor: AlwaysStoppedAnimation(color),
+          GradientProgressBar(
+            value: progress,
+            height: 5,
+            backgroundColor: color.withValues(alpha: 0.15),
+            gradient: LinearGradient(
+              colors: [color, Color.lerp(color, Colors.white, 0.25)!],
             ),
           ),
         ],
@@ -688,15 +709,12 @@ class _WaterCard extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 12),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 10,
-              backgroundColor:
-                  waterColor.withValues(alpha: 0.12),
-              valueColor:
-                  const AlwaysStoppedAnimation(waterColor),
+          GradientProgressBar(
+            value: progress,
+            height: 10,
+            backgroundColor: waterColor.withValues(alpha: 0.12),
+            gradient: const LinearGradient(
+              colors: [waterColor, Color(0xFF4FC3F7)],
             ),
           ),
           const SizedBox(height: 14),
@@ -963,7 +981,7 @@ class _DietPlanItemTile extends ConsumerWidget {
           title: Text(item.name,
               style: Theme.of(context).textTheme.bodyLarge),
           subtitle: Text(
-            '${item.quantity.toInt()}${item.unit} · P: ${item.protein.toInt()}g  C: ${item.carbs.toInt()}g  G: ${item.fat.toInt()}g',
+            '${item.quantity.toInt()}${item.unit} · P: ${item.protein.toInt()}g  C: ${item.carbs.toInt()}g  G: ${item.fat.toInt()}g  Fi: ${item.fiber.toInt()}g',
             style: Theme.of(context).textTheme.bodySmall,
           ),
           trailing: Container(
@@ -1041,7 +1059,7 @@ class _FoodEntryTile extends ConsumerWidget {
         title: Text(entry.foodName,
             style: Theme.of(context).textTheme.bodyLarge),
         subtitle: Text(
-          '${entry.quantity.toInt()}${entry.unit} · P: ${entry.protein.toInt()}g  C: ${entry.carbs.toInt()}g  G: ${entry.fat.toInt()}g',
+          '${entry.quantity.toInt()}${entry.unit} · P: ${entry.protein.toInt()}g  C: ${entry.carbs.toInt()}g  G: ${entry.fat.toInt()}g  Fi: ${entry.fiber.toInt()}g',
           style: Theme.of(context).textTheme.bodySmall,
         ),
         trailing: Row(
@@ -1094,6 +1112,7 @@ class _AddDietPlanItemSheetState
   final _protCtrl = TextEditingController();
   final _carbCtrl = TextEditingController();
   final _fatCtrl = TextEditingController();
+  final _fiberCtrl = TextEditingController(text: '0');
   final _qtyCtrl = TextEditingController(text: '100');
 
   List<TacoFood> _results = [];
@@ -1105,7 +1124,7 @@ class _AddDietPlanItemSheetState
   void dispose() {
     for (final c in [
       _searchCtrl, _nameCtrl, _calCtrl, _protCtrl,
-      _carbCtrl, _fatCtrl, _qtyCtrl
+      _carbCtrl, _fatCtrl, _fiberCtrl, _qtyCtrl
     ]) {
       c.dispose();
     }
@@ -1123,6 +1142,7 @@ class _AddDietPlanItemSheetState
   }
 
   void _selectTaco(TacoFood food) {
+    final fiberPer100 = (food.micronutrients?['fiber_g'] as num?)?.toDouble() ?? 0;
     setState(() {
       _selected = food;
       _qtyCtrl.text = '100';
@@ -1131,6 +1151,7 @@ class _AddDietPlanItemSheetState
       _protCtrl.text = food.protein.toStringAsFixed(1);
       _carbCtrl.text = food.carbs.toStringAsFixed(1);
       _fatCtrl.text = food.fat.toStringAsFixed(1);
+      _fiberCtrl.text = fiberPer100.toStringAsFixed(1);
     });
   }
 
@@ -1138,11 +1159,13 @@ class _AddDietPlanItemSheetState
     if (_selected == null) return;
     final qty = double.tryParse(val) ?? 100;
     final factor = qty / _selected!.servingSize;
+    final fiberPer100 = ((_selected!.micronutrients?['fiber_g'] as num?)?.toDouble() ?? 0);
     setState(() {
       _calCtrl.text = (_selected!.calories * factor).toStringAsFixed(1);
       _protCtrl.text = (_selected!.protein * factor).toStringAsFixed(1);
       _carbCtrl.text = (_selected!.carbs * factor).toStringAsFixed(1);
       _fatCtrl.text = (_selected!.fat * factor).toStringAsFixed(1);
+      _fiberCtrl.text = (fiberPer100 * factor).toStringAsFixed(1);
     });
   }
 
@@ -1158,6 +1181,7 @@ class _AddDietPlanItemSheetState
         protein: double.tryParse(_protCtrl.text) ?? 0,
         carbs: double.tryParse(_carbCtrl.text) ?? 0,
         fat: double.tryParse(_fatCtrl.text) ?? 0,
+        fiber: double.tryParse(_fiberCtrl.text) ?? 0,
         quantity: double.tryParse(_qtyCtrl.text) ?? 100,
         unit: 'g',
         mealType: widget.mealType,
@@ -1254,6 +1278,7 @@ class _AddDietPlanItemSheetState
                       protCtrl: _protCtrl,
                       carbCtrl: _carbCtrl,
                       fatCtrl: _fatCtrl,
+                      fiberCtrl: _fiberCtrl,
                       onQtyChanged: _onQtyChanged,
                       onSave: _saving ? null : _save,
                       saving: _saving,
@@ -1338,6 +1363,7 @@ class _AddFoodSheetState extends ConsumerState<_AddFoodSheet>
   final _protCtrl = TextEditingController();
   final _carbCtrl = TextEditingController();
   final _fatCtrl = TextEditingController();
+  final _fiberCtrl = TextEditingController(text: '0');
   final _qtyCtrl = TextEditingController(text: '100');
   late MealType _meal;
   bool _saving = false;
@@ -1353,7 +1379,7 @@ class _AddFoodSheetState extends ConsumerState<_AddFoodSheet>
   void dispose() {
     _tab.dispose();
     _searchCtrl.dispose();
-    for (final c in [_nameCtrl, _calCtrl, _protCtrl, _carbCtrl, _fatCtrl, _qtyCtrl]) {
+    for (final c in [_nameCtrl, _calCtrl, _protCtrl, _carbCtrl, _fatCtrl, _fiberCtrl, _qtyCtrl]) {
       c.dispose();
     }
     super.dispose();
@@ -1370,6 +1396,7 @@ class _AddFoodSheetState extends ConsumerState<_AddFoodSheet>
   }
 
   void _selectTaco(TacoFood food) {
+    final fiberPer100 = (food.micronutrients?['fiber_g'] as num?)?.toDouble() ?? 0;
     setState(() {
       _selected = food;
       _qtyCtrl.text = '100';
@@ -1378,6 +1405,7 @@ class _AddFoodSheetState extends ConsumerState<_AddFoodSheet>
       _protCtrl.text = food.protein.toStringAsFixed(1);
       _carbCtrl.text = food.carbs.toStringAsFixed(1);
       _fatCtrl.text = food.fat.toStringAsFixed(1);
+      _fiberCtrl.text = fiberPer100.toStringAsFixed(1);
     });
   }
 
@@ -1385,11 +1413,13 @@ class _AddFoodSheetState extends ConsumerState<_AddFoodSheet>
     if (_selected == null) return;
     final qty = double.tryParse(val) ?? 100;
     final factor = qty / _selected!.servingSize;
+    final fiberPer100 = ((_selected!.micronutrients?['fiber_g'] as num?)?.toDouble() ?? 0);
     setState(() {
       _calCtrl.text = (_selected!.calories * factor).toStringAsFixed(1);
       _protCtrl.text = (_selected!.protein * factor).toStringAsFixed(1);
       _carbCtrl.text = (_selected!.carbs * factor).toStringAsFixed(1);
       _fatCtrl.text = (_selected!.fat * factor).toStringAsFixed(1);
+      _fiberCtrl.text = (fiberPer100 * factor).toStringAsFixed(1);
     });
   }
 
@@ -1408,6 +1438,7 @@ class _AddFoodSheetState extends ConsumerState<_AddFoodSheet>
       protein: double.tryParse(_protCtrl.text) ?? 0,
       carbs: double.tryParse(_carbCtrl.text) ?? 0,
       fat: double.tryParse(_fatCtrl.text) ?? 0,
+      fiber: double.tryParse(_fiberCtrl.text) ?? 0,
       quantity: double.tryParse(_qtyCtrl.text) ?? 100,
       unit: 'g',
       mealType: _meal,
@@ -1504,6 +1535,7 @@ class _AddFoodSheetState extends ConsumerState<_AddFoodSheet>
                     protCtrl: _protCtrl,
                     carbCtrl: _carbCtrl,
                     fatCtrl: _fatCtrl,
+                    fiberCtrl: _fiberCtrl,
                     onSearch: _search,
                     onSelect: _selectTaco,
                     onDeselect: _deselect,
@@ -1519,6 +1551,7 @@ class _AddFoodSheetState extends ConsumerState<_AddFoodSheet>
                     protCtrl: _protCtrl,
                     carbCtrl: _carbCtrl,
                     fatCtrl: _fatCtrl,
+                    fiberCtrl: _fiberCtrl,
                     qtyCtrl: _qtyCtrl,
                     onSave: _saving ? null : _save,
                     saving: _saving,
@@ -1551,6 +1584,7 @@ class _TacoSearchTab extends StatelessWidget {
     required this.protCtrl,
     required this.carbCtrl,
     required this.fatCtrl,
+    required this.fiberCtrl,
     required this.onSearch,
     required this.onSelect,
     required this.onDeselect,
@@ -1572,6 +1606,7 @@ class _TacoSearchTab extends StatelessWidget {
   final TextEditingController protCtrl;
   final TextEditingController carbCtrl;
   final TextEditingController fatCtrl;
+  final TextEditingController fiberCtrl;
   final void Function(String) onSearch;
   final void Function(TacoFood) onSelect;
   final VoidCallback onDeselect;
@@ -1594,6 +1629,7 @@ class _TacoSearchTab extends StatelessWidget {
         protCtrl: protCtrl,
         carbCtrl: carbCtrl,
         fatCtrl: fatCtrl,
+        fiberCtrl: fiberCtrl,
         onQtyChanged: onQtyChanged,
         onSave: onSave,
         saving: saving,
@@ -1863,7 +1899,7 @@ class _FoodTile extends StatelessWidget {
                   .bodyLarge
                   ?.copyWith(fontWeight: FontWeight.w600)),
       subtitle: Text(
-        '${food.calories.toInt()} kcal · P: ${food.protein.toInt()}g · C: ${food.carbs.toInt()}g · G: ${food.fat.toInt()}g',
+        '${food.calories.toInt()} kcal · P: ${food.protein.toInt()}g · C: ${food.carbs.toInt()}g · G: ${food.fat.toInt()}g · Fi: ${((food.micronutrients?["fiber_g"] as num?)?.toInt() ?? 0)}g',
         style: Theme.of(context).textTheme.bodySmall,
       ),
       trailing: IconButton(
@@ -1892,6 +1928,7 @@ class _SelectedFoodCard extends StatelessWidget {
     required this.protCtrl,
     required this.carbCtrl,
     required this.fatCtrl,
+    required this.fiberCtrl,
     required this.onQtyChanged,
     required this.onSave,
     required this.saving,
@@ -1907,6 +1944,7 @@ class _SelectedFoodCard extends StatelessWidget {
   final TextEditingController protCtrl;
   final TextEditingController carbCtrl;
   final TextEditingController fatCtrl;
+  final TextEditingController fiberCtrl;
   final void Function(String) onQtyChanged;
   final VoidCallback? onSave;
   final bool saving;
@@ -2003,12 +2041,27 @@ class _SelectedFoodCard extends StatelessWidget {
                   decoration: const InputDecoration(labelText: 'Carbs (g)'),
                 ),
               ),
-              const SizedBox(width: 8),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
               Expanded(
                 child: TextField(
                   controller: fatCtrl,
                   readOnly: true,
                   decoration: const InputDecoration(labelText: 'Gord (g)'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: fiberCtrl,
+                  readOnly: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Fibra (g)',
+                    labelStyle: TextStyle(color: Color(0xFF22C55E)),
+                  ),
                 ),
               ),
             ],
@@ -2039,6 +2092,7 @@ class _ManualFoodTab extends StatelessWidget {
     required this.protCtrl,
     required this.carbCtrl,
     required this.fatCtrl,
+    required this.fiberCtrl,
     required this.qtyCtrl,
     required this.onSave,
     required this.saving,
@@ -2049,6 +2103,7 @@ class _ManualFoodTab extends StatelessWidget {
   final TextEditingController protCtrl;
   final TextEditingController carbCtrl;
   final TextEditingController fatCtrl;
+  final TextEditingController fiberCtrl;
   final TextEditingController qtyCtrl;
   final VoidCallback? onSave;
   final bool saving;
@@ -2108,6 +2163,19 @@ class _ManualFoodTab extends StatelessWidget {
                   decoration: const InputDecoration(labelText: 'Gordura (g)'),
                 ),
               ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: fiberCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Fibra (g)'),
+                ),
+              ),
+              const Expanded(child: SizedBox()),
             ],
           ),
           const SizedBox(height: 20),
@@ -2837,146 +2905,3 @@ class _PhotoItemCardState extends State<_PhotoItemCard> {
   }
 }
 
-// ─── Weight Card ──────────────────────────────────────────────────────────────
-
-class _WeightCard extends ConsumerStatefulWidget {
-  const _WeightCard();
-  @override
-  ConsumerState<_WeightCard> createState() => _WeightCardState();
-}
-
-class _WeightCardState extends ConsumerState<_WeightCard> {
-  bool _saving = false;
-
-  // Retorna a data do domingo da semana atual (YYYY-MM-DD)
-  String _currentWeekDate() {
-    final now = DateTime.now();
-    final sunday = now.subtract(Duration(days: now.weekday % 7));
-    return '${sunday.year}-${sunday.month.toString().padLeft(2, '0')}-${sunday.day.toString().padLeft(2, '0')}';
-  }
-
-  Future<void> _showLogDialog(BuildContext context, WeightEntry? existing) async {
-    final ctrl = TextEditingController(
-        text: existing != null ? existing.weight.toString() : '');
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Registrar peso'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Registre seu peso em jejum (pela manhã).',
-                style: TextStyle(fontSize: 13, color: Colors.grey)),
-            const SizedBox(height: 12),
-            TextField(
-              controller: ctrl,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              autofocus: true,
-              decoration: const InputDecoration(
-                labelText: 'Peso (kg)',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Salvar')),
-        ],
-      ),
-    );
-    if (confirmed != true || !mounted) return;
-    final weight = double.tryParse(ctrl.text.replaceAll(',', '.'));
-    if (weight == null || weight <= 0) return;
-    setState(() => _saving = true);
-    await ref.read(weightEntriesProvider.notifier).upsert(weight, _currentWeekDate());
-    if (mounted) setState(() => _saving = false);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final entries = ref.watch(weightEntriesProvider).valueOrNull ?? [];
-    final weekDate = _currentWeekDate();
-    final thisWeek = entries.where((e) => e.date == weekDate).firstOrNull;
-    final lastWeek = entries.where((e) => e.date != weekDate).firstOrNull;
-
-    double? diff;
-    if (thisWeek != null && lastWeek != null) {
-      diff = thisWeek.weight - lastWeek.weight;
-    }
-
-    return GradientCard(
-      key: TutorialKeys.weightCard,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Text('⚖️', style: TextStyle(fontSize: 20)),
-              const SizedBox(width: 8),
-              Text('Peso corporal', style: Theme.of(context).textTheme.titleMedium),
-              const Spacer(),
-              if (_saving)
-                const SizedBox(width: 20, height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2))
-              else
-                IconButton(
-                  icon: Icon(
-                    thisWeek != null ? Icons.edit_rounded : Icons.add_rounded,
-                    size: 20,
-                  ),
-                  tooltip: thisWeek != null ? 'Editar peso da semana' : 'Registrar peso',
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                  onPressed: () => _showLogDialog(context, thisWeek),
-                ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          if (thisWeek != null) ...[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '${thisWeek.weight.toStringAsFixed(1)} kg',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(width: 12),
-                if (diff != null)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: (diff <= 0 ? Colors.green : Colors.red).withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      '${diff > 0 ? '+' : ''}${diff.toStringAsFixed(1)} kg',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: diff <= 0 ? Colors.green.shade700 : Colors.red.shade700,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            if (lastWeek != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  'Semana anterior: ${lastWeek.weight.toStringAsFixed(1)} kg',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
-                ),
-              ),
-          ] else
-            Text(
-              'Nenhum peso registrado esta semana.\nRegistre em jejum para comparar com a semana anterior.',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
-            ),
-        ],
-      ),
-    );
-  }
-}

@@ -5,11 +5,12 @@ import 'tutorial_keys.dart';
 
 abstract class TutorialPhases {
   // ── Identificadores de fase ────────────────────────────────────────────────
-  static const mainApp   = 'main_app';
-  static const nutrition = 'nutrition';
-  static const social    = 'social';
-  static const analytics = 'analytics';
-  static const profile   = 'profile';
+  static const mainApp    = 'main_app';
+  static const workoutDay = 'workout_day';
+  static const nutrition  = 'nutrition';
+  static const social     = 'social';
+  static const analytics  = 'analytics';
+  static const profile    = 'profile';
 
   // ── Fase 1: App principal (WorkoutsScreen) ─────────────────────────────────
   static List<TutorialStep> get mainAppSteps => [
@@ -62,6 +63,48 @@ abstract class TutorialPhases {
     ),
   ];
 
+  // ── Fase 1b: Dia de Treino ─────────────────────────────────────────────────
+  static List<TutorialStep> get workoutDaySteps => [
+    TutorialStep(
+      id: 'workout_day_welcome',
+      title: 'Seu Treino 🏋️',
+      description:
+          'Aqui você organiza os exercícios do dia, inicia suas séries e '
+          'acompanha o progresso em tempo real.',
+      targetKey: null, // welcome card centralizado
+    ),
+    TutorialStep(
+      id: 'workout_day_fab',
+      title: 'Adicionar Exercício',
+      description:
+          'Toque no + para buscar exercícios por nome ou grupo muscular. '
+          'Você também pode criar exercícios personalizados.',
+      targetKey: TutorialKeys.workoutDayFab,
+      padding: const EdgeInsets.all(8),
+      tooltipPosition: TooltipPosition.above,
+    ),
+    TutorialStep(
+      id: 'workout_day_card',
+      title: 'Iniciar Série 🚀',
+      description:
+          'Cada card mostra séries, repetições e carga sugerida. '
+          'Toque em Iniciar para registrar seus sets e o cronômetro inicia automaticamente.',
+      targetKey: TutorialKeys.workoutDayExerciseCard,
+      padding: const EdgeInsets.all(6),
+      tooltipPosition: TooltipPosition.below,
+    ),
+    TutorialStep(
+      id: 'workout_day_finish',
+      title: 'Finalizar e Salvar 🏆',
+      description:
+          'Ao concluir seus exercícios, o botão Finalizar aparece no topo da tela. '
+          'Seu treino fica registrado nas Análises — você também pode desfazer se precisar.',
+      targetKey: TutorialKeys.workoutDayFab,
+      padding: const EdgeInsets.all(8),
+      tooltipPosition: TooltipPosition.above,
+    ),
+  ];
+
   // ── Fase 2: Nutrição ───────────────────────────────────────────────────────
   static List<TutorialStep> get nutritionSteps => [
     TutorialStep(
@@ -100,6 +143,18 @@ abstract class TutorialPhases {
       targetKey: TutorialKeys.weightCard,
       padding: const EdgeInsets.all(6),
       tooltipPosition: TooltipPosition.above,
+    ),
+    TutorialStep(
+      id: 'nutrition_tabs',
+      title: 'Abas de Nutrição 🗂️',
+      description:
+          'Visão Geral mostra seus macros do dia. '
+          'Refeições permite registrar cada alimento por tipo de refeição. '
+          'Metas define seus objetivos calóricos.',
+      targetKey: TutorialKeys.nutritionTabBar,
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+      radius: 8,
+      tooltipPosition: TooltipPosition.below,
     ),
   ];
 
@@ -158,10 +213,10 @@ abstract class TutorialPhases {
       id: 'profile_settings',
       title: 'Configurações ⚙️',
       description:
-          'Personalize modalidades ativas, timer de descanso, unidades de '
-          'peso, notificações e aparência do app.',
-      targetKey: TutorialKeys.profileSettingsBtn,
-      tooltipPosition: TooltipPosition.below,
+          'Acesse as configurações pelo ícone ⚙️ no topo da tela. '
+          'Personalize modalidades, timer de descanso, unidades de peso, '
+          'notificações e aparência do app.',
+      targetKey: null,
     ),
   ];
 }

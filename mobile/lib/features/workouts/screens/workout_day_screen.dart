@@ -14,7 +14,11 @@ import '../../auth/providers/auth_provider.dart';
 import '../../social/data/social_service.dart';
 import '../../social/domain/social_models.dart';
 import '../../../shared/providers/settings_provider.dart';
+import '../../../shared/providers/brand_provider.dart';
 import '../../analytics/providers/analytics_provider.dart';
+import '../../../shared/tutorial/tutorial_keys.dart';
+import '../../../shared/tutorial/tutorial_phases.dart';
+import '../../../shared/tutorial/tutorial_trigger.dart';
 import 'workout_session_screen.dart';
 
 class WorkoutDayScreen extends ConsumerWidget {
@@ -462,7 +466,15 @@ Future<void> _finishDay() async {
               ]
             : null,
       ),
-      body: day.exercises.isEmpty
+      body: Stack(
+        children: [
+          // Tutorial — dispara na primeira visita a qualquer dia de treino
+          TutorialTrigger(
+            phase: TutorialPhases.workoutDay,
+            steps: TutorialPhases.workoutDaySteps,
+            delayMs: 800,
+          ),
+          day.exercises.isEmpty
           ? _EmptyExercises(onAdd: () => _showAddExercise(context))
           : Column(
               children: [
@@ -509,6 +521,7 @@ Future<void> _finishDay() async {
                           : null;
 
                       return _ExerciseCard(
+                        key: i == 0 ? TutorialKeys.workoutDayExerciseCard : null,
                         exercise: displayEx,
                         muscleGroup: resolvedMuscle,
                         isInSession: isInSession,
@@ -533,9 +546,11 @@ Future<void> _finishDay() async {
                 ),
               ],
             ),
-      floatingActionButton: FloatingActionButton(
+        ],
+      ),
+      floatingActionButton: _GradientFab(
+        tutorialKey: TutorialKeys.workoutDayFab,
         onPressed: () => _showAddExercise(context),
-        child: const Icon(Icons.add),
       ),
     );
   }
@@ -554,6 +569,7 @@ Future<void> _finishDay() async {
 
 class _ExerciseCard extends ConsumerWidget {
   const _ExerciseCard({
+    super.key,
     required this.exercise,
     required this.onStart,
     required this.onDelete,
@@ -803,13 +819,7 @@ class _ExerciseCard extends ConsumerWidget {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: isInSession
-                          ? [cs.primary, cs.secondary]
-                          : [cs.primary, cs.secondary],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    gradient: ref.watch(brandGradientProvider),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -2945,6 +2955,40 @@ class _CrossfitMovementPickerState extends State<_CrossfitMovementPicker> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+
+// ─── FAB com gradiente (mesma estilização do botão "+" de treinos) ─────────────
+
+class _GradientFab extends ConsumerWidget {
+  const _GradientFab({required this.tutorialKey, required this.onPressed});
+  final GlobalKey tutorialKey;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final gradient = ref.watch(brandGradientProvider);
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        key: tutorialKey,
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          gradient: gradient,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.20),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: const Icon(Icons.add, color: Colors.white, size: 26),
       ),
     );
   }

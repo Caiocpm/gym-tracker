@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/theme/app_theme.dart';
+import '../../../shared/widgets/gradient_card.dart';
 import '../data/marketplace_service.dart';
 import '../domain/professional_listing.dart';
 
@@ -110,6 +111,9 @@ class _ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs    = theme.colorScheme;
+
     return CustomScrollView(
       slivers: [
         // ── App bar ──────────────────────────────────────────────────────────
@@ -166,8 +170,7 @@ class _ProfileView extends StatelessWidget {
                         children: [
                           Text(
                             profile.displayName,
-                            style: const TextStyle(
-                              fontSize: 22,
+                            style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.w900,
                             ),
                           ),
@@ -183,8 +186,9 @@ class _ProfileView extends StatelessWidget {
                           if (profile.clinicName != null) ...[
                             const SizedBox(height: 2),
                             Text(profile.clinicName!,
-                                style: TextStyle(
-                                    fontSize: 13, color: Colors.grey[600])),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: cs.onSurfaceVariant,
+                                )),
                           ],
                         ],
                       ),
@@ -194,8 +198,8 @@ class _ProfileView extends StatelessWidget {
                           horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                         color: profile.availableForHire
-                            ? Colors.green[50]
-                            : Colors.grey[100],
+                            ? Colors.green.withValues(alpha: 0.12)
+                            : cs.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -206,8 +210,8 @@ class _ProfileView extends StatelessWidget {
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: profile.availableForHire
-                              ? Colors.green[700]
-                              : Colors.grey[500],
+                              ? Colors.green[600]
+                              : cs.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -264,14 +268,13 @@ class _ProfileView extends StatelessWidget {
                 if (profile.bio != null && profile.bio!.isNotEmpty) ...[
                   _Section(title: 'Sobre'),
                   const SizedBox(height: 8),
-                  Text(
-                    profile.bio!,
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[800],
-                        height: 1.55),
+                  GradientCard(
+                    child: Text(
+                      profile.bio!,
+                      style: theme.textTheme.bodyMedium?.copyWith(height: 1.55),
+                    ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                 ],
 
                 // ── Specialties ──────────────────────────────────────────────
@@ -310,26 +313,32 @@ class _ProfileView extends StatelessWidget {
                     profile.websiteUrl != null ||
                     profile.phone != null) ...[
                   _Section(title: 'Contato'),
-                  const SizedBox(height: 10),
-                  if (profile.phone != null)
-                    _ContactRow(
-                      icon: Icons.phone_outlined,
-                      label: profile.phone!,
-                      onTap: () => _copy(context, profile.phone!),
+                  const SizedBox(height: 8),
+                  GradientCard(
+                    child: Column(
+                      children: [
+                        if (profile.phone != null)
+                          _ContactRow(
+                            icon: Icons.phone_outlined,
+                            label: profile.phone!,
+                            onTap: () => _copy(context, profile.phone!),
+                          ),
+                        if (profile.instagramHandle != null)
+                          _ContactRow(
+                            icon: Icons.camera_alt_outlined,
+                            label: '@${profile.instagramHandle}',
+                            onTap: () =>
+                                _copy(context, '@${profile.instagramHandle}'),
+                          ),
+                        if (profile.websiteUrl != null)
+                          _ContactRow(
+                            icon: Icons.language_outlined,
+                            label: profile.websiteUrl!,
+                            onTap: () => _copy(context, profile.websiteUrl!),
+                          ),
+                      ],
                     ),
-                  if (profile.instagramHandle != null)
-                    _ContactRow(
-                      icon: Icons.camera_alt_outlined,
-                      label: '@${profile.instagramHandle}',
-                      onTap: () =>
-                          _copy(context, '@${profile.instagramHandle}'),
-                    ),
-                  if (profile.websiteUrl != null)
-                    _ContactRow(
-                      icon: Icons.language_outlined,
-                      label: profile.websiteUrl!,
-                      onTap: () => _copy(context, profile.websiteUrl!),
-                    ),
+                  ),
                 ],
               ],
             ),
@@ -450,9 +459,10 @@ class _BottomCTAState extends ConsumerState<_BottomCTA> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cs.surface,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.08),
@@ -551,12 +561,15 @@ class _ContactSheetState extends State<_ContactSheet> {
   Widget build(BuildContext context) {
     final multiType = widget.professionalTypes.length > 1;
 
+    final theme = Theme.of(context);
+    final cs    = theme.colorScheme;
+
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
         child: Column(
@@ -569,7 +582,7 @@ class _ContactSheetState extends State<_ContactSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: cs.onSurface.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -578,14 +591,16 @@ class _ContactSheetState extends State<_ContactSheet> {
 
             // ── Specialty selection (only for dual-type pros) ────────────────
             if (multiType) ...[
-              const Text(
+              Text(
                 'Qual serviço você quer contratar?',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                style: theme.textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 4),
               Text(
                 'Selecione um ou mais serviços',
-                style: TextStyle(fontSize: 13, color: Colors.grey[500]),
+                style: theme.textTheme.bodySmall
+                    ?.copyWith(color: cs.onSurfaceVariant),
               ),
               const SizedBox(height: 12),
               ...widget.professionalTypes.map((type) {
@@ -611,10 +626,10 @@ class _ContactSheetState extends State<_ContactSheet> {
                       decoration: BoxDecoration(
                         color: isOn
                             ? AppTheme.primary.withValues(alpha: 0.08)
-                            : Colors.grey[50],
+                            : cs.surfaceContainerLowest,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: isOn ? AppTheme.primary : Colors.grey[200]!,
+                          color: isOn ? AppTheme.primary : cs.outlineVariant,
                           width: isOn ? 1.5 : 1,
                         ),
                       ),
@@ -622,7 +637,7 @@ class _ContactSheetState extends State<_ContactSheet> {
                         children: [
                           Icon(icon,
                               size: 20,
-                              color: isOn ? AppTheme.primary : Colors.grey[500]),
+                              color: isOn ? AppTheme.primary : cs.onSurfaceVariant),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
@@ -630,14 +645,14 @@ class _ContactSheetState extends State<_ContactSheet> {
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
-                                color: isOn ? AppTheme.primary : Colors.grey[700],
+                                color: isOn ? AppTheme.primary : cs.onSurface,
                               ),
                             ),
                           ),
                           Icon(
                             isOn ? Icons.check_circle : Icons.circle_outlined,
                             size: 20,
-                            color: isOn ? AppTheme.primary : Colors.grey[400],
+                            color: isOn ? AppTheme.primary : cs.onSurfaceVariant,
                           ),
                         ],
                       ),
@@ -649,14 +664,16 @@ class _ContactSheetState extends State<_ContactSheet> {
             ],
 
             // ── Message ─────────────────────────────────────────────────────
-            const Text(
+            Text(
               'Mensagem (opcional)',
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 4),
             Text(
               'Apresente-se e conte o que está buscando',
-              style: TextStyle(fontSize: 13, color: Colors.grey[500]),
+              style: theme.textTheme.bodySmall
+                  ?.copyWith(color: cs.onSurfaceVariant),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -667,16 +684,6 @@ class _ContactSheetState extends State<_ContactSheet> {
               decoration: InputDecoration(
                 hintText:
                     'Ex: Olá! Estou buscando acompanhamento para emagrecimento...',
-                filled: true,
-                fillColor: Colors.grey[50],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(color: Colors.grey[200]!),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(color: Colors.grey[200]!),
-                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -688,7 +695,6 @@ class _ContactSheetState extends State<_ContactSheet> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primary,
                   foregroundColor: Colors.white,
-                  disabledBackgroundColor: Colors.grey[300],
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                   elevation: 0,
@@ -716,7 +722,10 @@ class _Section extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+      style: Theme.of(context)
+          .textTheme
+          .titleMedium
+          ?.copyWith(fontWeight: FontWeight.w800),
     );
   }
 }
@@ -728,19 +737,20 @@ class _Chip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: cs.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: Colors.grey[600]),
+          Icon(icon, size: 14, color: cs.onSurfaceVariant),
           const SizedBox(width: 5),
           Text(label,
-              style: TextStyle(fontSize: 12, color: Colors.grey[700])),
+              style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
         ],
       ),
     );
@@ -759,6 +769,7 @@ class _ContactRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -773,7 +784,7 @@ class _ContactRow extends StatelessWidget {
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.w500)),
             ),
-            Icon(Icons.copy_outlined, size: 16, color: Colors.grey[400]),
+            Icon(Icons.copy_outlined, size: 16, color: cs.onSurfaceVariant),
           ],
         ),
       ),
@@ -842,7 +853,7 @@ class _RatingGauge extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: Colors.grey[600],
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
       ],

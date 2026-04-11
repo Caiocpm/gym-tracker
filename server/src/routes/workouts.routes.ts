@@ -39,10 +39,10 @@ router.get('/:userId/sessions/:sessionId', authorizeUserOrProfessional, workouts
 router.patch('/:userId/sessions/:sessionId', authorizeUser, validate(updateWorkoutSessionSchema), workoutsController.updateSession);
 router.delete('/:userId/sessions/:sessionId', authorizeUser, workoutsController.deleteSession);
 
-// Logged Exercises
-router.get('/:userId/logged-exercises', workoutsController.listLogged);
-router.post('/:userId/logged-exercises', validate(createLoggedExerciseSchema), workoutsController.createLogged);
-router.patch('/:userId/logged-exercises/:exerciseId', validate(updateLoggedExerciseSchema), workoutsController.updateLogged);
-router.delete('/:userId/logged-exercises/:exerciseId', workoutsController.deleteLogged);
+// Logged Exercises — leitura permite profissional vinculado; escrita/deleção apenas o próprio usuário
+router.get('/:userId/logged-exercises', authorizeUserOrProfessional, workoutsController.listLogged);
+router.post('/:userId/logged-exercises', authorizeUser, validate(createLoggedExerciseSchema), workoutsController.createLogged);
+router.patch('/:userId/logged-exercises/:exerciseId', authorizeUser, validate(updateLoggedExerciseSchema), workoutsController.updateLogged);
+router.delete('/:userId/logged-exercises/:exerciseId', authorizeUser, workoutsController.deleteLogged);
 
 export default router;

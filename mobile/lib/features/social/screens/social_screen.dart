@@ -879,20 +879,28 @@ class _CreateGroupSheetState extends ConsumerState<_CreateGroupSheet> {
             Text('Criar Grupo',
                 style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 16),
+            Text('Nome do grupo',
+                style: Theme.of(context).textTheme.labelLarge
+                    ?.copyWith(fontWeight: FontWeight.w600)),
+            const SizedBox(height: 6),
             TextFormField(
               controller: _nameCtrl,
               decoration: const InputDecoration(
-                labelText: 'Nome do grupo',
+                hintText: 'Ex: Galera da musculação',
                 prefixIcon: Icon(Icons.group),
               ),
               validator: (v) =>
                   (v == null || v.trim().isEmpty) ? 'Informe o nome' : null,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
+            Text('Descrição',
+                style: Theme.of(context).textTheme.labelLarge
+                    ?.copyWith(fontWeight: FontWeight.w600)),
+            const SizedBox(height: 6),
             TextFormField(
               controller: _descCtrl,
               decoration: const InputDecoration(
-                labelText: 'Descrição (opcional)',
+                hintText: 'Opcional — sobre o grupo',
                 prefixIcon: Icon(Icons.description_outlined),
               ),
               maxLines: 2,

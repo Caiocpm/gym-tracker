@@ -107,7 +107,15 @@
       "Bash(npx ts-node:*)",
       "Bash(~/.puro/bin/puro flutter:*)",
       "Bash(/c/Users/User/.puro/envs/stable/flutter/bin/flutter analyze:*)",
-      "Bash(/c/Users/User/.puro/envs/stable/flutter/bin/flutter.bat config:*)"
+      "Bash(/c/Users/User/.puro/envs/stable/flutter/bin/flutter.bat config:*)",
+      "Bash(powershell -Command \"Remove-Item 'C:\\\\Users\\\\User\\\\.puro\\\\envs\\\\stable\\\\flutter\\\\bin\\\\cache\\\\flutter_web_sdk' -Force\")",
+      "Bash(powershell -Command \"New-Item -ItemType Junction -Path 'C:\\\\Users\\\\User\\\\.puro\\\\envs\\\\stable\\\\flutter\\\\bin\\\\cache\\\\flutter_web_sdk' -Target 'C:\\\\Users\\\\User\\\\.puro\\\\shared\\\\caches\\\\e4b8dca3f1b4ede4c30371002441c88c12187ed6\\\\flutter_web_sdk'\")",
+      "Bash(powershell -Command \"Get-Item 'C:\\\\Users\\\\User\\\\.puro\\\\envs\\\\stable\\\\flutter\\\\bin\\\\cache\\\\dart-sdk' | Select-Object LinkType, Target\")",
+      "Bash(powershell -Command \"Remove-Item 'C:\\\\ProgramData\\\\chocolatey\\\\lib\\\\502c2f6a626861e353f89b92b9eac93c23c9d8de' -Force -ErrorAction SilentlyContinue; choco install flutter --version 3.38.5 -y 2>&1 | Select-Object -Last 10\")",
+      "Bash(powershell -Command \"winget uninstall pingbird.Puro 2>&1\")",
+      "Bash(grep -l \"difficulty\" /c/Users/User/Desktop/Dev/gym-tracker/server/node_modules/.prisma/client/*.d.ts)",
+      "Bash(curl -s -X POST http://localhost:3000/api/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"caio@email.com\",\"password\":\"123456\"}')",
+      "Bash(curl -s -X POST http://localhost:3000/api/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"test@test.com\",\"password\":\"teste1234\"}')"
     ],
     "deny": [],
     "ask": []

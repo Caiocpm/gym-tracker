@@ -1,5 +1,6 @@
 import prisma from '../config/database';
 import { AppError } from '../types/api.types';
+import { expandSearchTerms } from '../config/food-synonyms';
 import type {
   CreateFoodEntryInput,
   UpdateFoodEntryInput,
@@ -11,7 +12,7 @@ import type {
   UpdateDietPlanItemInput,
 } from '../schemas/nutrition.schemas';
 
-const DEFAULT_GOALS = { calories: 2000, protein: 150, carbs: 250, fat: 65, water: 2500 };
+const DEFAULT_GOALS = { calories: 2000, protein: 150, carbs: 250, fat: 65, fiber: 25, water: 2500 };
 
 export const nutritionService = {
   // ─── Food Entries ───────────────────────────────────────────────────────────
@@ -49,6 +50,7 @@ export const nutritionService = {
         protein: d.protein,
         carbs: d.carbs,
         fat: d.fat,
+        fiber: d.fiber ?? (d.micronutrients as any)?.fiber_g ?? 0,
         quantity: d.quantity ?? 1,
         meal: d.meal ?? d.mealType ?? null,
         date: typeof d.date === 'string' ? d.date.split('T')[0] : d.date,
@@ -140,13 +142,16 @@ export const nutritionService = {
 
   async getDailyGoals(userId: string) {
     const goals = await prisma.nutritionGoals.findUnique({ where: { userId } });
-    if (!goals) return DEFAULT_GOALS;
+    if (!goals) return { ...DEFAULT_GOALS, weightGoal: null, weightGoalStart: null };
     return {
       calories: goals.calories,
       protein: goals.protein,
       carbs: goals.carbs,
       fat: goals.fat,
+      fiber: goals.fiber,
       water: goals.water,
+      weightGoal: goals.weightGoal ?? null,
+      weightGoalStart: goals.weightGoalStart ?? null,
     };
   },
 
@@ -163,56 +168,74 @@ export const nutritionService = {
 
   async listPredefinedFoods(filters: { category?: string; search?: string }, userId?: string) {
     if (filters.search) {
-      // Accent-insensitive, multi-word search using the unaccent extension.
-      // $queryRawUnsafe is used (instead of tagged template literals) to avoid
-      // Prisma's internal parameter-numbering issues with conditional SQL fragments.
-      // The SQL string itself contains no user-interpolated values — all input
-      // goes through the parameterised values array, so injection is not possible.
-      const words = filters.search.trim().split(/\s+/).filter((w) => w.length > 0);
-      if (words.length === 0) return [];
+      // ── Build parameterised query with synonym expansion + alias matching ──
+      //
+      // Strategy:
+      //   1. Expand the raw search phrase via synonyms dict (e.g. "mussarela" → ["mussarela","mozarela"])
+      //   2. For each expanded term, ALL its words must appear in the food name  (name clauses, OR'd between terms)
+      //   3. Also OR the original phrase against the `aliases` array column      (covers DB-level aliases)
+      //   4. Rank results: starts-with > exact-segment > anywhere/alias match
+      //
+      // $queryRawUnsafe is necessary to build conditional SQL; all values go
+      // through the params array — no user strings are interpolated into the SQL.
 
-      const terms = words.map((w) => `%${w}%`);
+      const rawInput = filters.search.trim();
+      const expandedTerms = expandSearchTerms(rawInput);          // always includes rawInput
 
-      // Each word must appear somewhere in the (unaccented, lowercased) name
-      const wordClauses = words
-        .map((_, i) => `unaccent(lower(name)) LIKE unaccent(lower($${i + 1}))`)
-        .join(' AND ');
+      if (expandedTerms.length === 0) return [];
+
+      const params: (string | string[])[] = [];
+      const push = (v: string | string[]) => { params.push(v); return params.length; };
+
+      // ── 1. Name-match clauses (one per expanded term, OR'd) ──────────────────
+      const nameOrClauses: string[] = [];
+      for (const term of expandedTerms) {
+        const words = term.split(/\s+/).filter((w) => w.length > 0);
+        if (words.length === 0) continue;
+        const andClauses = words.map((w) => {
+          const idx = push(`%${w}%`);
+          return `unaccent(lower(name)) LIKE unaccent(lower($${idx}))`;
+        });
+        nameOrClauses.push(`(${andClauses.join(' AND ')})`);
+      }
+
+      // ── 2. Alias-match clause (original phrase against aliases[] column) ─────
+      //    One EXISTS per original word; all words must match at least one alias.
+      const rawWords = rawInput.split(/\s+/).filter((w) => w.length > 0);
+      const aliasClauses = rawWords.map((w) => {
+        const idx = push(`%${w}%`);
+        return `EXISTS (SELECT 1 FROM unnest(aliases) _a WHERE unaccent(lower(_a)) LIKE unaccent(lower($${idx})))`;
+      });
+      const aliasClause = `(${aliasClauses.join(' AND ')})`;
+
+      const MATCH = `(${[...nameOrClauses, aliasClause].join(' OR ')})`;
+
+      // ── 3. Ranking params (first word of raw input) ──────────────────────────
+      const startIdx = push(`${rawWords[0]}%`);     // name begins with first word
+      const exactIdx = push(rawWords[0]);            // first comma-segment = first word
 
       const SELECT = `SELECT id, name, category, calories, protein, carbs, fat, "servingSize", "servingUnit", micronutrients, "createdBy" FROM "PredefinedFood"`;
 
       type RawFood = { id: string; name: string; category: string | null; calories: unknown; protein: unknown; carbs: unknown; fat: unknown; servingSize: unknown; servingUnit: string | null; micronutrients: unknown; createdBy: string | null };
 
-      // Extra params for relevance ranking (fully parameterised — no interpolation):
-      //   startParam  = "word%"  → name begins with the first search word
-      //   exactParam  = "word"   → first comma-segment of name equals the search word
-      // Ranking: 1 = starts with term, 2 = first segment exact match, 3 = anywhere
+      const ORDER = `ORDER BY
+        CASE
+          WHEN unaccent(lower(name)) LIKE unaccent(lower($${startIdx})) THEN 1
+          WHEN unaccent(lower(split_part(name, ',', 1))) = unaccent(lower($${exactIdx})) THEN 2
+          ELSE 3
+        END ASC, name ASC LIMIT 100`;
+
       let rows: RawFood[];
       if (userId) {
-        const uidIdx      = words.length + 1;           // $N+1
-        const startIdx    = words.length + 2;           // $N+2
-        const exactIdx    = words.length + 3;           // $N+3
-        const ORDER = `ORDER BY
-          CASE
-            WHEN unaccent(lower(name)) LIKE unaccent(lower($${startIdx})) THEN 1
-            WHEN unaccent(lower(split_part(name, ',', 1))) = unaccent(lower($${exactIdx})) THEN 2
-            ELSE 3
-          END ASC, name ASC LIMIT 100`;
+        const uidIdx = push(userId);
         rows = await prisma.$queryRawUnsafe<RawFood[]>(
-          `${SELECT} WHERE ("createdBy" IS NULL OR "createdBy" = $${uidIdx}) AND ${wordClauses} ${ORDER}`,
-          ...terms, userId, `${words[0]}%`, words[0],
+          `${SELECT} WHERE ("createdBy" IS NULL OR "createdBy" = $${uidIdx}) AND ${MATCH} ${ORDER}`,
+          ...params,
         );
       } else {
-        const startIdx    = words.length + 1;           // $N+1
-        const exactIdx    = words.length + 2;           // $N+2
-        const ORDER = `ORDER BY
-          CASE
-            WHEN unaccent(lower(name)) LIKE unaccent(lower($${startIdx})) THEN 1
-            WHEN unaccent(lower(split_part(name, ',', 1))) = unaccent(lower($${exactIdx})) THEN 2
-            ELSE 3
-          END ASC, name ASC LIMIT 100`;
         rows = await prisma.$queryRawUnsafe<RawFood[]>(
-          `${SELECT} WHERE "createdBy" IS NULL AND ${wordClauses} ${ORDER}`,
-          ...terms, `${words[0]}%`, words[0],
+          `${SELECT} WHERE "createdBy" IS NULL AND ${MATCH} ${ORDER}`,
+          ...params,
         );
       }
 
@@ -282,6 +305,7 @@ export const nutritionService = {
     const totalProtein = foodEntries.reduce((s, e) => s + e.protein, 0);
     const totalCarbs = foodEntries.reduce((s, e) => s + e.carbs, 0);
     const totalFat = foodEntries.reduce((s, e) => s + e.fat, 0);
+    const totalFiber = foodEntries.reduce((s, e) => s + e.fiber, 0);
     const totalWater = waterEntries.reduce((s, e) => s + e.amount, 0);
 
     const trackedDates = new Set([
@@ -299,6 +323,7 @@ export const nutritionService = {
       totalProtein,
       totalCarbs,
       totalFat,
+      totalFiber,
       totalWater,
       averageCaloriesPerDay: daysTracked > 0 ? Math.round(totalCalories / daysTracked) : 0,
       daysTracked,
@@ -374,12 +399,13 @@ export const nutritionService = {
       this.getDailyGoals(userId),
     ]);
 
-    const consumed = { calories: 0, protein: 0, carbs: 0, fat: 0, water: 0 };
+    const consumed = { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, water: 0 };
     foodEntries.forEach((e) => {
       consumed.calories += e.calories;
       consumed.protein += e.protein;
       consumed.carbs += e.carbs;
       consumed.fat += e.fat;
+      consumed.fiber += e.fiber;
     });
     waterEntries.forEach((e) => { consumed.water += e.amount; });
 
@@ -391,6 +417,7 @@ export const nutritionService = {
         protein: goals.protein > 0 ? Math.round((consumed.protein / goals.protein) * 100) : 0,
         carbs: goals.carbs > 0 ? Math.round((consumed.carbs / goals.carbs) * 100) : 0,
         fat: goals.fat > 0 ? Math.round((consumed.fat / goals.fat) * 100) : 0,
+        fiber: goals.fiber > 0 ? Math.round((consumed.fiber / goals.fiber) * 100) : 0,
         water: goals.water > 0 ? Math.round((consumed.water / goals.water) * 100) : 0,
       },
     };

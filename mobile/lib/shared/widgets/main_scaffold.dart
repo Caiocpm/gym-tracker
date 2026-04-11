@@ -9,7 +9,6 @@ import '../../features/workouts/providers/rest_timer_provider.dart';
 import '../../features/workouts/screens/workout_session_screen.dart';
 import '../../features/professional/providers/professional_provider.dart';
 import '../../features/equipe/providers/equipe_provider.dart';
-import '../../shared/theme/app_theme.dart';
 import '../providers/brand_provider.dart';
 import '../tutorial/tutorial_keys.dart';
 import '../tutorial/tutorial_overlay.dart';
@@ -31,8 +30,12 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
   void initState() {
     super.initState();
     _elapsedTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted && ref.read(activeSessionProvider).isActive) {
-        setState(() {});
+      try {
+        if (mounted && ref.read(activeSessionProvider).isActive) {
+          setState(() {});
+        }
+      } catch (_) {
+        // Widget deactivated mid-tick — ignore safely
       }
     });
     // Insere o overlay do tutorial acima de tudo (inclusive BottomNav)
@@ -182,16 +185,10 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
       ),
       bottomNavigationBar: KeyedSubtree(
         key: TutorialKeys.bottomNav,
-        child: BottomNavigationBar(
+        child: _FloatingNavBar(
+          tabs: _tabs(isProfessional, hasActiveLink),
           currentIndex: _currentIndex(context, isProfessional),
           onTap: (i) => context.go(_tabs(isProfessional, hasActiveLink)[i].path),
-          type: BottomNavigationBarType.fixed,
-          items: _tabs(isProfessional, hasActiveLink)
-              .map((t) => BottomNavigationBarItem(
-                    icon: Icon(t.icon),
-                    label: t.label,
-                  ))
-              .toList(),
         ),
       ),
     );
@@ -249,22 +246,29 @@ class _GlobalAppBar extends ConsumerWidget {
                       fit: BoxFit.contain,
                     ),
                   Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        key: TutorialKeys.notifButton,
-                        tooltip: 'Notificações',
-                        onPressed: () => GoRouter.of(context).go('/notifications'),
-                        icon: unreadCount > 0
-                            ? Badge(
-                                label: Text(
-                                  unreadCount > 99 ? '99+' : '$unreadCount',
-                                  style: const TextStyle(fontSize: 10),
-                                ),
-                                child: const Icon(Icons.notifications_outlined),
-                              )
-                            : const Icon(Icons.notifications_outlined),
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          key: TutorialKeys.notifButton,
+                          tooltip: 'Notificações',
+                          onPressed: () => GoRouter.of(context).go('/notifications'),
+                          icon: unreadCount > 0
+                              ? Badge(
+                                  label: Text(
+                                    unreadCount > 99 ? '99+' : '$unreadCount',
+                                    style: const TextStyle(fontSize: 10),
+                                  ),
+                                  child: const Icon(Icons.notifications_outlined),
+                                )
+                              : const Icon(Icons.notifications_outlined),
+                        ),
+                        IconButton(
+                          tooltip: 'Configurações',
+                          onPressed: () => GoRouter.of(context).go('/settings'),
+                          icon: const Icon(Icons.settings_outlined),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -305,20 +309,16 @@ class _SessionAnchor extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme    = Theme.of(context);
-    final cs       = theme.colorScheme;
     final gradient = ref.watch(brandGradientProvider);
     final highlight = ref.watch(brandHighlightProvider);
     final isResting = restTimer.isActive;
 
-    final fgColor = isResting ? cs.onPrimaryContainer : Colors.white;
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: isResting ? cs.primaryContainer : null,
-          gradient: isResting ? null : gradient,
+          gradient: gradient,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -337,7 +337,7 @@ class _SessionAnchor extends ConsumerWidget {
                 children: [
                   Icon(
                     isResting ? Icons.hourglass_bottom : Icons.fitness_center,
-                    color: fgColor,
+                    color: Colors.white,
                     size: 20,
                   ),
                   const SizedBox(width: 10),
@@ -346,9 +346,11 @@ class _SessionAnchor extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          session.dayName ?? 'Treino em andamento',
-                          style: TextStyle(
-                            color: fgColor,
+                          isResting
+                              ? (restTimer.exerciseName ?? session.dayName ?? 'Treino em andamento')
+                              : (session.dayName ?? 'Treino em andamento'),
+                          style: const TextStyle(
+                            color: Colors.white,
                             fontWeight: FontWeight.w700,
                             fontSize: 13,
                           ),
@@ -358,29 +360,24 @@ class _SessionAnchor extends ConsumerWidget {
                               ? 'Descansando: ${restTimer.formatted}'
                               : _formatElapsed(session.elapsedSeconds),
                           style: TextStyle(
-                            color: fgColor.withValues(alpha: 0.85),
+                            color: Colors.white.withValues(alpha: 0.85),
                             fontSize: 12,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  // Sets concluídos
-                  _CompletedBadge(session: session, fgColor: fgColor, highlight: highlight),
+                  _CompletedBadge(session: session, fgColor: Colors.white, highlight: highlight),
                 ],
               ),
             ),
-            // Barra de progresso do descanso
+            // Barra neon de progresso do descanso
             if (isResting)
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                    bottom: Radius.circular(16)),
-                child: LinearProgressIndicator(
-                  value: restTimer.progress,
-                  minHeight: 4,
-                  backgroundColor: fgColor.withValues(alpha: 0.2),
-                  valueColor: AlwaysStoppedAnimation<Color>(highlight),
-                ),
+              LinearProgressIndicator(
+                value: restTimer.progress,
+                minHeight: 4,
+                backgroundColor: Colors.white.withValues(alpha: 0.2),
+                valueColor: AlwaysStoppedAnimation<Color>(highlight),
               ),
           ],
         ),
@@ -418,6 +415,118 @@ class _CompletedBadge extends StatelessWidget {
           color: fgColor,
           fontSize: 12,
           fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Floating pill navbar ─────────────────────────────────────────────────────
+
+class _FloatingNavBar extends ConsumerWidget {
+  const _FloatingNavBar({
+    required this.tabs,
+    required this.currentIndex,
+    required this.onTap,
+  });
+
+  final List<({IconData icon, String label, String path})> tabs;
+  final int currentIndex;
+  final void Function(int) onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme   = Theme.of(context);
+    final cs      = theme.colorScheme;
+    final isDark  = theme.brightness == Brightness.dark;
+    final primary = cs.primary;
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+        child: Container(
+          height: 62,
+          decoration: BoxDecoration(
+            color: isDark ? cs.surfaceContainer : cs.surface,
+            borderRadius: BorderRadius.circular(32),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.06),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: isDark
+                    ? Colors.black.withValues(alpha: 0.45)
+                    : Colors.black.withValues(alpha: 0.10),
+                blurRadius: 24,
+                offset: const Offset(0, 6),
+              ),
+              if (!isDark)
+                BoxShadow(
+                  color: primary.withValues(alpha: 0.10),
+                  blurRadius: 32,
+                  offset: const Offset(0, 10),
+                ),
+            ],
+          ),
+          child: Row(
+            children: List.generate(tabs.length, (i) {
+              final isActive = i == currentIndex;
+              final tab = tabs[i];
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () => onTap(i),
+                  behavior: HitTestBehavior.opaque,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                        color: isActive
+                            ? primary.withValues(alpha: isDark ? 0.18 : 0.12)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(26),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 220),
+                            curve: Curves.easeInOut,
+                            child: Icon(
+                              tab.icon,
+                              color: isActive ? primary : cs.onSurfaceVariant,
+                              size: 22,
+                            ),
+                          ),
+                          AnimatedSize(
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeInOut,
+                            child: isActive
+                                ? Padding(
+                                    padding: const EdgeInsets.only(top: 2),
+                                    child: Text(
+                                      tab.label,
+                                      style: TextStyle(
+                                        color: primary,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w600,
+                                        height: 1.0,
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox(height: 0),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
         ),
       ),
     );

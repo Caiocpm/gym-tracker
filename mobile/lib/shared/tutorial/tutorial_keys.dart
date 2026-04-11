@@ -13,8 +13,13 @@ abstract class TutorialKeys {
   static final workoutsHeader    = GlobalKey(debugLabel: 'tut_workoutsHeader');
   static final addWorkoutButton  = GlobalKey(debugLabel: 'tut_addWorkoutButton');
 
+  // ── Dia de Treino ──────────────────────────────────────────────────────────
+  static final workoutDayFab           = GlobalKey(debugLabel: 'tut_workoutDayFab');
+  static final workoutDayExerciseCard  = GlobalKey(debugLabel: 'tut_workoutDayExerciseCard');
+
   // ── Nutrição ───────────────────────────────────────────────────────────────
   static final nutritionHeader   = GlobalKey(debugLabel: 'tut_nutritionHeader');
+  static final nutritionTabBar   = GlobalKey(debugLabel: 'tut_nutritionTabBar');
   static final caloriesCard      = GlobalKey(debugLabel: 'tut_caloriesCard');
   static final waterCard         = GlobalKey(debugLabel: 'tut_waterCard');
   static final weightCard        = GlobalKey(debugLabel: 'tut_weightCard');

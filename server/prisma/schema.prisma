@@ -28,6 +28,20 @@ model User {
   updatedAt      DateTime @updatedAt
   lastLoginAt    DateTime @default(now())
 
+  // Dados pessoais
+  birthDate     String?   // YYYY-MM-DD
+  sex           String?   // male | female
+  height        Float?    // cm
+  objective     String?   // lose_weight | gain_muscle | maintain | performance | health
+  activityLevel String?   // sedentary | light | moderate | active | very_active
+
+  // Perfil social
+  bio           String?   // texto livre, max 300 chars
+  profilePhotos UserPhoto[]
+
+  // Push notifications (FCM)
+  fcmToken      String?
+
   workoutDays         WorkoutDay[]
   workoutSessions     WorkoutSession[]
   loggedExercises     LoggedExercise[]
@@ -37,6 +51,7 @@ model User {
   customFoods         PredefinedFood[]
   dietPlanItems       DietPlanItem[]
   weightEntries       WeightEntry[]
+  bodyMeasurements    BodyMeasurement[]
   professionalProfile ProfessionalProfile?
   notifications       Notification[]
   contactRequests     ContactRequest[]
@@ -51,6 +66,19 @@ model User {
   sentCollaborations       ProfessionalCollaboration[] @relation("SentCollaborations")
   presets                  Preset[]
   professionalRatings      ProfessionalRating[]
+}
+
+// ─── Fotos de Perfil ──────────────────────────────────────────────────────────
+
+model UserPhoto {
+  id        String   @id @default(uuid())
+  userId    String
+  url       String
+  caption   String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // ─── Workouts ─────────────────────────────────────────────────────────────────
@@ -145,6 +173,7 @@ model FoodEntry {
   protein        Float
   carbs          Float
   fat            Float
+  fiber          Float    @default(0)
   quantity       Float    @default(1)
   meal           String?
   date           String
@@ -177,14 +206,17 @@ model WaterEntry {
 }
 
 model NutritionGoals {
-  id        String   @id @default(uuid())
-  userId    String   @unique
-  calories  Float    @default(2000)
-  protein   Float    @default(150)
-  carbs     Float    @default(250)
-  fat       Float    @default(65)
-  water     Float    @default(2500)
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  calories    Float    @default(2000)
+  protein     Float    @default(150)
+  carbs       Float    @default(250)
+  fat         Float    @default(65)
+  fiber       Float    @default(25)
+  water       Float    @default(2500)
+  weightGoal       Float?
+  weightGoalStart  Float?
+  updatedAt        DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -200,6 +232,7 @@ model PredefinedFood {
   servingSize    Float?
   servingUnit    String?
   micronutrients Json?
+  aliases        String[] @default([])
   createdBy      String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -235,6 +268,58 @@ model WeightEntry {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model BodyMeasurement {
+  id          String   @id @default(uuid())
+  userId      String
+  date        String   // YYYY-MM-DD
+
+  // Circunferências (cm)
+  weight      Float?
+  height      Float?
+  waist       Float?
+  hip         Float?
+  chest       Float?
+  neck        Float?
+  shoulder    Float?
+
+  // Membros bilaterais (cm) — direito / esquerdo
+  armRelaxedRight  Float?
+  armRelaxedLeft   Float?
+  armFlexRight     Float?
+  armFlexLeft      Float?
+  forearmRight     Float?
+  forearmLeft      Float?
+  thighRight       Float?
+  thighLeft        Float?
+  calfRight        Float?
+  calfLeft         Float?
+
+  // Pollock 7 dobras cutâneas (mm)
+  skinfoldChest       Float?   // tórax
+  skinfoldAxillary    Float?   // axilar média
+  skinfoldTricep      Float?   // tríceps
+  skinfoldSubscapular Float?   // subescapular
+  skinfoldAbdominal   Float?   // abdominal
+  skinfoldSuprailiac  Float?   // supra-ilíaca
+  skinfoldThigh       Float?   // coxa
+
+  // Resultados calculados
+  bodyFatPercent Float?
+  leanMassKg     Float?
+  fatMassKg      Float?
+
+  sex       String?  // male | female (para equação de Pollock)
+  age       Int?
+
+  note      String?
+  photos    String[] // URLs de fotos de progresso (paths locais /uploads/measurements/...)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
 }
 
 // ─── Professional ─────────────────────────────────────────────────────────────

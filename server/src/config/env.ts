@@ -22,6 +22,10 @@ const envSchema = z.object({
   // Google OAuth (sem Firebase)
   GOOGLE_CLIENT_ID: z.string().min(1, 'GOOGLE_CLIENT_ID obrigatório'),
 
+  // FCM push notifications — service account JSON path (opcional; push desabilitado sem ele)
+  FCM_SERVICE_ACCOUNT_PATH: z.string().optional(),
+  FCM_PROJECT_ID: z.string().optional(),
+
   // Gemini AI
   GEMINI_API_KEY: z.string().min(1, 'GEMINI_API_KEY obrigatório'),
 

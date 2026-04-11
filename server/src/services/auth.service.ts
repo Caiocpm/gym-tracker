@@ -17,6 +17,12 @@ export interface AuthUser {
   isPrivate: boolean;
   createdAt?: string;
   lastLoginAt?: string;
+  birthDate?: string | null;
+  sex?: string | null;
+  height?: number | null;
+  objective?: string | null;
+  activityLevel?: string | null;
+  bio?: string | null;
 }
 
 export interface AuthResponse {
@@ -52,6 +58,12 @@ function mapUser(user: {
   isPrivate: boolean;
   createdAt: Date;
   lastLoginAt: Date;
+  birthDate?: string | null;
+  sex?: string | null;
+  height?: number | null;
+  objective?: string | null;
+  activityLevel?: string | null;
+  bio?: string | null;
 }): AuthUser {
   return {
     uid: user.id,
@@ -62,6 +74,12 @@ function mapUser(user: {
     isPrivate: user.isPrivate,
     createdAt: user.createdAt.toISOString(),
     lastLoginAt: user.lastLoginAt.toISOString(),
+    birthDate: user.birthDate,
+    sex: user.sex,
+    height: user.height,
+    objective: user.objective,
+    activityLevel: user.activityLevel,
+    bio: user.bio,
   };
 }
 
@@ -159,7 +177,17 @@ export const authService = {
     return mapUser(user);
   },
 
-  async updateUserProfile(uid: string, data: { displayName?: string; photoURL?: string; isPrivate?: boolean }): Promise<AuthUser> {
+  async updateUserProfile(uid: string, data: {
+    displayName?: string;
+    photoURL?: string;
+    isPrivate?: boolean;
+    birthDate?: string | null;
+    sex?: string | null;
+    height?: number | null;
+    objective?: string | null;
+    activityLevel?: string | null;
+    bio?: string | null;
+  }): Promise<AuthUser> {
     const user = await prisma.user.update({
       where: { id: uid },
       data,

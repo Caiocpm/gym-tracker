@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import prisma from '../config/database';
 import { AppError } from '../types/api.types';
 import { sseService } from './sse.service';
+import { pushService } from './push.service';
 
 // ─── Challenge Difficulty Presets ────────────────────────────────────────────
 // All values are normalized for 30 days. Actual targetValue = preset * (days/30).
@@ -352,6 +353,7 @@ export const socialService = {
         },
       });
       sseService.send(post.userId, 'notification', notification);
+      pushService.sendToUser(post.userId, { title: 'Curtida no seu post', body: 'Alguém curtiu seu post', data: { type: 'post_like', notificationId: notification.id } }).catch(() => {});
     }
   },
 
@@ -395,6 +397,7 @@ export const socialService = {
         },
       });
       sseService.send(post.userId, 'notification', notification);
+      pushService.sendToUser(post.userId, { title: 'Novo comentário', body: 'Alguém comentou no seu post', data: { type: 'post_comment', notificationId: notification.id } }).catch(() => {});
     }
 
     return comment;
@@ -754,6 +757,7 @@ export const socialService = {
       },
     });
     sseService.send(followingId, 'notification', notification);
+    pushService.sendToUser(followingId, { title: 'Novo seguidor', body: notification.message, data: { type: 'new_follower', notificationId: notification.id } }).catch(() => {});
   },
 
   async unfollowUser(followerId: string, followingId: string) {
@@ -856,16 +860,20 @@ export const socialService = {
   },
 
   async getUserPublicProfile(userId: string, requesterId?: string) {
-    const [user, badges, groupMemberships] = await Promise.all([
+    const [user, badges, groupMemberships, photos] = await Promise.all([
       prisma.user.findUnique({
         where: { id: userId },
-        select: { id: true, displayName: true, photoURL: true, isPrivate: true, createdAt: true, followersCount: true, followingCount: true },
+        select: { id: true, displayName: true, photoURL: true, bio: true, isPrivate: true, createdAt: true, followersCount: true, followingCount: true },
       }),
       prisma.userBadge.findMany({ where: { userId }, orderBy: { earnedAt: 'desc' }, take: 10 }),
       prisma.groupMember.findMany({
         where: { userId },
         include: { group: { select: { id: true, name: true, coverPhoto: true } } },
         take: 5,
+      }),
+      prisma.userPhoto.findMany({
+        where: { userId },
+        orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
       }),
     ]);
     if (!user) throw new AppError(404, 'Usuário não encontrado');
@@ -879,6 +887,7 @@ export const socialService = {
     if (user.isPrivate) {
       return {
         id: user.id, displayName: user.displayName, photoURL: user.photoURL,
+        bio: user.bio, photos,
         isPrivate: true, isFollowing,
         followersCount: user.followersCount, followingCount: user.followingCount,
       };
@@ -889,6 +898,8 @@ export const socialService = {
       id: user.id,
       displayName: user.displayName,
       photoURL: user.photoURL,
+      bio: user.bio,
+      photos,
       isPrivate: false,
       isFollowing,
       followersCount: user.followersCount,

@@ -32,6 +32,7 @@ class FoodEntry {
   final double protein;
   final double carbs;
   final double fat;
+  final double fiber;
   final double quantity;
   final String unit;
   final MealType mealType;
@@ -46,6 +47,7 @@ class FoodEntry {
     required this.protein,
     required this.carbs,
     required this.fat,
+    this.fiber = 0,
     required this.quantity,
     required this.unit,
     required this.mealType,
@@ -61,6 +63,7 @@ class FoodEntry {
         protein: (json['protein'] as num?)?.toDouble() ?? 0,
         carbs: (json['carbs'] as num?)?.toDouble() ?? 0,
         fat: (json['fat'] as num?)?.toDouble() ?? 0,
+        fiber: (json['fiber'] as num?)?.toDouble() ?? 0,
         quantity: (json['quantity'] as num?)?.toDouble() ?? 1,
         unit: json['unit'] as String? ?? 'g',
         mealType: MealTypeExt.fromString(
@@ -75,6 +78,7 @@ class FoodEntry {
         'protein': protein,
         'carbs': carbs,
         'fat': fat,
+        'fiber': fiber,
         'quantity': quantity,
         'unit': unit,
         'mealType': mealType.value,
@@ -92,6 +96,7 @@ class DietPlanItem {
   final double protein;
   final double carbs;
   final double fat;
+  final double fiber;
   final double quantity;
   final String unit;
   final MealType? mealType;
@@ -105,6 +110,7 @@ class DietPlanItem {
     required this.protein,
     required this.carbs,
     required this.fat,
+    this.fiber = 0,
     this.quantity = 1,
     this.unit = 'g',
     this.mealType,
@@ -119,6 +125,7 @@ class DietPlanItem {
         protein: (json['protein'] as num?)?.toDouble() ?? 0,
         carbs: (json['carbs'] as num?)?.toDouble() ?? 0,
         fat: (json['fat'] as num?)?.toDouble() ?? 0,
+        fiber: (json['fiber'] as num?)?.toDouble() ?? 0,
         quantity: (json['quantity'] as num?)?.toDouble() ?? 1,
         unit: json['unit'] as String? ?? 'g',
         mealType: json['meal'] != null
@@ -133,6 +140,7 @@ class DietPlanItem {
         'protein': protein,
         'carbs': carbs,
         'fat': fat,
+        'fiber': fiber,
         'quantity': quantity,
         'unit': unit,
         if (mealType != null) 'meal': mealType!.value,
@@ -200,6 +208,7 @@ class TacoFood {
     required DateTime date,
   }) {
     final factor = quantity / servingSize;
+    final fiberPer100 = (micronutrients?['fiber_g'] as num?)?.toDouble() ?? 0;
     return FoodEntry(
       id: '',
       userId: userId,
@@ -208,6 +217,7 @@ class TacoFood {
       protein: protein * factor,
       carbs: carbs * factor,
       fat: fat * factor,
+      fiber: fiberPer100 * factor,
       quantity: quantity,
       unit: servingUnit,
       mealType: mealType,
@@ -239,14 +249,20 @@ class NutritionGoals {
   final double protein;
   final double carbs;
   final double fat;
+  final double fiber;
   final int water; // ml
+  final double? weightGoal;      // kg — alvo
+  final double? weightGoalStart; // kg — peso no momento em que a meta foi definida
 
   const NutritionGoals({
     this.calories = 2000,
     this.protein = 150,
     this.carbs = 250,
     this.fat = 65,
+    this.fiber = 25,
     this.water = 2500,
+    this.weightGoal,
+    this.weightGoalStart,
   });
 
   factory NutritionGoals.fromJson(Map<String, dynamic> json) => NutritionGoals(
@@ -254,7 +270,10 @@ class NutritionGoals {
         protein: (json['protein'] as num?)?.toDouble() ?? 150,
         carbs: (json['carbs'] as num?)?.toDouble() ?? 250,
         fat: (json['fat'] as num?)?.toDouble() ?? 65,
+        fiber: (json['fiber'] as num?)?.toDouble() ?? 25,
         water: (json['water'] as num?)?.toInt() ?? 2500,
+        weightGoal: (json['weightGoal'] as num?)?.toDouble(),
+        weightGoalStart: (json['weightGoalStart'] as num?)?.toDouble(),
       );
 }
 
@@ -263,6 +282,7 @@ class DailySummary {
   final double protein;
   final double carbs;
   final double fat;
+  final double fiber;
   final int water;
 
   const DailySummary({
@@ -270,6 +290,7 @@ class DailySummary {
     this.protein = 0,
     this.carbs = 0,
     this.fat = 0,
+    this.fiber = 0,
     this.water = 0,
   });
 
@@ -280,6 +301,7 @@ class DailySummary {
       protein: foods.fold(0, (s, e) => s + e.protein),
       carbs: foods.fold(0, (s, e) => s + e.carbs),
       fat: foods.fold(0, (s, e) => s + e.fat),
+      fiber: foods.fold(0, (s, e) => s + e.fiber),
       water: waters.fold(0, (s, e) => s + e.amount),
     );
   }

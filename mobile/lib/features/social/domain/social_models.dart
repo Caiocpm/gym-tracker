@@ -582,6 +582,8 @@ class PublicUserProfile {
   final PublicStrongestLift? strongestLift;
   final List<PublicBadge> badges;
   final List<PublicGroupRef> groups;
+  final String? bio;
+  final List<PublicPhoto> photos;
 
   const PublicUserProfile({
     required this.id,
@@ -605,6 +607,8 @@ class PublicUserProfile {
     this.strongestLift,
     this.badges = const [],
     this.groups = const [],
+    this.bio,
+    this.photos = const [],
   });
 
   factory PublicUserProfile.fromJson(Map<String, dynamic> json) {
@@ -637,6 +641,11 @@ class PublicUserProfile {
           .whereType<Map<String, dynamic>>()
           .map(PublicGroupRef.fromJson)
           .toList(),
+      bio: json['bio'] as String?,
+      photos: (json['photos'] as List? ?? [])
+          .whereType<Map<String, dynamic>>()
+          .map(PublicPhoto.fromJson)
+          .toList(),
     );
   }
 
@@ -662,6 +671,8 @@ class PublicUserProfile {
         strongestLift: strongestLift,
         badges: badges,
         groups: groups,
+        bio: bio,
+        photos: photos,
       );
 
   String get totalVolumeFormatted {
@@ -678,4 +689,20 @@ class PublicUserProfile {
     if (h == 0) return '${m}min';
     return '${h}h ${m}min';
   }
+}
+
+// ─── Foto pública do perfil ───────────────────────────────────────────────────
+
+class PublicPhoto {
+  final String id;
+  final String url;
+  final String? caption;
+
+  const PublicPhoto({required this.id, required this.url, this.caption});
+
+  factory PublicPhoto.fromJson(Map<String, dynamic> j) => PublicPhoto(
+        id:      j['id']      as String,
+        url:     j['url']     as String,
+        caption: j['caption'] as String?,
+      );
 }

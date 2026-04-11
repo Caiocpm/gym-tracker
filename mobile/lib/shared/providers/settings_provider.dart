@@ -15,6 +15,7 @@ class AppSettings {
   final int defaultRestSeconds;
   final double weightIncrement; // kg
   final int firstDayOfWeek; // DateTime.monday=1, DateTime.sunday=7
+  final int weightCheckInDay; // dia de início da semana de peso (mesmo padrão)
   final int weeklyGoal; // treinos/semana
   final bool trainingReminder;
   final int reminderHour;
@@ -34,12 +35,13 @@ class AppSettings {
     this.defaultRestSeconds = 60,
     this.weightIncrement = 2.5,
     this.firstDayOfWeek = DateTime.monday,
+    this.weightCheckInDay = DateTime.monday,
     this.weeklyGoal = 3,
     this.trainingReminder = false,
     this.reminderHour = 7,
     this.reminderMinute = 0,
     this.weeklyReport = true,
-    this.themeMode = 'system',
+    this.themeMode = 'dark',
     this.waterReminderEnabled = false,
     this.waterReminderStartHour = 8,
     this.waterReminderEndHour = 18,
@@ -83,6 +85,7 @@ class AppSettings {
     int? defaultRestSeconds,
     double? weightIncrement,
     int? firstDayOfWeek,
+    int? weightCheckInDay,
     int? weeklyGoal,
     bool? trainingReminder,
     int? reminderHour,
@@ -101,6 +104,7 @@ class AppSettings {
         defaultRestSeconds: defaultRestSeconds ?? this.defaultRestSeconds,
         weightIncrement: weightIncrement ?? this.weightIncrement,
         firstDayOfWeek: firstDayOfWeek ?? this.firstDayOfWeek,
+        weightCheckInDay: weightCheckInDay ?? this.weightCheckInDay,
         weeklyGoal: weeklyGoal ?? this.weeklyGoal,
         trainingReminder: trainingReminder ?? this.trainingReminder,
         reminderHour: reminderHour ?? this.reminderHour,
@@ -127,6 +131,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   static const _kDefaultRest = 'settings_default_rest';
   static const _kWeightIncrement = 'settings_weight_increment';
   static const _kFirstDay = 'settings_first_day';
+  static const _kWeightCheckInDay = 'settings_weight_checkin_day';
   static const _kWeeklyGoal = 'settings_weekly_goal';
   static const _kReminder = 'settings_training_reminder';
   static const _kReminderHour = 'settings_reminder_hour';
@@ -151,12 +156,13 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       defaultRestSeconds: prefs.getInt(_kDefaultRest) ?? 60,
       weightIncrement: prefs.getDouble(_kWeightIncrement) ?? 2.5,
       firstDayOfWeek: prefs.getInt(_kFirstDay) ?? DateTime.monday,
+      weightCheckInDay: prefs.getInt(_kWeightCheckInDay) ?? DateTime.monday,
       weeklyGoal: prefs.getInt(_kWeeklyGoal) ?? 3,
       trainingReminder: prefs.getBool(_kReminder) ?? false,
       reminderHour: prefs.getInt(_kReminderHour) ?? 7,
       reminderMinute: prefs.getInt(_kReminderMinute) ?? 0,
       weeklyReport: prefs.getBool(_kWeeklyReport) ?? true,
-      themeMode: prefs.getString(_kThemeMode) ?? 'system',
+      themeMode: prefs.getString(_kThemeMode) ?? 'dark',
       waterReminderEnabled: prefs.getBool(_kWaterReminder) ?? false,
       waterReminderStartHour: prefs.getInt(_kWaterStartHour) ?? 8,
       waterReminderEndHour: prefs.getInt(_kWaterEndHour) ?? 18,
@@ -173,6 +179,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     await prefs.setInt(_kDefaultRest, state.defaultRestSeconds);
     await prefs.setDouble(_kWeightIncrement, state.weightIncrement);
     await prefs.setInt(_kFirstDay, state.firstDayOfWeek);
+    await prefs.setInt(_kWeightCheckInDay, state.weightCheckInDay);
     await prefs.setInt(_kWeeklyGoal, state.weeklyGoal);
     await prefs.setBool(_kReminder, state.trainingReminder);
     await prefs.setInt(_kReminderHour, state.reminderHour);
@@ -224,6 +231,11 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
 
   void setFirstDayOfWeek(int d) {
     state = state.copyWith(firstDayOfWeek: d);
+    _save();
+  }
+
+  void setWeightCheckInDay(int d) {
+    state = state.copyWith(weightCheckInDay: d);
     _save();
   }
 

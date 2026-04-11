@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/network/dio_client.dart';
+import '../../../core/storage/secure_storage.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../features/equipe/providers/equipe_provider.dart';
 import 'package:dio/dio.dart';
@@ -70,58 +71,91 @@ class NotificationsNotifier
   final _dio = DioClient.instance.dio;
   StreamSubscription? _sseSub;
   String _sseBuffer = '';
+  Timer? _reconnectTimer;
+  int _reconnectAttempts = 0;
+  bool _disposed = false;
 
   Future<void> _load() async {
     try {
       final res = await _dio.get('/notifications');
       final data = (res.data['data'] as List?) ?? [];
+      if (!mounted) return;
       state = AsyncValue.data(data
           .whereType<Map<String, dynamic>>()
           .map(AppNotification.fromJson)
           .toList());
       _connectSse();
     } catch (_) {
+      if (!mounted) return;
       state = const AsyncValue.data([]);
+      _scheduleReconnect();
     }
   }
 
   Future<void> _connectSse() async {
+    if (_disposed) return;
     _sseSub?.cancel();
+    _sseSub = null;
     _sseBuffer = '';
+
+    // Obtain fresh token — the interceptor already refreshed it if needed
+    final token = await SecureStorage.instance.getToken();
+    if (token == null || _disposed) return;
+
     try {
       final response = await _dio.get(
         '/notifications/stream',
+        queryParameters: {'token': token},
         options: Options(
           responseType: ResponseType.stream,
           receiveTimeout: Duration.zero,
         ),
       );
+      if (_disposed) return;
+
+      _reconnectAttempts = 0; // reset backoff on success
       final stream = (response.data as ResponseBody).stream;
-      _sseSub = stream.listen((bytes) {
-        _sseBuffer += utf8.decode(bytes);
-        // SSE events are separated by double newline
-        final events = _sseBuffer.split('\n\n');
-        _sseBuffer = events.removeLast(); // keep incomplete trailing event
-        for (final block in events) {
-          if (block.trim().isEmpty) continue;
-          String? eventType;
-          String? data;
-          for (final line in block.split('\n')) {
-            if (line.startsWith('event:')) {
-              eventType = line.substring(6).trim();
-            } else if (line.startsWith('data:')) {
-              data = line.substring(5).trim();
+      _sseSub = stream.listen(
+        (bytes) {
+          _sseBuffer += utf8.decode(bytes);
+          final events = _sseBuffer.split('\n\n');
+          _sseBuffer = events.removeLast();
+          for (final block in events) {
+            if (block.trim().isEmpty) continue;
+            String? eventType;
+            String? data;
+            for (final line in block.split('\n')) {
+              if (line.startsWith('event:')) {
+                eventType = line.substring(6).trim();
+              } else if (line.startsWith('data:')) {
+                data = line.substring(5).trim();
+              }
+            }
+            if (data != null) {
+              _handleEvent(eventType ?? 'notification', data);
             }
           }
-          if (data != null) {
-            _handleEvent(eventType ?? 'notification', data);
-          }
-        }
-      });
+        },
+        onDone: () => _scheduleReconnect(),
+        onError: (_) => _scheduleReconnect(),
+        cancelOnError: true,
+      );
     } catch (_) {
-      // SSE not available — polling fallback every 60s
-      Future.delayed(const Duration(seconds: 60), () { if (this.mounted) _load(); });
+      _scheduleReconnect();
     }
+  }
+
+  void _scheduleReconnect() {
+    if (_disposed || !mounted) return;
+    _reconnectTimer?.cancel();
+    // Exponential backoff: 5s, 10s, 20s, 40s, 60s (max)
+    final delay = Duration(
+      seconds: [5, 10, 20, 40, 60][_reconnectAttempts.clamp(0, 4)],
+    );
+    _reconnectAttempts++;
+    _reconnectTimer = Timer(delay, () {
+      if (!_disposed && mounted) _connectSse();
+    });
   }
 
   void _handleEvent(String eventType, String data) {
@@ -164,6 +198,8 @@ class NotificationsNotifier
 
   @override
   void dispose() {
+    _disposed = true;
+    _reconnectTimer?.cancel();
     _sseSub?.cancel();
     super.dispose();
   }

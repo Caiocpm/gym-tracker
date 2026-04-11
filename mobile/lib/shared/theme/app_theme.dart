@@ -1,5 +1,6 @@
 // lib/shared/theme/app_theme.dart
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   AppTheme._();
@@ -183,7 +184,7 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 1,
         centerTitle: false,
-        titleTextStyle: TextStyle(
+        titleTextStyle: GoogleFonts.outfit(
           color: cs.onSurface,
           fontSize: 20,
           fontWeight: FontWeight.w700,
@@ -276,16 +277,16 @@ class AppTheme {
 
       dividerTheme: DividerThemeData(color: cs.outlineVariant, thickness: 0.5),
 
-      textTheme: TextTheme(
-        headlineLarge: TextStyle(color: cs.onSurface, fontSize: 28, fontWeight: FontWeight.w800),
+      textTheme: GoogleFonts.outfitTextTheme(TextTheme(
+        headlineLarge:  TextStyle(color: cs.onSurface, fontSize: 28, fontWeight: FontWeight.w800),
         headlineMedium: TextStyle(color: cs.onSurface, fontSize: 22, fontWeight: FontWeight.w700),
-        titleLarge: TextStyle(color: cs.onSurface, fontSize: 18, fontWeight: FontWeight.w700),
-        titleMedium: TextStyle(color: cs.onSurface, fontSize: 16, fontWeight: FontWeight.w600),
-        bodyLarge: TextStyle(color: cs.onSurface, fontSize: 16),
-        bodyMedium: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
-        bodySmall: TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
-        labelSmall: TextStyle(color: cs.onSurfaceVariant, fontSize: 11),
-      ),
+        titleLarge:     TextStyle(color: cs.onSurface, fontSize: 18, fontWeight: FontWeight.w700),
+        titleMedium:    TextStyle(color: cs.onSurface, fontSize: 16, fontWeight: FontWeight.w600),
+        bodyLarge:      TextStyle(color: cs.onSurface,        fontSize: 16),
+        bodyMedium:     TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
+        bodySmall:      TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
+        labelSmall:     TextStyle(color: cs.onSurfaceVariant, fontSize: 11),
+      )),
     );
   }
 
@@ -303,7 +304,7 @@ class AppTheme {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: TextStyle(
+        titleTextStyle: GoogleFonts.outfit(
           color: cs.onSurface,
           fontSize: 18,
           fontWeight: FontWeight.w600,
@@ -379,14 +380,14 @@ class AppTheme {
 
       dividerTheme: DividerThemeData(color: cs.outlineVariant, thickness: 0.5),
 
-      textTheme: TextTheme(
-        headlineLarge: TextStyle(color: cs.onSurface, fontSize: 28, fontWeight: FontWeight.bold),
+      textTheme: GoogleFonts.outfitTextTheme(TextTheme(
+        headlineLarge:  TextStyle(color: cs.onSurface, fontSize: 28, fontWeight: FontWeight.bold),
         headlineMedium: TextStyle(color: cs.onSurface, fontSize: 22, fontWeight: FontWeight.w600),
-        titleLarge: TextStyle(color: cs.onSurface, fontSize: 18, fontWeight: FontWeight.w600),
-        bodyLarge: TextStyle(color: cs.onSurface, fontSize: 16),
-        bodyMedium: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
-        bodySmall: TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
-      ),
+        titleLarge:     TextStyle(color: cs.onSurface, fontSize: 18, fontWeight: FontWeight.w600),
+        bodyLarge:      TextStyle(color: cs.onSurface,        fontSize: 16),
+        bodyMedium:     TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
+        bodySmall:      TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
+      )),
     );
   }
 }

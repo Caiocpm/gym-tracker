@@ -150,6 +150,22 @@ class SettingsScreen extends ConsumerWidget {
               ),
               _Divider(),
               _PickerTile<int>(
+                icon: Icons.monitor_weight_outlined,
+                title: 'Dia de pesagem semanal',
+                options: const [
+                  _Option(1, 'Seg', 'Segunda'),
+                  _Option(2, 'Ter', 'Terça'),
+                  _Option(3, 'Qua', 'Quarta'),
+                  _Option(4, 'Qui', 'Quinta'),
+                  _Option(5, 'Sex', 'Sexta'),
+                  _Option(6, 'Sáb', 'Sábado'),
+                  _Option(7, 'Dom', 'Domingo'),
+                ],
+                selected: s.weightCheckInDay,
+                onSelected: n.setWeightCheckInDay,
+              ),
+              _Divider(),
+              _PickerTile<int>(
                 icon: Icons.flag_rounded,
                 title: 'Meta semanal de treinos',
                 options: const [

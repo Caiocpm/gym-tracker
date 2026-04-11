@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../domain/social_models.dart';
 import '../data/social_service.dart';
 import 'user_profile_sheet.dart';
+import '../../../core/config/env.dart';
 
 // ─── Post palette — resolves against current brightness ──────────────────────
 
@@ -93,7 +94,10 @@ class SocialPostItem extends ConsumerWidget {
               height: 44,
               child: ClipOval(
                 child: post.userPhotoURL != null
-                    ? Image.network(post.userPhotoURL!,
+                    ? Image.network(
+                        post.userPhotoURL!.startsWith('/')
+                            ? '${Env.serverBaseUrl}${post.userPhotoURL!}'
+                            : post.userPhotoURL!,
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) => _avatarFallback())
                     : _avatarFallback(),

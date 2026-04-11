@@ -10,6 +10,8 @@ import '../../../features/nutrition/domain/nutrition_models.dart';
 import '../../../features/analytics/providers/analytics_provider.dart';
 import '../../../shared/providers/brand_provider.dart';
 import '../../../shared/theme/app_theme.dart';
+import '../../../shared/widgets/gradient_progress_bar.dart';
+import '../../../shared/widgets/weight_card.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -43,13 +45,14 @@ class _HomeContent extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
+                  _BirthdayCard(),
                   _NutritionCard(),
+                  const SizedBox(height: 12),
+                  const WeightCard(),
                   const SizedBox(height: 12),
                   _WorkoutStreakCard(),
                   const SizedBox(height: 12),
                   _RecentSessionsSection(),
-                  const SizedBox(height: 12),
-                  _AnalyticsCard(),
                   const SizedBox(height: 24),
                 ]),
               ),
@@ -66,8 +69,6 @@ class _HomeContent extends ConsumerWidget {
 class _GreetingSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
     final user = ref.watch(currentUserProvider);
     final gradient = ref.watch(brandGradientProvider);
 
@@ -89,23 +90,59 @@ class _GreetingSection extends ConsumerWidget {
         ),
       ),
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(
-            '$greeting${firstName.isNotEmpty ? ', $firstName' : ''}!',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '$greeting${firstName.isNotEmpty ? ', $firstName' : ''}!',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _todayLabel(),
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.8),
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            _todayLabel(),
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
-              fontSize: 14,
+          const SizedBox(width: 12),
+          GestureDetector(
+            onTap: () => context.go('/analytics'),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.18),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.30),
+                ),
+              ),
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.bar_chart_rounded, color: Colors.white, size: 22),
+                  SizedBox(height: 4),
+                  Text(
+                    'Análises',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -184,18 +221,8 @@ class _NutritionCard extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: calorieProgress,
-              minHeight: 6,
-              backgroundColor: cs.primary.withValues(alpha: 0.12),
-              valueColor: AlwaysStoppedAnimation<Color>(
-                calorieProgress >= 1.0 ? Colors.orange : cs.primary,
-              ),
-            ),
-          ),
+          const SizedBox(height: 10),
+          GradientProgressBar(value: calorieProgress, height: 7),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -639,58 +666,6 @@ class _SessionRow extends StatelessWidget {
   }
 }
 
-// ─── Analytics Card ────────────────────────────────────────────────────────────
-
-class _AnalyticsCard extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
-    final gradient = ref.watch(brandGradientProvider);
-
-    return GestureDetector(
-      onTap: () => context.go('/analytics'),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-        child: Row(
-          children: [
-            const Icon(Icons.bar_chart_rounded, color: Colors.white, size: 32),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Análises',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'Volume, PRs, RPE e progresso',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.8),
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 // ─── Shared card widget ────────────────────────────────────────────────────────
 
 class _HomeCard extends StatelessWidget {
@@ -728,6 +703,109 @@ class _HomeCard extends StatelessWidget {
           child: Padding(
             padding: padding,
             child: child,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Birthday Card ────────────────────────────────────────────────────────────
+
+class _BirthdayCard extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_BirthdayCard> createState() => _BirthdayCardState();
+}
+
+class _BirthdayCardState extends ConsumerState<_BirthdayCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    _scale = CurvedAnimation(parent: _controller, curve: Curves.elasticOut);
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  bool _isBirthday(String? birthDate) {
+    if (birthDate == null) return false;
+    try {
+      final dob = DateTime.parse(birthDate);
+      final now = DateTime.now();
+      return dob.month == now.month && dob.day == now.day;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final user = ref.watch(currentUserProvider);
+    if (!_isBirthday(user?.birthDate)) return const SizedBox.shrink();
+
+    final theme = Theme.of(context);
+    final firstName = user?.displayName?.split(' ').first ?? '';
+    final age = user?.age;
+
+    return ScaleTransition(
+      scale: _scale,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFF6B9D), Color(0xFFFFB347)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFFF6B9D).withValues(alpha: 0.35),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const Text('🎂', style: TextStyle(fontSize: 40)),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Feliz aniversário${firstName.isNotEmpty ? ', $firstName' : ''}!',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    if (age != null)
+                      Text(
+                        '$age anos de muito treino pela frente! 💪',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.9),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

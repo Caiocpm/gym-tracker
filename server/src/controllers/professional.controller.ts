@@ -503,27 +503,29 @@ export const professionalController = {
           protein:  acc.protein  + (e.protein  ?? 0),
           carbs:    acc.carbs    + (e.carbs     ?? 0),
           fat:      acc.fat      + (e.fat       ?? 0),
+          fiber:    acc.fiber    + (e.fiber     ?? 0),
         }),
-        { calories: 0, protein: 0, carbs: 0, fat: 0 }
+        { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 }
       );
       const todayWater = waterEntries.reduce((sum, w) => sum + (w.amount ?? 0), 0);
 
       // Agrupa por data para os últimos 7 dias
-      const byDate: Record<string, { date: string; calories: number; protein: number; carbs: number; fat: number; entries: typeof recentEntries }> = {};
+      const byDate: Record<string, { date: string; calories: number; protein: number; carbs: number; fat: number; fiber: number; entries: typeof recentEntries }> = {};
       for (const entry of recentEntries) {
         if (!byDate[entry.date]) {
-          byDate[entry.date] = { date: entry.date, calories: 0, protein: 0, carbs: 0, fat: 0, entries: [] };
+          byDate[entry.date] = { date: entry.date, calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, entries: [] };
         }
         byDate[entry.date].calories += entry.calories ?? 0;
         byDate[entry.date].protein  += entry.protein  ?? 0;
         byDate[entry.date].carbs    += entry.carbs     ?? 0;
         byDate[entry.date].fat      += entry.fat       ?? 0;
+        byDate[entry.date].fiber    += entry.fiber     ?? 0;
         byDate[entry.date].entries.push(entry);
       }
       const recentDays = Object.values(byDate).sort((a, b) => b.date.localeCompare(a.date));
 
       res.json({
-        goals: goals ?? { calories: 2000, protein: 150, carbs: 250, fat: 65, water: 2500 },
+        goals: goals ?? { calories: 2000, protein: 150, carbs: 250, fat: 65, fiber: 25, water: 2500 },
         todayProgress: { ...todayProgress, water: todayWater },
         todayEntries,
         recentDays,
@@ -641,7 +643,8 @@ export const professionalController = {
   async searchExercises(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const search = req.query.search as string | undefined;
-      const limit  = parseInt(req.query.limit as string ?? '20', 10);
+      const limitRaw = parseInt(req.query.limit as string ?? '20', 10);
+      const limit = Number.isNaN(limitRaw) ? 20 : limitRaw;
       const exercises = await prisma.exerciseDefinition.findMany({
         where: search
           ? { name: { contains: search, mode: 'insensitive' } }

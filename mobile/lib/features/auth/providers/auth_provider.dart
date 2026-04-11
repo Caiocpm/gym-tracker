@@ -2,6 +2,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/auth_service.dart';
 import '../domain/auth_user.dart';
+import '../../notifications/services/push_notification_service.dart';
 
 // Estado de autenticação
 sealed class AuthState {
@@ -36,9 +37,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> _init() async {
     final user = await _service.getCurrentUser();
-    state = user != null
-        ? AuthAuthenticated(user)
-        : const AuthUnauthenticated();
+    if (user != null) {
+      state = AuthAuthenticated(user);
+      PushNotificationService.instance.registerToken();
+    } else {
+      state = const AuthUnauthenticated();
+    }
   }
 
   Future<void> loginWithEmailPassword({
@@ -52,6 +56,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         password: password,
       );
       state = AuthAuthenticated(user);
+      PushNotificationService.instance.registerToken();
     } catch (e) {
       state = AuthError(e.toString());
     }
@@ -63,6 +68,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final user = await _service.loginWithGoogle();
       if (user != null) {
         state = AuthAuthenticated(user);
+        PushNotificationService.instance.registerToken();
       } else {
         state = const AuthUnauthenticated();
       }
@@ -84,38 +90,78 @@ class AuthNotifier extends StateNotifier<AuthState> {
         displayName: displayName,
       );
       state = AuthAuthenticated(user);
+      PushNotificationService.instance.registerToken();
     } catch (e) {
       state = AuthError(e.toString());
     }
   }
 
   Future<void> logout() async {
+    await PushNotificationService.instance.unregisterToken();
     await _service.logout();
     state = const AuthUnauthenticated();
   }
 
-  Future<void> updateDisplayName(String displayName) async {
+  Future<void> updateDisplayName(String displayName) =>
+      updateProfile(displayName: displayName);
+
+  Future<void> updatePrivacy(bool isPrivate) =>
+      updateProfile(isPrivate: isPrivate);
+
+  Future<void> updateProfile({
+    String? displayName,
+    String? photoURL,
+    bool? isPrivate,
+    String? birthDate,
+    String? sex,
+    double? height,
+    String? objective,
+    String? activityLevel,
+    String? bio,
+  }) async {
     final current = state;
     if (current is! AuthAuthenticated) return;
-    final updated = current.user.copyWith(displayName: displayName);
+
+    final updated = current.user.copyWith(
+      displayName: displayName,
+      photoURL: photoURL,
+      isPrivate: isPrivate,
+      birthDate: birthDate,
+      sex: sex,
+      height: height,
+      objective: objective,
+      activityLevel: activityLevel,
+      bio: bio,
+    );
     state = AuthAuthenticated(updated);
-    // Persiste no backend via PUT /auth/profile
+
+    final body = <String, dynamic>{
+      if (displayName != null) 'displayName': displayName,
+      if (photoURL != null) 'photoURL': photoURL,
+      if (isPrivate != null) 'isPrivate': isPrivate,
+      if (birthDate != null) 'birthDate': birthDate,
+      if (sex != null) 'sex': sex,
+      if (height != null) 'height': height,
+      if (objective != null) 'objective': objective,
+      if (activityLevel != null) 'activityLevel': activityLevel,
+      if (bio != null) 'bio': bio,
+    };
+
     try {
-      await _service.dio.put('/auth/profile', data: {'displayName': displayName});
+      await _service.dio.put('/auth/profile', data: body);
     } catch (_) {
       state = current; // rollback
     }
   }
 
-  Future<void> updatePrivacy(bool isPrivate) async {
+  Future<void> uploadAvatar(String filePath) async {
     final current = state;
     if (current is! AuthAuthenticated) return;
-    final updated = current.user.copyWith(isPrivate: isPrivate);
-    state = AuthAuthenticated(updated);
     try {
-      await _service.dio.put('/auth/profile', data: {'isPrivate': isPrivate});
+      final updated = await _service.uploadAvatar(filePath);
+      state = AuthAuthenticated(updated);
     } catch (_) {
-      state = current; // rollback
+      // mantém estado atual em caso de erro
     }
   }
 

@@ -68,12 +68,23 @@ class NutritionService {
   }
 
   Future<void> updateGoals(String userId, NutritionGoals goals) async {
-    await _dio.put('/nutrition/$userId/goals', data: {
+    await _dio.patch('/nutrition/$userId/goals', data: {
       'calories': goals.calories,
       'protein': goals.protein,
       'carbs': goals.carbs,
       'fat': goals.fat,
+      'fiber': goals.fiber,
       'water': goals.water,
+      if (goals.weightGoal != null) 'weightGoal': goals.weightGoal,
+    });
+  }
+
+  Future<void> updateWeightGoal(String userId, double? weightGoal, {double? currentWeight}) async {
+    await _dio.patch('/nutrition/$userId/goals', data: {
+      'weightGoal': weightGoal,
+      // When setting a new goal, record current weight as the start baseline.
+      // When clearing (weightGoal == null), also clear the start.
+      'weightGoalStart': weightGoal != null ? currentWeight : null,
     });
   }
 

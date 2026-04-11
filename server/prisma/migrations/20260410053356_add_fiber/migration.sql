@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "FoodEntry" ADD COLUMN     "fiber" DOUBLE PRECISION NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "NutritionGoals" ADD COLUMN     "fiber" DOUBLE PRECISION NOT NULL DEFAULT 25;

@@ -1,6 +1,7 @@
 import prisma from '../config/database';
 import { AppError } from '../types/api.types';
 import { sseService } from './sse.service';
+import { pushService } from './push.service';
 import type {
   CreateProfileInput,
   CreateTagInput,
@@ -44,6 +45,8 @@ async function sendNotification(
     data: { userId, type, title, message, actionUrl: actionUrl ?? null, ...extras },
   });
   sseService.send(userId, 'notification', notification);
+  // Push para usuários com app fechado (best-effort)
+  pushService.sendToUser(userId, { title, body: message, data: { type, notificationId: notification.id, ...(actionUrl ? { url: actionUrl } : {}) } }).catch(() => {});
 }
 
 // ─── Shared consistency helper ────────────────────────────────────────────────

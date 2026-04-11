@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/router/app_router.dart';
 import 'features/equipe/providers/equipe_provider.dart';
+import 'features/notifications/services/push_notification_service.dart';
 import 'shared/theme/app_theme.dart';
 import 'shared/providers/settings_provider.dart';
 import 'shared/providers/brand_provider.dart';
@@ -60,6 +61,8 @@ class _GymTrackerAppState extends ConsumerState<GymTrackerApp>
   @override
   Widget build(BuildContext context) {
     final router          = ref.watch(routerProvider);
+    // Passa o router para o PushNotificationService poder navegar ao tocar em notificação
+    PushNotificationService.instance.setRouter(router);
     final themeMode       = ref.watch(settingsProvider.select((s) => s.flutterThemeMode));
     final brandColor      = ref.watch(brandColorProvider);
     final brandSurface    = ref.watch(brandSurfaceColorProvider);

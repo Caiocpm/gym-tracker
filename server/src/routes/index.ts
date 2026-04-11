@@ -10,6 +10,7 @@ import wodsRouter from './wods.routes';
 import weightRouter from './weight.routes';
 import marketplaceRouter from './marketplace.routes';
 import presetRouter from './preset.routes';
+import bodyMeasurementsRouter from './body-measurements.routes';
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.use('/wods', wodsRouter);
 router.use('/weight', weightRouter);
 router.use('/marketplace', marketplaceRouter);
 router.use('/presets', presetRouter);
+router.use('/body', bodyMeasurementsRouter);
 
 export default router;

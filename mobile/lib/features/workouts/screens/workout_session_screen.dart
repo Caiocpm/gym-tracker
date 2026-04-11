@@ -11,6 +11,7 @@ import '../providers/workouts_provider.dart';
 import '../providers/rest_timer_provider.dart';
 import '../domain/workout_models.dart';
 import '../../../shared/providers/settings_provider.dart';
+import '../../../shared/providers/brand_provider.dart';
 import '../../analytics/providers/training_goals_provider.dart';
 import '../../social/data/social_service.dart';
 import '../../social/domain/social_models.dart';
@@ -450,43 +451,51 @@ class _ExerciseNavBar extends StatelessWidget {
 
 // ─── Rest timer banner ────────────────────────────────────────────────────────
 
-class _RestBanner extends StatelessWidget {
+class _RestBanner extends ConsumerWidget {
   const _RestBanner({required this.timer, required this.onSkip});
   final RestTimerState timer;
   final VoidCallback onSkip;
 
   @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final gradient  = ref.watch(brandGradientProvider);
+    final highlight = ref.watch(brandHighlightProvider);
+
     return Container(
-      color: cs.primaryContainer,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
+      decoration: BoxDecoration(gradient: gradient),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.hourglass_bottom, size: 20, color: cs.onPrimaryContainer),
-          const SizedBox(width: 8),
-          Text(
-            'Descanso: ${timer.formatted}',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: cs.onPrimaryContainer),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: LinearProgressIndicator(
-              value: timer.progress,
-              color: cs.primary,
-              backgroundColor: cs.onPrimaryContainer.withValues(alpha: 0.2),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: Row(
+              children: [
+                const Icon(Icons.hourglass_bottom, size: 20, color: Colors.white),
+                const SizedBox(width: 8),
+                Text(
+                  'Descansando: ${timer.formatted}',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: Colors.white, fontWeight: FontWeight.w600),
+                ),
+                const Spacer(),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    minimumSize: Size.zero,
+                    foregroundColor: Colors.white.withValues(alpha: 0.85),
+                  ),
+                  onPressed: onSkip,
+                  child: const Text('Pular'),
+                ),
+              ],
             ),
           ),
-          const SizedBox(width: 12),
-          TextButton(
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              minimumSize: Size.zero,
-              foregroundColor: cs.onPrimaryContainer,
-            ),
-            onPressed: onSkip,
-            child: const Text('Pular'),
+          // Barra neon de progresso
+          LinearProgressIndicator(
+            value: timer.progress,
+            minHeight: 4,
+            backgroundColor: Colors.white.withValues(alpha: 0.2),
+            valueColor: AlwaysStoppedAnimation<Color>(highlight),
           ),
         ],
       ),

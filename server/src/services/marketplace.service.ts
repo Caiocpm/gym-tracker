@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import prisma from '../config/database';
 import { AppError } from '../types/api.types';
 import { sseService } from './sse.service';
+import { pushService } from './push.service';
 import type {
   SearchProfessionalsInput,
   CreateContactRequestInput,
@@ -26,6 +27,7 @@ async function pushNotification(
     data: { userId, type, title, message, actionUrl: null },
   });
   sseService.send(userId, 'notification', notif);
+  pushService.sendToUser(userId, { title, body: message, data: { type, notificationId: notif.id } }).catch(() => {});
 }
 
 const TYPE_LABELS: Record<string, string> = {

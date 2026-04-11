@@ -20,6 +20,7 @@ export const createFoodEntrySchema = z.object({
   protein: z.number().nonnegative(),
   carbs: z.number().nonnegative(),
   fat: z.number().nonnegative(),
+  fiber: z.number().nonnegative().optional().default(0),
   quantity: z.number().positive().optional().default(1),
   unit: z.string().optional(),
   // Aceita tanto "meal" quanto "mealType" (mobile)
@@ -55,7 +56,10 @@ export const updateDailyGoalsSchema = z.object({
   protein: z.number().nonnegative().optional(),
   carbs: z.number().nonnegative().optional(),
   fat: z.number().nonnegative().optional(),
+  fiber: z.number().nonnegative().optional(),
   water: z.number().positive().optional(),
+  weightGoal: z.number().positive().nullable().optional(),
+  weightGoalStart: z.number().positive().nullable().optional(),
 });
 
 // ─── Predefined Food ──────────────────────────────────────────────────────────

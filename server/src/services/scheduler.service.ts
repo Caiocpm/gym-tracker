@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import prisma from '../config/database';
 import { sseService } from './sse.service';
+import { pushService } from './push.service';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -48,6 +49,7 @@ async function pushNotification(
   });
 
   sseService.send(userId, 'notification', notification);
+  pushService.sendToUser(userId, { title, body: message, data: { type, notificationId: notification.id, url: actionUrl } }).catch(() => {});
 }
 
 // ─── Nutrition checks ─────────────────────────────────────────────────────────

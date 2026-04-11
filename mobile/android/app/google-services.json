@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "158669162595",
+    "project_id": "kinify-app",
+    "storage_bucket": "kinify-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158669162595:android:68d62e06c437c15ec09056",
+        "android_client_info": {
+          "package_name": "com.kinify.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9ythvF50FVDnAV_4BGT8jCb6XP2CNiqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

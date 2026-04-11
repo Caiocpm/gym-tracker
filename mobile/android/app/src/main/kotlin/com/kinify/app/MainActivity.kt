@@ -1,4 +1,4 @@
-package com.example.gym_tracker
+package com.kinify.app
 
 import io.flutter.embedding.android.FlutterActivity
 

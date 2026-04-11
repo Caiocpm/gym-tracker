@@ -11,7 +11,9 @@ import '../providers/social_provider.dart';
 import '../data/social_service.dart';
 import '../widgets/social_post_item.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../../core/config/env.dart';
 import '../../../shared/theme/app_theme.dart';
+import '../../../shared/widgets/gradient_progress_bar.dart';
 import '../../workouts/data/wods_service.dart';
 import '../../workouts/domain/workout_models.dart';
 import '../../workouts/providers/workouts_provider.dart';
@@ -1011,22 +1013,17 @@ class _ChallengeCardState extends ConsumerState<_ChallengeCard> {
                           ],
                         ),
                         const SizedBox(height: 4),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: LinearProgressIndicator(
-                            value: c.targetValue > 0
-                                ? (myParticipant.currentValue /
-                                        c.targetValue)
-                                    .clamp(0.0, 1.0)
-                                : 0,
-                            minHeight: 8,
-                            backgroundColor:
-                                cs.surfaceContainerHighest,
-                            valueColor: AlwaysStoppedAnimation(
-                                myParticipant.isCompleted
-                                    ? Colors.green
-                                    : cs.primary),
-                          ),
+                        GradientProgressBar(
+                          value: c.targetValue > 0
+                              ? (myParticipant.currentValue / c.targetValue)
+                                  .clamp(0.0, 1.0)
+                              : 0,
+                          height: 8,
+                          gradient: myParticipant.isCompleted
+                              ? const LinearGradient(
+                                  colors: [Color(0xFF43E97B), Color(0xFF38F9D7)],
+                                )
+                              : null,
                         ),
                       ],
                     ),
@@ -1693,7 +1690,10 @@ class _MemberTile extends StatelessWidget {
         backgroundColor: cs.primaryContainer,
         child: member.photoURL != null
             ? ClipOval(
-                child: Image.network(member.photoURL!,
+                child: Image.network(
+                    member.photoURL!.startsWith('/')
+                        ? '${Env.serverBaseUrl}${member.photoURL!}'
+                        : member.photoURL!,
                     width: 40,
                     height: 40,
                     fit: BoxFit.cover,

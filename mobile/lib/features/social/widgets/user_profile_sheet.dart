@@ -1,8 +1,12 @@
 // lib/features/social/widgets/user_profile_sheet.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../data/social_service.dart';
 import '../domain/social_models.dart';
 import '../../../shared/theme/app_theme.dart';
+import '../../../core/config/env.dart';
+import '../../profile/screens/profile_screen.dart' show ProfileStatCard, StrongestLiftCard;
 import 'package:intl/intl.dart';
 
 class UserProfileSheet extends StatefulWidget {
@@ -55,15 +59,15 @@ class _UserProfileSheetState extends State<UserProfileSheet> {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _UserProfileContent extends StatefulWidget {
+class _UserProfileContent extends ConsumerStatefulWidget {
   const _UserProfileContent({required this.profile});
   final PublicUserProfile profile;
 
   @override
-  State<_UserProfileContent> createState() => _UserProfileContentState();
+  ConsumerState<_UserProfileContent> createState() => _UserProfileContentState();
 }
 
-class _UserProfileContentState extends State<_UserProfileContent> {
+class _UserProfileContentState extends ConsumerState<_UserProfileContent> {
   late bool _isFollowing;
   bool _followLoading = false;
 
@@ -71,6 +75,54 @@ class _UserProfileContentState extends State<_UserProfileContent> {
   void initState() {
     super.initState();
     _isFollowing = widget.profile.isFollowing;
+  }
+
+  void _showPhotoViewer(BuildContext context, List<PublicPhoto> photos, int initial) {
+    final cs = Theme.of(context).colorScheme;
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.black,
+        insetPadding: EdgeInsets.zero,
+        child: Stack(
+          children: [
+            PageView.builder(
+              controller: PageController(initialPage: initial),
+              itemCount: photos.length,
+              itemBuilder: (_, i) {
+                final url = '${Env.serverBaseUrl}${photos[i].url}';
+                return InteractiveViewer(
+                  child: Center(
+                    child: CachedNetworkImage(
+                      imageUrl: url,
+                      fit: BoxFit.contain,
+                      placeholder: (_, __) =>
+                          const CircularProgressIndicator(color: Colors.white),
+                      errorWidget: (_, __, ___) =>
+                          Icon(Icons.broken_image_outlined, color: cs.onSurfaceVariant),
+                    ),
+                  ),
+                );
+              },
+            ),
+            Positioned(
+              top: 12, right: 12,
+              child: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 20),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _toggleFollow() async {
@@ -98,109 +150,250 @@ class _UserProfileContentState extends State<_UserProfileContent> {
     final profile = widget.profile;
     final name  = profile.displayName ?? 'Usuário';
 
+    final coverUrl = profile.photos.isNotEmpty
+        ? '${Env.serverBaseUrl}${profile.photos.first.url}'
+        : null;
+
     return DraggableScrollableSheet(
-      initialChildSize: 0.7,
-      minChildSize: 0.4,
+      initialChildSize: 0.75,
+      minChildSize: 0.5,
       maxChildSize: 0.95,
       expand: false,
       builder: (_, controller) => ListView(
         controller: controller,
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+        padding: EdgeInsets.zero,
         children: [
-          // Drag handle
-          Center(
-            child: Container(
-              width: 40, height: 4,
-              margin: const EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                color: cs.onSurface.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(2),
+          // ── Cover header ──────────────────────────────────────────────────
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // Cover photo / gradient fallback
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                child: SizedBox(
+                  height: 160,
+                  width: double.infinity,
+                  child: coverUrl != null
+                      ? CachedNetworkImage(
+                          imageUrl: coverUrl,
+                          fit: BoxFit.cover,
+                          color: Colors.black.withOpacity(0.35),
+                          colorBlendMode: BlendMode.darken,
+                          placeholder: (_, __) => Container(
+                              color: AppTheme.primary.withOpacity(0.6)),
+                          errorWidget: (_, __, ___) =>
+                              Container(color: AppTheme.primary.withOpacity(0.6)),
+                        )
+                      : Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppTheme.primary,
+                                AppTheme.primary.withOpacity(0.7),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          ),
+                        ),
+                ),
               ),
-            ),
+              // Drag handle
+              Positioned(
+                top: 10, left: 0, right: 0,
+                child: Center(
+                  child: Container(
+                    width: 40, height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+              ),
+              // Avatar — sobreposto na borda inferior do cover
+              Positioned(
+                bottom: -44,
+                left: 0, right: 0,
+                child: Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: cs.surface, width: 4),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.18),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: GestureDetector(
+                      onTap: profile.photoURL != null
+                          ? () {
+                              final url = profile.photoURL!.startsWith('/')
+                                  ? '${Env.serverBaseUrl}${profile.photoURL!}'
+                                  : profile.photoURL!;
+                              _showPhotoViewer(
+                                context,
+                                [PublicPhoto(id: 'avatar', url: profile.photoURL!, caption: null)],
+                                0,
+                              );
+                            }
+                          : null,
+                      child: CircleAvatar(
+                        radius: 44,
+                        backgroundColor: AppTheme.primary.withOpacity(0.15),
+                        backgroundImage: profile.photoURL != null
+                            ? NetworkImage(
+                                profile.photoURL!.startsWith('/')
+                                    ? '${Env.serverBaseUrl}${profile.photoURL!}'
+                                    : profile.photoURL!,
+                              )
+                            : null,
+                        child: profile.photoURL == null
+                            ? Text(
+                                name.isNotEmpty ? name[0].toUpperCase() : '?',
+                                style: TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppTheme.primary,
+                                ),
+                              )
+                            : null,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
 
-          // Avatar + nome
-          Center(
+          // ── Info abaixo do header ─────────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 56, 16, 0),
             child: Column(
               children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundColor: AppTheme.primary.withOpacity(0.15),
-                  backgroundImage: profile.photoURL != null
-                      ? NetworkImage(profile.photoURL!) : null,
-                  child: profile.photoURL == null
-                      ? Text(
-                          name.isNotEmpty ? name[0].toUpperCase() : '?',
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w700,
-                            color: AppTheme.primary,
-                          ),
-                        )
-                      : null,
-                ),
-                const SizedBox(height: 10),
                 Text(name,
                     style: theme.textTheme.titleLarge
-                        ?.copyWith(fontWeight: FontWeight.w700)),
+                        ?.copyWith(fontWeight: FontWeight.w800)),
                 if (profile.memberSince != null) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   Text(
                     'Membro desde ${_fmtDate(profile.memberSince!)}',
                     style: theme.textTheme.bodySmall
                         ?.copyWith(color: cs.onSurface.withOpacity(0.5)),
                   ),
                 ],
-                const SizedBox(height: 14),
-                _followLoading
-                    ? const SizedBox(
-                        width: 24, height: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2))
-                    : FilledButton.icon(
-                        onPressed: _toggleFollow,
-                        icon: Icon(_isFollowing
-                            ? Icons.person_remove_outlined
-                            : Icons.person_add_alt_1_outlined,
-                            size: 18),
-                        label: Text(_isFollowing ? 'Seguindo' : 'Seguir'),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: _isFollowing
-                              ? cs.surfaceContainerHighest
-                              : AppTheme.primary,
-                          foregroundColor: _isFollowing
-                              ? cs.onSurface
-                              : Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 10),
-                        ),
-                      ),
+                // Bio
+                if (profile.bio?.trim().isNotEmpty == true) ...[
+                  const SizedBox(height: 10),
+                  Text(
+                    profile.bio!,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                        color: cs.onSurface.withOpacity(0.75), height: 1.45),
+                  ),
+                ],
                 const SizedBox(height: 16),
-                // Seguidores / Seguindo
+                // Seguidores / Seguindo / Botão
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _FollowStat(
-                      count: profile.followersCount,
-                      label: 'Seguidores',
-                    ),
+                    _FollowStat(count: profile.followersCount, label: 'Seguidores'),
                     Container(
                       width: 1, height: 28,
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
                       color: cs.onSurface.withOpacity(0.12),
                     ),
-                    _FollowStat(
-                      count: profile.followingCount,
-                      label: 'Seguindo',
-                    ),
+                    _FollowStat(count: profile.followingCount, label: 'Seguindo'),
+                    const SizedBox(width: 20),
+                    _followLoading
+                        ? const SizedBox(width: 24, height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2))
+                        : FilledButton.icon(
+                            onPressed: _toggleFollow,
+                            icon: Icon(_isFollowing
+                                ? Icons.person_remove_outlined
+                                : Icons.person_add_alt_1_outlined,
+                                size: 16),
+                            label: Text(_isFollowing ? 'Seguindo' : 'Seguir'),
+                            style: FilledButton.styleFrom(
+                              backgroundColor: _isFollowing
+                                  ? cs.surfaceContainerHighest
+                                  : AppTheme.primary,
+                              foregroundColor: _isFollowing
+                                  ? cs.onSurface
+                                  : Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 8),
+                              visualDensity: VisualDensity.compact,
+                            ),
+                          ),
                   ],
                 ),
               ],
             ),
           ),
 
+          // ── Galeria de Fotos ──────────────────────────────────────────────
+          if (profile.photos.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Fotos', style: theme.textTheme.titleSmall
+                      ?.copyWith(fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 10),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 6,
+                      mainAxisSpacing: 6,
+                    ),
+                    itemCount: profile.photos.length,
+                    itemBuilder: (_, i) {
+                      final photo = profile.photos[i];
+                      return GestureDetector(
+                        onTap: () =>
+                            _showPhotoViewer(context, profile.photos, i),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: CachedNetworkImage(
+                            imageUrl: '${Env.serverBaseUrl}${photo.url}',
+                            fit: BoxFit.cover,
+                            placeholder: (_, __) => Container(
+                                color: cs.surfaceContainerHighest),
+                            errorWidget: (_, __, ___) => Container(
+                              color: cs.surfaceContainerHighest,
+                              child: Icon(Icons.broken_image_outlined,
+                                  color: cs.onSurfaceVariant, size: 20),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+
           const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: const Divider(),
+          ),
+          const SizedBox(height: 8),
 
           // Private profile
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(children: [
           if (profile.isPrivate) ...[
             Container(
               padding: const EdgeInsets.all(20),
@@ -229,14 +422,14 @@ class _UserProfileContentState extends State<_UserProfileContent> {
             _PSectionTitle('🔥 Sequências'),
             const SizedBox(height: 8),
             Row(children: [
-              Expanded(child: _PStatCard(
+              Expanded(child: ProfileStatCard(
                 icon: Icons.local_fire_department,
                 iconColor: Colors.orange,
                 label: 'Sequência atual',
                 value: '${profile.currentStreak ?? 0} dias',
               )),
               const SizedBox(width: 8),
-              Expanded(child: _PStatCard(
+              Expanded(child: ProfileStatCard(
                 icon: Icons.emoji_events,
                 iconColor: Colors.amber,
                 label: 'Maior sequência',
@@ -249,14 +442,14 @@ class _UserProfileContentState extends State<_UserProfileContent> {
             _PSectionTitle('💪 Volume e Recordes'),
             const SizedBox(height: 8),
             Row(children: [
-              Expanded(child: _PStatCard(
+              Expanded(child: ProfileStatCard(
                 icon: Icons.fitness_center,
                 iconColor: AppTheme.primary,
                 label: 'Volume total',
                 value: profile.totalVolumeFormatted,
               )),
               const SizedBox(width: 8),
-              Expanded(child: _PStatCard(
+              Expanded(child: ProfileStatCard(
                 icon: Icons.star,
                 iconColor: Colors.amber,
                 label: 'Recordes pessoais',
@@ -265,14 +458,14 @@ class _UserProfileContentState extends State<_UserProfileContent> {
             ]),
             const SizedBox(height: 8),
             Row(children: [
-              Expanded(child: _PStatCard(
+              Expanded(child: ProfileStatCard(
                 icon: Icons.timer_outlined,
                 iconColor: const Color(0xFF14B8A6),
                 label: 'Tempo total',
                 value: profile.totalTimeFormatted,
               )),
               const SizedBox(width: 8),
-              Expanded(child: _PStatCard(
+              Expanded(child: ProfileStatCard(
                 icon: Icons.repeat,
                 iconColor: AppTheme.primaryDark,
                 label: 'Total de séries',
@@ -285,41 +478,9 @@ class _UserProfileContentState extends State<_UserProfileContent> {
               const SizedBox(height: 16),
               _PSectionTitle('🏋️ Melhor levantamento'),
               const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [AppTheme.primary.withOpacity(0.1),
-                             AppTheme.primaryDark.withOpacity(0.05)],
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppTheme.primary.withOpacity(0.2)),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 44, height: 44,
-                      decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(Icons.fitness_center,
-                          color: Colors.orange, size: 22),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(profile.strongestLift!.exerciseName,
-                          style: theme.textTheme.titleMedium),
-                    ),
-                    Text(
-                      '${profile.strongestLift!.weight.toInt()} kg',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: Colors.orange,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ],
-                ),
+              StrongestLiftCard(
+                exerciseName: profile.strongestLift!.exerciseName,
+                weight: profile.strongestLift!.weight,
               ),
             ],
 
@@ -328,21 +489,21 @@ class _UserProfileContentState extends State<_UserProfileContent> {
             _PSectionTitle('👥 Social'),
             const SizedBox(height: 8),
             Row(children: [
-              Expanded(child: _PStatCard(
+              Expanded(child: ProfileStatCard(
                 icon: Icons.group,
                 iconColor: Colors.green,
                 label: 'Grupos',
                 value: '${profile.totalGroups ?? 0}',
               )),
               const SizedBox(width: 8),
-              Expanded(child: _PStatCard(
+              Expanded(child: ProfileStatCard(
                 icon: Icons.emoji_events_outlined,
                 iconColor: Colors.red,
                 label: 'Desafios',
                 value: '${profile.totalChallengesCompleted ?? 0}',
               )),
               const SizedBox(width: 8),
-              Expanded(child: _PStatCard(
+              Expanded(child: ProfileStatCard(
                 icon: Icons.military_tech,
                 iconColor: Colors.amber,
                 label: 'Badges',
@@ -380,6 +541,9 @@ class _UserProfileContentState extends State<_UserProfileContent> {
               )),
             ],
           ],
+        ]),
+          ),
+          const SizedBox(height: 32),
         ],
       ),
     );
@@ -445,51 +609,6 @@ class _PSectionTitle extends StatelessWidget {
       );
 }
 
-// ─── Stat card ────────────────────────────────────────────────────────────────
-
-class _PStatCard extends StatelessWidget {
-  const _PStatCard({
-    required this.icon,
-    required this.iconColor,
-    required this.label,
-    required this.value,
-  });
-  final IconData icon;
-  final Color iconColor;
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: cs.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: iconColor, size: 20),
-          const SizedBox(height: 8),
-          Text(value,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w800)),
-          const SizedBox(height: 2),
-          Text(label,
-              style: TextStyle(
-                fontSize: 11,
-                color: cs.onSurface.withOpacity(0.55),
-              )),
-        ],
-      ),
-    );
-  }
-}
-
 // ─── Badge chip ───────────────────────────────────────────────────────────────
 
 class _BadgeChip extends StatelessWidget {
@@ -497,10 +616,11 @@ class _BadgeChip extends StatelessWidget {
   final PublicBadge badge;
 
   Color get _color => switch (badge.rarity) {
-        'legendary' => const Color(0xFFFFD700),
-        'epic'      => const Color(0xFF9B59B6),
-        'rare'      => const Color(0xFF3498DB),
-        _           => const Color(0xFF95A5A6),
+        'diamond'   => const Color(0xFF00E5FF),
+        'gold' || 'legendary' => const Color(0xFFFFD700),
+        'silver' || 'epic'    => const Color(0xFF9B59B6),
+        'bronze' || 'rare'    => const Color(0xFF3498DB),
+        _                     => const Color(0xFF95A5A6),
       };
 
   @override

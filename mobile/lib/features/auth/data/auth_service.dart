@@ -60,6 +60,16 @@ class AuthService {
     return _handleAuthResponse(res.data as Map<String, dynamic>);
   }
 
+  // ─── Upload avatar ──────────────────────────────────────────────────────────
+
+  Future<AuthUser> uploadAvatar(String filePath) async {
+    final formData = FormData.fromMap({
+      'avatar': await MultipartFile.fromFile(filePath, filename: 'avatar.jpg'),
+    });
+    final res = await _dio.post('/auth/avatar', data: formData);
+    return AuthUser.fromJson(res.data as Map<String, dynamic>);
+  }
+
   // ─── Logout ─────────────────────────────────────────────────────────────────
 
   Future<void> logout() async {
